@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { curatedProducts } from "../../data/products";
 import { ProductCard } from "../../components/ProductCard";
-import { Filter, SlidersHorizontal, Gift, X } from "lucide-react";
+import { Filter, SlidersHorizontal, Gift, X, Tag, IndianRupee } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Collections() {
@@ -19,14 +19,10 @@ export default function Collections() {
     { label: "Over ₹3,000", value: "over3000" },
   ];
 
-  // Filtering logic
   const filteredProducts = useMemo(() => {
     return curatedProducts.filter((product) => {
-      // Category Match
-      const categoryMatch =
-        selectedCategory === "All" || product.category === selectedCategory;
-
-      // Price Match
+      const categoryMatch = selectedCategory === "All" || product.category === selectedCategory;
+      
       let priceMatch = true;
       if (selectedPriceRange === "under2000") {
         priceMatch = product.price < 2000;
@@ -41,149 +37,136 @@ export default function Collections() {
   }, [selectedCategory, selectedPriceRange]);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-12">
-      {/* Banner Header */}
-      <section className="relative rounded-[32px] overflow-hidden bg-teal-deep text-[#FFFDF5] p-8 md:p-12 border border-teal-deep/10 shadow-lg">
-        {/* Decorative Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-deep to-[#031d1d] -z-10" />
-        <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-rani-pink/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-10 w-[250px] h-[250px] bg-saffron/10 rounded-full blur-3xl" />
-
-        <div className="space-y-4 max-w-xl relative z-10">
-          <div className="inline-flex items-center space-x-1.5 bg-saffron/10 border border-saffron/20 px-3 py-1 rounded-full text-xs font-bold text-saffron uppercase">
-            <Gift className="w-3.5 h-3.5" />
-            <span>Ready-made Curations</span>
+    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-10 px-6">
+      <div className="max-w-6xl mx-auto space-y-12">
+        
+        {/* Banner: Clean Minimalist Editorial Layout */}
+        <section className="relative rounded-[32px] overflow-hidden bg-white border border-slate-200/60 p-8 md:p-14 shadow-sm text-left">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100 rounded-full blur-3xl -z-10" />
+          <div className="space-y-4 max-w-xl">
+            <span className="text-[10px] tracking-widest font-black uppercase text-slate-400 block">
+              Pre-Curated Selection
+            </span>
+            <h1 className="font-heading text-4xl sm:text-5xl font-light text-slate-900 tracking-tight leading-tight">
+              Ready-made <br />
+              <span className="font-black italic text-slate-700">Curated Sets</span>
+            </h1>
+            <div className="w-12 h-0.5 bg-slate-900" />
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm">
+              Discover gift box curations styled for Diwali, luxury marriages, B2B milestones, and corporate celebrations.
+            </p>
           </div>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
-            Exquisite Pre-Curated Gift Sets
-          </h1>
-          <p className="text-xs sm:text-sm text-[#FFFDF5]/70 leading-relaxed">
-            Beautiful gift boxes filled with premium treats, handcrafted items, and luxurious wellness products. Ready to deliver instantly to your loved ones.
-          </p>
-        </div>
-      </section>
+        </section>
 
-      {/* Main Catalog Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Sidebar Filters */}
-        <aside className="lg:col-span-3 space-y-6 bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-teal-deep/5 shadow-sm">
-          <div className="flex items-center justify-between border-b border-teal-deep/10 pb-4">
-            <div className="flex items-center space-x-2 text-teal-deep font-bold">
-              <SlidersHorizontal className="w-4 h-4" />
-              <span>Filters</span>
+        {/* Catalog Body with Split Sidebar Filter */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 items-start">
+          
+          {/* Sticky Left Filter Sidebar */}
+          <aside className="lg:col-span-1 bg-white border border-slate-200 p-6 rounded-3xl space-y-8 sticky top-24 text-left shadow-sm">
+            <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+              <SlidersHorizontal className="w-4.5 h-4.5 text-slate-900" />
+              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">Filters</h3>
             </div>
-            {(selectedCategory !== "All" || selectedPriceRange !== "All") && (
-              <button
-                onClick={() => {
-                  setSelectedCategory("All");
-                  setSelectedPriceRange("All");
-                }}
-                className="text-xs font-semibold text-rani-pink hover:underline flex items-center space-x-1"
-              >
-                <X className="w-3 h-3" />
-                <span>Reset</span>
-              </button>
-            )}
-          </div>
 
-          {/* Occasions Filter */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-teal-deep/50">
-              Occasions
-            </h4>
-            <div className="flex flex-wrap gap-2 lg:flex-col lg:items-start">
-              {categories.map((cat) => {
-                const isActive = selectedCategory === cat;
-                return (
+            {/* Category Filter */}
+            <div className="space-y-3">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                <Tag className="w-3.5 h-3.5 mr-1" />
+                <span>Categories</span>
+              </span>
+              <div className="flex flex-col space-y-1.5">
+                {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`text-xs px-4 py-2 rounded-full font-semibold transition-all duration-200 border ${
-                      isActive
-                        ? "bg-teal-deep border-teal-deep text-[#FFFDF5]"
-                        : "bg-[#FFFDF5] border-teal-deep/15 text-teal-deep/80 hover:border-teal-deep"
+                    className={`text-xs font-semibold px-3.5 py-2.5 rounded-xl text-left transition-all ${
+                      selectedCategory === cat
+                        ? "bg-slate-900 text-white font-bold"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   >
-                    {cat}
+                    {cat === "All" ? "All Occated Boxes" : `${cat} Gifts`}
                   </button>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Price Range Filter */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-teal-deep/50">
-              Price Range
-            </h4>
-            <div className="flex flex-wrap gap-2 lg:flex-col lg:items-start">
-              {priceRanges.map((range) => {
-                const isActive = selectedPriceRange === range.value;
-                return (
+            {/* Price Filter */}
+            <div className="space-y-3">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                <IndianRupee className="w-3.5 h-3.5 mr-1" />
+                <span>Budget Tier</span>
+              </span>
+              <div className="flex flex-col space-y-1.5">
+                {priceRanges.map((range) => (
                   <button
                     key={range.value}
                     onClick={() => setSelectedPriceRange(range.value)}
-                    className={`text-xs px-4 py-2 rounded-full font-semibold transition-all duration-200 border ${
-                      isActive
-                        ? "bg-teal-deep border-teal-deep text-[#FFFDF5]"
-                        : "bg-[#FFFDF5] border-teal-deep/15 text-teal-deep/80 hover:border-teal-deep"
+                    className={`text-xs font-semibold px-3.5 py-2.5 rounded-xl text-left transition-all ${
+                      selectedPriceRange === range.value
+                        ? "bg-slate-900 text-white font-bold"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   >
                     {range.label}
                   </button>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
-        </aside>
+          </aside>
 
-        {/* Right Catalog Grid */}
-        <section className="lg:col-span-9 space-y-6">
-          <div className="flex justify-between items-center text-xs text-teal-deep/60 px-2">
-            <span>
-              Showing <strong className="text-teal-deep">{filteredProducts.length}</strong> items
-            </span>
-          </div>
-
-          <AnimatePresence mode="popLayout">
-            {filteredProducts.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="bg-white/40 border border-teal-deep/5 p-12 rounded-3xl text-center space-y-3"
-              >
-                <Gift className="w-12 h-12 text-teal-deep/30 mx-auto" />
-                <h3 className="font-heading text-lg font-bold text-teal-deep">
-                  No Hampers Found
-                </h3>
-                <p className="text-xs text-teal-deep/60 max-w-sm mx-auto">
-                  We don&apos;t have items matching this combination. Try clearing filters or launching our Build-a-Box tool to make your own.
-                </p>
+          {/* Right Product Grid */}
+          <main className="lg:col-span-3 space-y-6 text-left">
+            <div className="flex justify-between items-center text-xs text-slate-400 px-2">
+              <span>Showing <strong>{filteredProducts.length}</strong> items matching filters</span>
+              {(selectedCategory !== "All" || selectedPriceRange !== "All") && (
                 <button
                   onClick={() => {
                     setSelectedCategory("All");
                     setSelectedPriceRange("All");
                   }}
-                  className="mt-2 text-xs font-bold bg-teal-deep hover:bg-teal-deep/90 text-[#FFFDF5] px-6 py-2.5 rounded-full"
+                  className="flex items-center text-slate-950 font-bold hover:underline"
                 >
                   Clear Filters
+                  <X className="w-3.5 h-3.5 ml-1" />
                 </button>
-              </motion.div>
-            ) : (
-              <motion.div
-                layout
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-              >
-                {filteredProducts.map((product) => (
-                  <motion.div key={product.id} layout>
-                    <ProductCard product={product} />
+              )}
+            </div>
+
+            {/* Grid Container */}
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+            >
+              <AnimatePresence>
+                {filteredProducts.length === 0 ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="col-span-full py-20 text-center space-y-3"
+                  >
+                    <Gift className="w-10 h-10 text-slate-300 mx-auto" />
+                    <p className="text-sm font-semibold text-slate-600">No curations match these filters.</p>
                   </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </section>
+                ) : (
+                  filteredProducts.map((product) => (
+                    <motion.div
+                      key={product.id}
+                      layout
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -15 }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <ProductCard product={product} />
+                    </motion.div>
+                  ))
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </main>
+        </div>
       </div>
     </div>
   );

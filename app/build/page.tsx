@@ -57,7 +57,7 @@ export default function BuildBox() {
           const defaultStyles = [
             { name: "Classic Royal Gold", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" },
             { name: "Blossom Rani Pink", color: "from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20" },
-            { name: "Midnight Teal Elegance", color: "from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30" },
+            { name: "Midnight Teal Elegance", color: "from-[#042F2E]/20 to-blue-900/20 border-[#042F2E]/30" },
           ];
           setBoxStyleList(defaultStyles);
           setSelectedBoxStyle(defaultStyles[0].name);
@@ -84,7 +84,7 @@ export default function BuildBox() {
     (item) => bazaarFilter === "All" || item.category === bazaarFilter
   );
 
-  const boxPrice = 250; // Base package price
+  const boxPrice = 250; 
   const hamperItemsTotal = buildABoxItems.reduce((acc: number, item: any) => acc + item.price, 0);
   const totalHamperPrice = hamperItemsTotal + boxPrice;
   const isFull = buildABoxItems.length >= boxCapacity;
@@ -92,312 +92,282 @@ export default function BuildBox() {
   const handleAddItem = (item: any) => {
     const success = addToBox(item);
     if (!success) {
-      // Could show toast or visual cue
+      // Show alerts or effects
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-12">
-      {/* Page Header */}
-      <section className="text-center max-w-2xl mx-auto space-y-4">
-        <div className="inline-flex items-center space-x-1.5 bg-[#D1126A]/10 border border-rani-pink/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-rani-pink uppercase animate-pulse">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Hamper Studio</span>
-        </div>
-        <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-teal-deep">
-          Build a Bespoke Hamper
-        </h1>
-        <p className="text-xs sm:text-sm text-teal-deep/75 leading-relaxed">
-          Create a personalized gift box. Select a premium packaging style, select up to 5 artisanal treats, and let us package it with love.
-        </p>
-      </section>
+    <div className="min-h-screen bg-[#07080B] text-slate-100 py-10 px-6 relative overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute top-10 left-10 w-96 h-96 bg-purple-900/10 rounded-full blur-3xl filter animate-pulse -z-10" />
+      <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-teal-900/10 rounded-full blur-3xl filter animate-pulse -z-10" />
 
-      {/* Main Builder Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Pane: The Bazaar */}
-        <section className="lg:col-span-7 space-y-6">
-          {/* Packaging Box Style Selector */}
-          <div className="bg-white/60 backdrop-blur-sm p-6 rounded-3xl border border-teal-deep/5 shadow-sm space-y-4">
-            <h3 className="font-heading text-lg font-bold flex items-center space-x-2">
-              <Box className="w-5 h-5 text-saffron" />
-              <span>Step 1: Choose Packaging Style</span>
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {boxStyleList.map((style) => {
-                const isSelected = selectedBoxStyle === style.name;
-                return (
-                  <button
-                    key={style.name}
-                    onClick={() => setSelectedBoxStyle(style.name)}
-                    className={`p-4 rounded-2xl border-2 text-left transition-all duration-200 bg-gradient-to-br ${style.color} ${
-                      isSelected
-                        ? "border-teal-deep ring-2 ring-teal-deep/10 scale-[1.02]"
-                        : "border-transparent opacity-70 hover:opacity-100"
-                    }`}
-                  >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs font-bold text-teal-deep">{style.name}</span>
-                      {isSelected && (
-                        <span className="w-4 h-4 bg-teal-deep rounded-full flex items-center justify-center">
-                          <Check className="w-2.5 h-2.5 text-[#FFFDF5]" />
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[10px] text-teal-deep/60">Premium Rigid Box + Gold Ribbons</span>
-                  </button>
-                );
-              })}
-            </div>
+      <div className="max-w-6xl mx-auto space-y-12">
+        {/* Header */}
+        <section className="text-center max-w-2xl mx-auto space-y-4">
+          <div className="inline-flex items-center space-x-1.5 bg-purple-500/15 border border-purple-500/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-purple-400 uppercase tracking-widest">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Interactive Workshop</span>
           </div>
-
-          {/* Ribbon Style Selector */}
-          <div className="bg-white/60 backdrop-blur-sm p-6 rounded-3xl border border-teal-deep/5 shadow-sm space-y-4">
-            <h3 className="font-heading text-lg font-bold flex items-center space-x-2">
-              <Sparkles className="w-5 h-5 text-rani-pink" />
-              <span>Step 1.5: Select Ribbon Style</span>
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {ribbonStyles.map((style) => {
-                const isSelected = selectedRibbonStyle === style.name;
-                return (
-                  <button
-                    key={style.name}
-                    type="button"
-                    onClick={() => setSelectedRibbonStyle(style.name)}
-                    className={`p-3.5 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${
-                      isSelected
-                        ? "border-teal-deep bg-teal-deep/5 ring-2 ring-teal-deep/10 scale-[1.02]"
-                        : "border-transparent bg-white hover:border-teal-deep/20"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <span className={`w-3.5 h-3.5 rounded-full ${style.color}`} />
-                      <span className="text-xs font-semibold text-teal-deep">{style.name}</span>
-                    </div>
-                    {isSelected && (
-                      <span className="w-3.5 h-3.5 bg-teal-deep rounded-full flex items-center justify-center">
-                        <Check className="w-2.5 h-2.5 text-[#FFFDF5]" />
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Bazaar Items Grid */}
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/40 p-4 rounded-2xl border border-teal-deep/5">
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-deep/60">
-                Step 2: Add Hamper Delights ({buildABoxItems.length}/5)
-              </span>
-              {/* Category selector */}
-              <div className="flex flex-wrap gap-1.5">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setBazaarFilter(cat)}
-                    className={`text-[10px] px-3 py-1.5 rounded-full font-bold transition-colors ${
-                      bazaarFilter === cat
-                        ? "bg-teal-deep text-[#FFFDF5]"
-                        : "bg-white border border-teal-deep/15 text-teal-deep hover:border-teal-deep"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Grid of bazaar items */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {filteredBazaar.map((item) => {
-                const countInBox = buildABoxItems.filter((i: any) => i.id === item.id).length;
-                return (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    className="group bg-white rounded-2xl border border-teal-deep/5 p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
-                  >
-                    {/* Item Image */}
-                    <div className="aspect-square bg-teal-deep/5 rounded-xl overflow-hidden flex items-center justify-center mb-3 relative">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=200&auto=format&fit=crop&q=80";
-                        }}
-                      />
-                      {countInBox > 0 && (
-                        <span className="absolute top-2 right-2 bg-rani-pink text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
-                          {countInBox}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Metadata */}
-                    <div className="space-y-1">
-                      <h4 className="text-xs font-bold text-teal-deep line-clamp-1 group-hover:text-rani-pink transition-colors">
-                        {item.name}
-                      </h4>
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-teal-deep/80">₹{item.price}</span>
-                        <button
-                          disabled={isFull}
-                          onClick={() => handleAddItem(item)}
-                          className={`p-1 rounded-full border transition-all duration-200 ${
-                            isFull
-                              ? "border-teal-deep/10 text-teal-deep/20 cursor-not-allowed"
-                              : "border-teal-deep text-teal-deep hover:bg-teal-deep hover:text-white transform active:scale-90"
-                          }`}
-                          title={isFull ? "Box Full" : "Add to Box"}
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+            Hamper Customization Studio
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            Unleash your creativity. Choose your custom box structure, tie ribbon bows, and fill up to 5 delicacies.
+          </p>
         </section>
 
-        {/* Right Pane: Sticky Visual Container "Your Hamper" */}
-        <section className="lg:col-span-5 lg:sticky lg:top-28">
-          <div className="bg-[#042F2E] text-[#FFFDF5] p-6 rounded-[32px] border border-white/10 shadow-lg space-y-6">
-            {/* Visual Box Rendering */}
-            <div className="border-2 border-dashed border-[#FFFDF5]/20 p-6 rounded-2xl relative bg-[#042F2E]/60 overflow-hidden">
-              {/* Packaging Name */}
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex flex-col space-y-0.5 text-left">
-                  <div className="flex items-center space-x-1.5">
-                    <Box className="w-4 h-4 text-saffron" />
-                    <span className="text-xs font-bold text-[#FFFDF5]/80">{selectedBoxStyle}</span>
-                  </div>
-                  <span className="text-[10px] text-[#FFFDF5]/50 italic">Ribbon: {selectedRibbonStyle}</span>
+        {/* Builder Panel Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Pane: Customizer Controls */}
+          <div className="lg:col-span-7 space-y-8 text-left">
+            {/* Box Styles Selection */}
+            <div className="bg-white/[0.03] backdrop-blur-md border border-white/5 p-6 rounded-3xl space-y-4">
+              <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-400 flex items-center space-x-2">
+                <Box className="w-4.5 h-4.5 text-purple-400" />
+                <span>1. Packaging Box Style</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {boxStyleList.map((style) => {
+                  const isSelected = selectedBoxStyle === style.name;
+                  return (
+                    <button
+                      key={style.name}
+                      onClick={() => setSelectedBoxStyle(style.name)}
+                      className={`p-4 rounded-2xl border text-left transition-all duration-300 bg-gradient-to-br ${style.color} ${
+                        isSelected
+                          ? "border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.15)] scale-[1.01]"
+                          : "border-white/5 opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs font-bold text-white">{style.name}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-purple-400" />}
+                      </div>
+                      <span className="text-[10px] text-slate-400 block mt-1">Lidded rigid board box</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Ribbon Styles Selection */}
+            <div className="bg-white/[0.03] backdrop-blur-md border border-white/5 p-6 rounded-3xl space-y-4">
+              <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-400 flex items-center space-x-2">
+                <Sparkles className="w-4.5 h-4.5 text-saffron" />
+                <span>2. Silk Ribbon Wrap</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {ribbonStyles.map((style) => {
+                  const isSelected = selectedRibbonStyle === style.name;
+                  return (
+                    <button
+                      key={style.name}
+                      onClick={() => setSelectedRibbonStyle(style.name)}
+                      className={`p-3.5 rounded-xl border text-left transition-all flex items-center justify-between ${
+                        isSelected
+                          ? "border-saffron bg-saffron/10 shadow-[0_0_15px_rgba(249,115,22,0.1)] scale-[1.01]"
+                          : "border-white/5 bg-transparent opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className={`w-3 h-3 rounded-full ${style.color}`} />
+                        <span className="text-xs font-semibold text-white">{style.name}</span>
+                      </div>
+                      {isSelected && <Check className="w-3.5 h-3.5 text-saffron" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Treats Bazaar Selection */}
+            <div className="bg-white/[0.03] backdrop-blur-md border border-white/5 p-6 rounded-3xl space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/5 pb-4">
+                <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-400 flex items-center space-x-2">
+                  <ShoppingBag className="w-4.5 h-4.5 text-teal-400" />
+                  <span>3. Treats Bazaar</span>
+                </h3>
+                {/* Filters */}
+                <div className="flex space-x-1.5 flex-wrap gap-1">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setBazaarFilter(cat)}
+                      className={`text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors ${
+                        bazaarFilter === cat
+                          ? "bg-teal-500 text-slate-950 font-black shadow-sm"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
                 </div>
-                <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full">Base Box Fee: ₹{boxPrice}</span>
               </div>
 
-              {/* Added items list with Framer Motion Layout animations */}
-              <div className="min-h-[160px] flex flex-col justify-center">
-                {buildABoxItems.length === 0 ? (
-                  <div className="text-center py-6 space-y-2">
-                    <Box className="w-10 h-10 text-white/20 mx-auto animate-bounce" />
-                    <p className="text-xs text-[#FFFDF5]/50">Your hamper is empty</p>
-                    <p className="text-[10px] text-[#FFFDF5]/30">Add goodies from the bazaar on the left</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <AnimatePresence>
-                      {buildABoxItems.map((item: any, index: number) => (
-                        <motion.div
-                          key={`${item.id}-${index}`}
-                          initial={{ opacity: 0, scale: 0.85, x: 20 }}
-                          animate={{ opacity: 1, scale: 1, x: 0 }}
-                          exit={{ opacity: 0, scale: 0.85, x: -20 }}
-                          layout
-                          className="flex items-center justify-between p-2 bg-[#FFFDF5]/10 rounded-xl border border-white/5 group"
-                        >
-                          <div className="flex items-center space-x-2.5">
-                            <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  e.currentTarget.src = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&auto=format&fit=crop&q=80";
-                                }}
-                              />
-                            </div>
-                            <span className="text-xs font-semibold truncate max-w-[150px]">{item.name}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs font-bold text-gold">₹{item.price}</span>
+              {/* Items Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-1">
+                {filteredBazaar.map((item) => {
+                  const currentQty = buildABoxItems.filter((x) => x.id === item.id).length;
+                  return (
+                    <div
+                      key={item.id}
+                      className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex items-center justify-between space-x-4 hover:border-white/10 transition-colors"
+                    >
+                      <div className="flex items-center space-x-3 text-left">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-xl border border-white/5" />
+                        <div>
+                          <span className="text-xs font-bold text-white block leading-tight">{item.name}</span>
+                          <span className="text-[10px] text-teal-400 font-bold block mt-0.5">₹{item.price}</span>
+                        </div>
+                      </div>
+
+                      {/* Add controls */}
+                      <div className="flex items-center space-x-2">
+                        {currentQty > 0 ? (
+                          <div className="flex items-center space-x-2.5 bg-white/5 border border-white/10 rounded-xl px-2 py-1">
                             <button
                               onClick={() => removeFromBox(item.id)}
-                              className="p-1 hover:bg-white/10 text-[#FFFDF5]/40 hover:text-white rounded-lg transition-colors"
-                              title="Remove item"
+                              className="text-xs font-bold text-slate-400 hover:text-white"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Minus className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="text-xs font-bold text-white">{currentQty}</span>
+                            <button
+                              disabled={isFull}
+                              onClick={() => handleAddItem(item)}
+                              className="text-xs font-bold text-slate-400 hover:text-white disabled:opacity-30"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                )}
+                        ) : (
+                          <button
+                            disabled={isFull}
+                            onClick={() => handleAddItem(item)}
+                            className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-slate-200 border border-white/5 disabled:opacity-30 transition-colors"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
+          </div>
 
-            {/* Capacity Progress Bar */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold">
-                <span className="text-[#FFFDF5]/70">Hamper Capacity</span>
-                <span className={isFull ? "text-saffron" : "text-[#FFFDF5]"}>
-                  {buildABoxItems.length} of {boxCapacity} Items
-                </span>
-              </div>
-              <div className="w-full h-2 bg-white/15 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(buildABoxItems.length / boxCapacity) * 100}%` }}
-                  className="h-full bg-gradient-to-r from-saffron to-rani-pink rounded-full"
-                />
-              </div>
-              <p className="text-[10px] text-[#FFFDF5]/40 leading-relaxed">
-                Add at least 1 item to proceed. A maximum of 5 items guarantees clean packing.
-              </p>
-            </div>
-
-            {/* Invoice breakdown */}
-            {buildABoxItems.length > 0 && (
-              <div className="border-t border-white/10 pt-4 space-y-2">
-                <div className="flex justify-between text-xs text-[#FFFDF5]/70">
-                  <span>Hamper Items Total</span>
-                  <span>₹{hamperItemsTotal}</span>
+          {/* Right Pane: Sticky Visual Hamper Preview Card */}
+          <div className="lg:col-span-5 sticky top-24 space-y-6">
+            <div className="bg-gradient-to-br from-indigo-950/40 to-slate-950/80 backdrop-blur-xl border border-white/5 rounded-[40px] p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-purple-500/5 rounded-full blur-2xl" />
+              
+              <div className="flex justify-between items-center border-b border-white/5 pb-4 text-left">
+                <div>
+                  <h3 className="font-heading text-lg font-bold text-white">Your Box Preview</h3>
+                  <span className="text-[10px] text-slate-400">Ribbon: {selectedRibbonStyle}</span>
                 </div>
-                <div className="flex justify-between text-xs text-[#FFFDF5]/70">
-                  <span>Gift Box & Ribbons</span>
-                  <span>₹{boxPrice}</span>
-                </div>
-                <div className="flex justify-between text-sm font-bold border-t border-white/5 pt-2">
-                  <span>Subtotal Price</span>
-                  <span className="text-gold">₹{totalHamperPrice}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex space-x-3 pt-2">
-              {buildABoxItems.length > 0 && (
                 <button
                   onClick={clearBox}
-                  className="px-4 py-3 bg-[#FFFDF5]/10 hover:bg-[#FFFDF5]/15 text-[#FFFDF5] rounded-xl text-xs font-bold transition-colors"
+                  className="text-[10px] font-bold uppercase tracking-wider text-rani-pink/70 hover:text-rani-pink"
                 >
-                  Clear Box
+                  Reset Drawer
                 </button>
-              )}
+              </div>
+
+              {/* Glowing Capacity Bar */}
+              <div className="space-y-1.5 text-left">
+                <div className="flex justify-between text-xs font-semibold text-slate-400">
+                  <span>Capacity Filled</span>
+                  <span>{buildABoxItems.length} / {boxCapacity} Items</span>
+                </div>
+                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden relative border border-white/5">
+                  <div
+                    className="h-full bg-gradient-to-r from-purple-500 to-teal-400 transition-all duration-300"
+                    style={{ width: `${(buildABoxItems.length / boxCapacity) * 100}%` }}
+                  />
+                </div>
+                <span className="text-[9px] text-slate-500 block leading-normal">Limit up to 5 items to guarantee premium styling and fit.</span>
+              </div>
+
+              {/* List of items inside box preview */}
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1 text-left">
+                {buildABoxItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-8 border border-dashed border-white/5 rounded-2xl text-slate-500 space-y-2">
+                    <Box className="w-8 h-8 text-white/10" />
+                    <span className="text-[11px]">No treats placed in the box yet.</span>
+                  </div>
+                ) : (
+                  buildABoxItems.map((item: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className="bg-white/5 border border-white/5 p-3 rounded-xl flex items-center justify-between"
+                    >
+                      <div className="flex items-center space-x-2.5">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.image} alt={item.name} className="w-8 h-8 object-cover rounded" />
+                        <span className="text-xs font-bold text-white">{item.name}</span>
+                      </div>
+                      <button
+                        onClick={() => removeFromBox(item.id)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Invoice Breakdown */}
+              <div className="border-t border-white/5 pt-4 space-y-2 text-xs text-left">
+                <div className="flex justify-between text-slate-400">
+                  <span>Artisan Box Packaging Fee</span>
+                  <span className="font-bold text-white">₹{boxPrice}</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Selected Treats ({buildABoxItems.length})</span>
+                  <span className="font-bold text-white">₹{hamperItemsTotal}</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Shipping Fee</span>
+                  <span className="font-bold text-teal-400 uppercase">FREE</span>
+                </div>
+                <div className="flex justify-between text-sm font-bold border-t border-white/5 pt-2">
+                  <span>Hamper Subtotal</span>
+                  <span className="text-saffron text-base">₹{totalHamperPrice}</span>
+                </div>
+              </div>
+
+              {/* Move to Bag button */}
               <button
                 disabled={buildABoxItems.length === 0}
-                onClick={() => moveBoxToCart(`${selectedBoxStyle} with ${selectedRibbonStyle}`)}
-                className={`flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
-                  buildABoxItems.length === 0
-                    ? "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
-                    : "bg-[#FFFDF5] hover:bg-gold-light text-teal-deep shadow-md hover:shadow-lg transform active:scale-[0.98]"
-                }`}
+                onClick={() => {
+                  moveBoxToCart(selectedBoxStyle);
+                  alert("Bespoke Box added to Gifting Bag!");
+                }}
+                className="w-full flex items-center justify-center space-x-2 py-4 bg-white text-[#07080B] hover:bg-gold-light rounded-xl font-bold text-sm shadow-lg disabled:opacity-30 disabled:hover:bg-white transition-all transform hover:-translate-y-0.5"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Add Hamper to Bag</span>
+                <span>Add Box to Bag</span>
               </button>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </div>
+  );
+}
+
+// Simple minus icon
+function Minus(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
+    </svg>
   );
 }
