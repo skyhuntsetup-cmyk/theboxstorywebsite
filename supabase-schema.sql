@@ -92,7 +92,11 @@ INSERT INTO public.products (id, name, price, image, description, category, badg
 ('cur-3', 'Sandalwood & Brass Rituals', 3299, 'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=600&auto=format&fit=crop&q=80', 'A premium ritual set consisting of a heavy brass incense burner, pure Mysore sandalwood incense cones, and premium cashew nuts.', 'Weddings', 'Premium Heritage'),
 ('cur-4', 'Rose Gold Grooming Hamper', 1599, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80', 'Curated grooming products, handmade charcoal-rose soaps, a rose-gold vacuum flask, and dark hazelnut chocolates.', 'Anniversary', 'Modern Elegance'),
 ('cur-5', 'The Executive Coffee Blend', 2100, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80', 'Designed for premium desk settings: customized ceramic mug, single-origin Araku Valley coffee beans, and oats cookies.', 'Corporate', 'Corporate Elite'),
-('cur-6', 'Sweet Serenity Hampers', 1750, 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&auto=format&fit=crop&q=80', 'Perfect housewarming wellness gift: Organic lavender room spray, jasmine soy wax candles, and wild acacia honey jar.', 'Housewarming', 'Self Care')
+('cur-6', 'Sweet Serenity Hampers', 1750, 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&auto=format&fit=crop&q=80', 'Perfect housewarming wellness gift: Organic lavender room spray, jasmine soy wax candles, and wild acacia honey jar.', 'Housewarming', 'Self Care'),
+('cur-7', 'Classic Stanley Tumbler Set', 1499, '/images/imported/Stanley Sets/63d936bc994f71d1655702a1b430608f.jpg', 'Features a premium insulated Stanley-style vacuum tumbler with matching steel straws and treats.', 'Corporate', 'Trending Cup'),
+('cur-8', 'Golden Oak Open Hamper', 2100, '/images/imported/Open Hampers/57e9e083f75f408cd26a017a92dc32c7.webp', 'An open display willow basket consisting of gourmet almond brittle, wildflower honey, and organic tea jars.', 'Anniversary', 'Handcrafted Basket'),
+('cur-9', 'Acrylic Standalone Keepsake', 899, '/images/imported/Acrlytic Stand Along Gifts/bb915f0783dca64827c47db821455a24.webp', 'Custom laser-engraved acrylic plaque mounted on a natural beechwood LED lighted base.', 'Housewarming', 'Personalized'),
+('cur-10', 'The Budget Sweet Box', 990, '/images/imported/Below 1000 Inspiration/5a88e75cded9f4d147484596051ef5b2.webp', 'An affordable celebration tray packing dry fruit mathri, premium cashews, and twin tealight diyas.', 'Diwali', 'Best Value')
 ON CONFLICT (id) DO NOTHING;
 
 
@@ -151,7 +155,10 @@ INSERT INTO public.bazaar_items (name, price, image, category, is_active) VALUES
 ('Organic Lavender Soy Candle', 350, 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80', 'Wellness', true),
 ('Premium Kashmiri Saffron (1g)', 550, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&auto=format&fit=crop&q=80', 'Gourmet', true),
 ('Assorted Dry Fruits (200g)', 490, 'https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=300&auto=format&fit=crop&q=80', 'Gourmet', true),
-('Rose Water Facial Mist', 320, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80', 'Wellness', true);
+('Rose Water Facial Mist', 320, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80', 'Wellness', true),
+('Stanley Steel Insulated Cup', 850, '/images/imported/Stanley Sets/8cba5ebdf761b8e27b6e23f8c3019ecb.jpg', 'Gourmet', true),
+('Laser Engraved Acrylic Tag', 190, '/images/imported/Acrlytic Stand Along Gifts/02ca82a0a07f3026aba3f6f3e1b1b132.jpg', 'Decor', true),
+('Sleek Black Flask Bottle', 590, '/images/imported/Drop Shipping STuff/bdcee014bb020d160f6ba54bb74dd638.webp', 'Gourmet', true);
 
 -- Seed Box Styles
 INSERT INTO public.box_styles (name, color, is_active) VALUES

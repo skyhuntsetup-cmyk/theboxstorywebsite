@@ -70,6 +70,42 @@ export const curatedProducts: Product[] = [
     description: "Perfect housewarming wellness gift: Organic lavender room spray, jasmine soy wax candles, and wild acacia honey jar.",
     category: "Housewarming",
     badge: "Self Care"
+  },
+  {
+    id: "cur-7",
+    name: "Classic Stanley Tumbler Set",
+    price: 1499,
+    image: "/images/imported/Stanley Sets/63d936bc994f71d1655702a1b430608f.jpg",
+    description: "Features a premium insulated Stanley-style vacuum tumbler with matching steel straws and treats.",
+    category: "Corporate",
+    badge: "Trending Cup"
+  },
+  {
+    id: "cur-8",
+    name: "Golden Oak Open Hamper",
+    price: 2100,
+    image: "/images/imported/Open Hampers/57e9e083f75f408cd26a017a92dc32c7.webp",
+    description: "An open display willow basket consisting of gourmet almond brittle, wildflower honey, and organic tea jars.",
+    category: "Anniversary",
+    badge: "Handcrafted Basket"
+  },
+  {
+    id: "cur-9",
+    name: "Acrylic Standalone Keepsake",
+    price: 899,
+    image: "/images/imported/Acrlytic Stand Along Gifts/bb915f0783dca64827c47db821455a24.webp",
+    description: "Custom laser-engraved acrylic plaque mounted on a natural beechwood LED lighted base.",
+    category: "Housewarming",
+    badge: "Personalized"
+  },
+  {
+    id: "cur-10",
+    name: "The Budget Sweet Box",
+    price: 990,
+    image: "/images/imported/Below 1000 Inspiration/5a88e75cded9f4d147484596051ef5b2.webp",
+    description: "An affordable celebration tray packing dry fruit mathri, premium cashews, and twin tealight diyas.",
+    category: "Diwali",
+    badge: "Best Value"
   }
 ];
 
@@ -143,5 +179,26 @@ export const bazaarItems: BazaarItem[] = [
     price: 250,
     image: "https://images.unsplash.com/photo-1548907040-4d42b52145ca?w=300&auto=format&fit=crop&q=80",
     category: "Sweets"
+  },
+  {
+    id: "bz-11",
+    name: "Stanley Steel Insulated Cup",
+    price: 850,
+    image: "/images/imported/Stanley Sets/8cba5ebdf761b8e27b6e23f8c3019ecb.jpg",
+    category: "Gourmet"
+  },
+  {
+    id: "bz-12",
+    name: "Laser Engraved Acrylic Tag",
+    price: 190,
+    image: "/images/imported/Acrlytic Stand Along Gifts/02ca82a0a07f3026aba3f6f3e1b1b132.jpg",
+    category: "Decor"
+  },
+  {
+    id: "bz-13",
+    name: "Sleek Black Flask Bottle",
+    price: 590,
+    image: "/images/imported/Drop Shipping STuff/bdcee014bb020d160f6ba54bb74dd638.webp",
+    category: "Gourmet"
   }
 ];
