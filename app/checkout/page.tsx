@@ -10,6 +10,7 @@ import Link from "next/link";
 export default function Checkout() {
   const { cartItems, clearCart } = useGift();
   const [deliveryMode, setDeliveryMode] = useState<"physical" | "magical">("physical");
+  const [createdOrderId, setCreatedOrderId] = useState<string>("");
 
   // ... (form states and other variables)
   const [shippingInfo, setShippingInfo] = useState({
@@ -62,19 +63,53 @@ export default function Checkout() {
     })();
   };
 
-  const handlePay = (e: React.FormEvent) => {
+  const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessingPayment(true);
     setPaymentStep("authorizing");
 
-    // Simulate premium Razorpay interface processing
-    setTimeout(() => {
-      setPaymentStep("success");
-      setPaymentSuccess(true);
+    const payload = {
+      deliveryMode,
+      subtotal,
+      customerName: deliveryMode === "physical" ? `${shippingInfo.firstName} ${shippingInfo.lastName}` : null,
+      customerPhone: deliveryMode === "physical" ? shippingInfo.phone : null,
+      customerEmail: deliveryMode === "physical" ? shippingInfo.email : null,
+      shippingAddress: deliveryMode === "physical" ? shippingInfo : null,
+      magicalLinkDetails: deliveryMode === "magical" ? magicalInfo : null,
+      items: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        isCustomBox: item.isCustomBox || false,
+        boxItems: item.boxItems || null,
+      })),
+    };
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setCreatedOrderId(data.order.id);
+        setPaymentStep("success");
+        setPaymentSuccess(true);
+        setIsProcessingPayment(false);
+        triggerConfetti();
+        clearCart();
+      } else {
+        alert("Transaction Failed: " + (data.error || "Please review connection settings."));
+        setIsProcessingPayment(false);
+      }
+    } catch (err: any) {
+      alert("Network Error: " + err.message);
       setIsProcessingPayment(false);
-      triggerConfetti();
-      clearCart();
-    }, 2800);
+    }
   };
 
   if (paymentSuccess) {
@@ -112,10 +147,10 @@ export default function Checkout() {
               <span className="text-[10px] font-bold text-teal-deep/50 uppercase">Your Magical Link</span>
               <div className="flex items-center justify-between bg-white border border-teal-deep/10 px-4 py-2.5 rounded-xl">
                 <code className="text-xs text-rani-pink font-semibold truncate select-all pr-4">
-                  https://theboxstory.in/claim-gift?id=claim_tbs_{Math.floor(Math.random() * 10000)}
+                  {typeof window !== "undefined" ? `${window.location.origin}/claim-gift?id=${createdOrderId}` : `https://theboxstory.in/claim-gift?id=${createdOrderId}`}
                 </code>
                 <Link
-                  href="/claim-gift"
+                  href={`/claim-gift?id=${createdOrderId}`}
                   className="text-xs font-bold text-teal-deep hover:underline flex items-center space-x-1 flex-shrink-0"
                 >
                   <span>Test Link</span>
