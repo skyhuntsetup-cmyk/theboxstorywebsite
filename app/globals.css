@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FFFDF5;
+  --foreground: #042F2E;
+  
+  --color-teal-deep: #042F2E;
+  --color-rani-pink: #D1126A;
+  --color-saffron: #F97316;
+  --color-gold: #E2BA5F;
+  --color-gold-light: #F7E9C8;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-teal-deep: var(--color-teal-deep);
+  --color-rani-pink: var(--color-rani-pink);
+  --color-saffron: var(--color-saffron);
+  --color-gold: var(--color-gold);
+  --color-gold-light: var(--color-gold-light);
+  
+  --font-heading: var(--font-playfair);
+  --font-body: var(--font-outfit);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFFDF5;
+}
+::-webkit-scrollbar-thumb {
+  background: #042F2E;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D1126A;
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Sparkle shimmer effect */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-gradient {
+  background: linear-gradient(90deg, #D1126A 25%, #F97316 50%, #D1126A 75%);
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
