@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Sparkles, Gift, MapPin, CheckCircle, Truck, Heart, Loader } from "lucide-react";
+import { Sparkles, Gift, MapPin, CheckCircle, Truck, Heart, Loader, Plus, Minus, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { supabase } from "../../lib/supabase";
@@ -18,6 +18,10 @@ function ClaimGiftContent() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClaimed, setIsClaimed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Customizer state if recipientSelects is true
+  const [bazaarList, setBazaarList] = useState<any[]>([]);
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
   const [addressInfo, setAddressInfo] = useState({
     name: "",
@@ -62,6 +66,51 @@ function ClaimGiftContent() {
     fetchOrder();
   }, [orderId]);
 
+  // Load bazaar if recipient customizable
+  useEffect(() => {
+    if (order?.magical_link_details?.recipientSelects) {
+      const fetchBazaar = async () => {
+        try {
+          const { data } = await supabase
+            .from("bazaar_items")
+            .select("*")
+            .eq("is_active", true);
+
+          if (data && data.length > 0) {
+            setBazaarList(data);
+          } else {
+            // fallback treats
+            setBazaarList([
+              { id: "bz-1", name: "Artisanal Kaju Katli (250g)", price: 450, image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=300&auto=format&fit=crop&q=80", category: "Sweets" },
+              { id: "bz-2", name: "Handcrafted Brass Diya (Pair)", price: 600, image: "https://images.unsplash.com/photo-1605884768395-5cb5dbfb21be?w=300&auto=format&fit=crop&q=80", category: "Decor" },
+              { id: "bz-3", name: "Organic Lavender Soy Candle", price: 350, image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80", category: "Wellness" },
+              { id: "bz-4", name: "Premium Kashmiri Saffron (1g)", price: 550, image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&auto=format&fit=crop&q=80", category: "Gourmet" }
+            ]);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      fetchBazaar();
+    }
+  }, [order]);
+
+  const budgetLimit = order?.magical_link_details?.budgetTier || 2500;
+  const maxItems = budgetLimit <= 1500 ? 3 : budgetLimit <= 2500 ? 4 : 5;
+
+  const handleSelectItem = (item: any) => {
+    const isAlreadySelected = selectedItems.some(x => x.id === item.id);
+    if (isAlreadySelected) {
+      setSelectedItems(selectedItems.filter(x => x.id !== item.id));
+    } else {
+      if (selectedItems.length >= maxItems) {
+        alert(`You can select up to ${maxItems} items for this budget tier.`);
+        return;
+      }
+      setSelectedItems([...selectedItems, { ...item, quantity: 1 }]);
+    }
+  };
+
   const triggerConfetti = () => {
     const duration = 2.5 * 1000;
     const animationEnd = Date.now() + duration;
@@ -91,15 +140,29 @@ function ClaimGiftContent() {
 
   const handleClaimSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const isCustomizable = order?.magical_link_details?.recipientSelects;
+    if (isCustomizable && selectedItems.length === 0) {
+      alert("Please select at least 1 treat to fill your customized box!");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      const updatePayload: any = {
+        status: "claimed",
+        shipping_address: addressInfo,
+      };
+
+      // Write chosen items to the order record in database!
+      if (isCustomizable) {
+        updatePayload.items = selectedItems;
+      }
+
       const { error } = await supabase
         .from("orders")
-        .update({
-          status: "claimed",
-          shipping_address: addressInfo,
-        })
+        .update(updatePayload)
         .eq("id", orderId);
 
       if (error) {
@@ -142,7 +205,10 @@ function ClaimGiftContent() {
 
   const senderName = order?.customer_name || "A Special Friend";
   const greetingNote = order?.magical_link_details?.giftNote || "Hope this hamper brings celebration and joy into your home!";
-  const boxItems = order?.items || [];
+  const isCustomizable = order?.magical_link_details?.recipientSelects && !isClaimed;
+  
+  // If claimed, read items from DB order record (which includes selectedItems now!)
+  const boxItems = order?.status === "claimed" ? (order?.items || []) : (isCustomizable ? selectedItems : (order?.items || []));
 
   return (
     <div className="w-full max-w-2xl relative z-10">
@@ -224,37 +290,84 @@ function ClaimGiftContent() {
               </div>
             </div>
 
-            {/* Box Contents */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#FFFDF5]/50 text-left">
-                Hamper Contents
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {boxItems.map((item: any, index: number) => (
-                  <div
-                    key={index}
-                    className="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-between text-center space-y-3"
-                  >
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&auto=format&fit=crop&q=80"}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="space-y-0.5">
-                      <span className="text-xs font-semibold leading-tight block">
-                        {item.name}
-                      </span>
-                      {item.isCustomBox && (
-                        <span className="text-[9px] text-gold font-bold">Custom Build</span>
-                      )}
-                    </div>
+            {/* IF CUSTOMIZABLE: Display selection board */}
+            {isCustomizable ? (
+              <div className="space-y-4 bg-white/5 border border-white/5 p-6 rounded-3xl">
+                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                  <div className="text-left">
+                    <span className="text-[10px] font-bold text-saffron uppercase block">Customize Your Box</span>
+                    <h3 className="font-heading text-base font-bold text-white">Choose Up to {maxItems} Treats</h3>
                   </div>
-                ))}
+                  <span className="text-xs bg-saffron/10 border border-saffron/20 text-saffron font-bold px-3 py-1 rounded-full">
+                    {selectedItems.length} / {maxItems} Filled
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-1">
+                  {bazaarList.map((item) => {
+                    const isSelected = selectedItems.some(x => x.id === item.id);
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleSelectItem(item)}
+                        className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                          isSelected
+                            ? "border-saffron bg-saffron/10 scale-[1.01]"
+                            : "border-white/15 bg-white/5 hover:border-white/30"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-lg" />
+                          <div className="text-left space-y-0.5">
+                            <span className="text-xs font-semibold text-white block leading-tight">{item.name}</span>
+                            <span className="text-[10px] text-white/50">{item.category}</span>
+                          </div>
+                        </div>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
+                          isSelected ? "bg-saffron border-saffron text-teal-deep" : "border-white/30 text-transparent"
+                        }`}>
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ) : (
+              /* IF PRE-CURATED: Display contents */
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#FFFDF5]/50 text-left">
+                  Hamper Contents
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {boxItems.map((item: any, index: number) => (
+                    <div
+                      key={index}
+                      className="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-between text-center space-y-3"
+                    >
+                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&auto=format&fit=crop&q=80"}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-xs font-semibold leading-tight block">
+                          {item.name}
+                        </span>
+                        {item.isCustomBox && (
+                          <span className="text-[9px] text-gold font-bold">Custom Build</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Claim Address Form */}
             <form
@@ -378,6 +491,18 @@ function ClaimGiftContent() {
                 We have registered your delivery coordinates. 
                 The custom hamper sent by <strong className="text-saffron font-bold">{senderName}</strong> will be shipped shortly.
               </p>
+            </div>
+
+            {/* Display final selected items to recipient */}
+            <div className="space-y-2 max-w-sm mx-auto bg-teal-deep/5 p-4 rounded-2xl border border-teal-deep/5">
+              <span className="text-[10px] font-bold text-teal-deep/45 uppercase block mb-1">Your Custom Selection</span>
+              <div className="flex flex-wrap gap-1 justify-center">
+                {boxItems.map((item: any, idx: number) => (
+                  <span key={idx} className="bg-teal-deep/10 text-teal-deep px-2 py-0.5 rounded text-[10px] font-semibold">
+                    {item.name}
+                  </span>
+                ))}
+              </div>
             </div>
 
             <div className="pt-2 flex items-center justify-center space-x-2 text-[10px] text-teal-deep/50">

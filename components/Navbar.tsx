@@ -19,6 +19,7 @@ export const Navbar = () => {
     { href: "/build", label: "Build a Box", icon: Sparkles },
     { href: "/corporate", label: "Corporate", icon: Briefcase },
     { href: "/weddings", label: "Weddings", icon: Heart },
+    { href: "/claim-token", label: "Claim Token", icon: Gift },
     { href: "/about", label: "About", icon: Heart },
     { href: "/contact", label: "Contact", icon: Heart },
     { href: "/admin", label: "Admin", icon: Briefcase },

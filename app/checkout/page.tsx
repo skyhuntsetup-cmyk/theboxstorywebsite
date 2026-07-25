@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useGift } from "../context/GiftContext";
-import { ShieldCheck, CreditCard, Send, MapPin, Sparkles, Check, CheckCircle, ArrowRight } from "lucide-react";
+import { ShieldCheck, CreditCard, Send, MapPin, Sparkles, CheckCircle, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import Link from "next/link";
@@ -12,7 +12,6 @@ export default function Checkout() {
   const [deliveryMode, setDeliveryMode] = useState<"physical" | "magical">("physical");
   const [createdOrderId, setCreatedOrderId] = useState<string>("");
 
-  // ... (form states and other variables)
   const [shippingInfo, setShippingInfo] = useState({
     firstName: "",
     lastName: "",
@@ -30,12 +29,17 @@ export default function Checkout() {
     giftNote: "",
   });
 
+  // Recipient Selectable options
+  const [recipientSelects, setRecipientSelects] = useState<boolean>(false);
+  const [budgetTier, setBudgetTier] = useState<number>(2500);
+
   // Payment states
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"none" | "authorizing" | "success">("none");
 
   const subtotal = cartItems.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
+  const checkoutTotal = recipientSelects && deliveryMode === "magical" ? budgetTier : subtotal;
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -70,13 +74,17 @@ export default function Checkout() {
 
     const payload = {
       deliveryMode,
-      subtotal,
+      subtotal: checkoutTotal,
       customerName: deliveryMode === "physical" ? `${shippingInfo.firstName} ${shippingInfo.lastName}` : null,
       customerPhone: deliveryMode === "physical" ? shippingInfo.phone : null,
       customerEmail: deliveryMode === "physical" ? shippingInfo.email : null,
       shippingAddress: deliveryMode === "physical" ? shippingInfo : null,
-      magicalLinkDetails: deliveryMode === "magical" ? magicalInfo : null,
-      items: cartItems.map(item => ({
+      magicalLinkDetails: deliveryMode === "magical" ? {
+        ...magicalInfo,
+        recipientSelects,
+        budgetTier: recipientSelects ? budgetTier : null
+      } : null,
+      items: recipientSelects && deliveryMode === "magical" ? [] : cartItems.map(item => ({
         id: item.id,
         name: item.name,
         price: item.price,
@@ -114,13 +122,12 @@ export default function Checkout() {
 
   if (paymentSuccess) {
     return (
-      <div className="max-w-xl mx-auto px-6 py-12">
+      <div className="max-w-xl mx-auto px-6 py-12 text-left">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="bg-white border border-teal-deep/5 rounded-[40px] p-8 text-center space-y-6 shadow-xl relative overflow-hidden"
         >
-          {/* Confetti details */}
           <div className="w-20 h-20 bg-saffron/10 border border-saffron/20 rounded-full flex items-center justify-center mx-auto text-saffron animate-bounce">
             <CheckCircle className="w-10 h-10" />
           </div>
@@ -132,7 +139,7 @@ export default function Checkout() {
             <h1 className="font-heading text-3xl font-black text-teal-deep">
               Celebrate the Moment!
             </h1>
-            <p className="text-xs text-teal-deep/75 max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-teal-deep/75 max-w-sm mx-auto leading-relaxed text-center">
               Your order has been recorded and the Razorpay gateway confirmed your receipt. 
               {deliveryMode === "magical" ? (
                 <span> We have generated your <strong>Magical Gift Link</strong>. You can send it to your recipient to let them claim their package.</span>
@@ -180,14 +187,14 @@ export default function Checkout() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <div className="max-w-6xl mx-auto px-6 py-8 space-y-8 text-left">
       <h1 className="font-heading text-3xl md:text-4xl font-black text-teal-deep text-center">
         Complete Purchase
       </h1>
 
-      {cartItems.length === 0 ? (
+      {cartItems.length === 0 && !recipientSelects ? (
         <div className="bg-white/40 border border-teal-deep/5 rounded-3xl p-12 text-center space-y-4">
-          <p className="text-sm text-teal-deep/75">Your celebration bag is empty. Please add items to checkout.</p>
+          <p className="text-sm text-teal-deep/75">Your celebration bag is empty. Please add items or configure recipient select modes.</p>
           <Link
             href="/collections"
             className="inline-flex items-center space-x-2 text-xs font-bold bg-teal-deep text-[#FFFDF5] px-6 py-3 rounded-full"
@@ -208,7 +215,10 @@ export default function Checkout() {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setDeliveryMode("physical")}
+                  onClick={() => {
+                    setDeliveryMode("physical");
+                    setRecipientSelects(false);
+                  }}
                   className={`p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between h-24 ${
                     deliveryMode === "physical"
                       ? "border-teal-deep bg-teal-deep/5 ring-2 ring-teal-deep/10"
@@ -374,6 +384,35 @@ export default function Checkout() {
                       className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-2xl px-4 py-3 text-sm italic font-medium focus:outline-none focus:border-rani-pink/40 resize-none font-heading text-teal-deep/90"
                     />
                   </div>
+
+                  {/* Recipient Customization Option */}
+                  <div className="space-y-4 pt-4 border-t border-teal-deep/5">
+                    <label className="flex items-center space-x-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={recipientSelects}
+                        onChange={(e) => setRecipientSelects(e.target.checked)}
+                        className="w-4 h-4 rounded text-rani-pink focus:ring-rani-pink border-teal-deep/15"
+                      />
+                      <span className="text-xs font-bold text-teal-deep">Let Recipient select their own treats!</span>
+                    </label>
+
+                    {recipientSelects && (
+                      <div className="space-y-1.5 p-4 bg-saffron/5 rounded-2xl border border-saffron/10">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Choose Gift Box Budget Tier</label>
+                        <select
+                          value={budgetTier}
+                          onChange={(e) => setBudgetTier(Number(e.target.value))}
+                          className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-3 py-2 text-xs font-bold text-teal-deep focus:outline-none focus:border-rani-pink/40"
+                        >
+                          <option value={1500}>Bronze Tier - ₹1,500 budget (choose up to 3 items)</option>
+                          <option value={2500}>Silver Tier - ₹2,500 budget (choose up to 4 items)</option>
+                          <option value={4000}>Gold Tier - ₹4,000 budget (choose up to 5 items)</option>
+                        </select>
+                        <span className="text-[10px] text-teal-deep/50 block">Your recipient will customize their hamper inside this budget limit.</span>
+                      </div>
+                    )}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -387,22 +426,30 @@ export default function Checkout() {
               </h3>
 
               {/* Items List */}
-              <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
-                {cartItems.map((item: any) => (
-                  <div key={item.id} className="flex justify-between items-center text-xs">
-                    <span className="font-semibold truncate max-w-[200px]">
-                      {item.name} <span className="text-white/55">x{item.quantity}</span>
-                    </span>
-                    <span className="font-bold text-gold">₹{item.price * item.quantity}</span>
-                  </div>
-                ))}
-              </div>
+              {!recipientSelects ? (
+                <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+                  {cartItems.map((item: any) => (
+                    <div key={item.id} className="flex justify-between items-center text-xs">
+                      <span className="font-semibold truncate max-w-[200px]">
+                        {item.name} <span className="text-white/55">x{item.quantity}</span>
+                      </span>
+                      <span className="font-bold text-gold">₹{item.price * item.quantity}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs p-4 bg-white/5 rounded-2xl border border-white/5 space-y-1.5">
+                  <span className="text-[10px] font-bold text-saffron uppercase block">Bespoke Option Active</span>
+                  <span className="font-semibold text-white/90">Recipient Selects Hamper Treats</span>
+                  <span className="text-white/50 block">No pre-selected box contents will be shipped. Recipient picks items.</span>
+                </div>
+              )}
 
               {/* Pricing breakdown */}
               <div className="border-t border-white/10 pt-4 space-y-2 text-xs">
                 <div className="flex justify-between text-[#FFFDF5]/70">
                   <span>Subtotal</span>
-                  <span>₹{subtotal}</span>
+                  <span>₹{checkoutTotal}</span>
                 </div>
                 <div className="flex justify-between text-[#FFFDF5]/70">
                   <span>Shipping</span>
@@ -410,7 +457,7 @@ export default function Checkout() {
                 </div>
                 <div className="flex justify-between text-sm font-bold border-t border-white/5 pt-2">
                   <span>Total Amount</span>
-                  <span className="text-gold text-base">₹{subtotal}</span>
+                  <span className="text-gold text-base">₹{checkoutTotal}</span>
                 </div>
               </div>
 
