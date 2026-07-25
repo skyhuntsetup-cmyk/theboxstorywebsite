@@ -17,12 +17,19 @@ export default function BuildBox() {
   } = useGift();
 
   const [selectedBoxStyle, setSelectedBoxStyle] = useState<string>("Classic Royal Gold");
+  const [selectedRibbonStyle, setSelectedRibbonStyle] = useState<string>("Premium Gold Satin");
   const [bazaarFilter, setBazaarFilter] = useState<string>("All");
 
   const boxStyles = [
     { name: "Classic Royal Gold", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" },
     { name: "Blossom Rani Pink", color: "from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20" },
     { name: "Midnight Teal Elegance", color: "from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30" },
+  ];
+
+  const ribbonStyles = [
+    { name: "Premium Gold Satin", color: "bg-[#E2BA5F]" },
+    { name: "Festive Rani Pink Silk", color: "bg-[#D1126A]" },
+    { name: "Classic Saffron Bow", color: "bg-[#F97316]" },
   ];
 
   const categories = ["All", "Sweets", "Decor", "Wellness", "Gourmet"];
@@ -91,6 +98,41 @@ export default function BuildBox() {
                       )}
                     </div>
                     <span className="text-[10px] text-teal-deep/60">Premium Rigid Box + Gold Ribbons</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Ribbon Style Selector */}
+          <div className="bg-white/60 backdrop-blur-sm p-6 rounded-3xl border border-teal-deep/5 shadow-sm space-y-4">
+            <h3 className="font-heading text-lg font-bold flex items-center space-x-2">
+              <Sparkles className="w-5 h-5 text-rani-pink" />
+              <span>Step 1.5: Select Ribbon Style</span>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {ribbonStyles.map((style) => {
+                const isSelected = selectedRibbonStyle === style.name;
+                return (
+                  <button
+                    key={style.name}
+                    type="button"
+                    onClick={() => setSelectedRibbonStyle(style.name)}
+                    className={`p-3.5 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${
+                      isSelected
+                        ? "border-teal-deep bg-teal-deep/5 ring-2 ring-teal-deep/10 scale-[1.02]"
+                        : "border-transparent bg-white hover:border-teal-deep/20"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span className={`w-3.5 h-3.5 rounded-full ${style.color}`} />
+                      <span className="text-xs font-semibold text-teal-deep">{style.name}</span>
+                    </div>
+                    {isSelected && (
+                      <span className="w-3.5 h-3.5 bg-teal-deep rounded-full flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5 text-[#FFFDF5]" />
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -184,9 +226,12 @@ export default function BuildBox() {
             <div className="border-2 border-dashed border-[#FFFDF5]/20 p-6 rounded-2xl relative bg-[#042F2E]/60 overflow-hidden">
               {/* Packaging Name */}
               <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center space-x-1.5">
-                  <Box className="w-4 h-4 text-saffron" />
-                  <span className="text-xs font-bold text-[#FFFDF5]/80">{selectedBoxStyle}</span>
+                <div className="flex flex-col space-y-0.5 text-left">
+                  <div className="flex items-center space-x-1.5">
+                    <Box className="w-4 h-4 text-saffron" />
+                    <span className="text-xs font-bold text-[#FFFDF5]/80">{selectedBoxStyle}</span>
+                  </div>
+                  <span className="text-[10px] text-[#FFFDF5]/50 italic">Ribbon: {selectedRibbonStyle}</span>
                 </div>
                 <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full">Base Box Fee: ₹{boxPrice}</span>
               </div>
@@ -293,7 +338,7 @@ export default function BuildBox() {
               )}
               <button
                 disabled={buildABoxItems.length === 0}
-                onClick={() => moveBoxToCart(selectedBoxStyle)}
+                onClick={() => moveBoxToCart(`${selectedBoxStyle} with ${selectedRibbonStyle}`)}
                 className={`flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
                   buildABoxItems.length === 0
                     ? "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
