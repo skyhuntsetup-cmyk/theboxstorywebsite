@@ -17,8 +17,11 @@ export const Navbar = () => {
     { href: "/", label: "Home", icon: Heart },
     { href: "/collections", label: "Collections", icon: Gift },
     { href: "/build", label: "Build a Box", icon: Sparkles },
-    { href: "/gift-genie", label: "Gift Genie AI", icon: Sparkles },
-    { href: "/corporate", label: "Corporate Gifting", icon: Briefcase },
+    { href: "/corporate", label: "Corporate", icon: Briefcase },
+    { href: "/weddings", label: "Weddings", icon: Heart },
+    { href: "/about", label: "About", icon: Heart },
+    { href: "/contact", label: "Contact", icon: Heart },
+    { href: "/admin", label: "Admin", icon: Briefcase },
   ];
 
   return (
