@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { bazaarItems, BazaarItem } from "../../data/products";
+import React, { useState, useEffect } from "react";
 import { useGift } from "../context/GiftContext";
 import { Sparkles, Trash2, Box, ShoppingBag, Info, Plus, ChevronRight, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "../../lib/supabase";
 
 export default function BuildBox() {
   const {
@@ -20,11 +20,57 @@ export default function BuildBox() {
   const [selectedRibbonStyle, setSelectedRibbonStyle] = useState<string>("Premium Gold Satin");
   const [bazaarFilter, setBazaarFilter] = useState<string>("All");
 
-  const boxStyles = [
-    { name: "Classic Royal Gold", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" },
-    { name: "Blossom Rani Pink", color: "from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20" },
-    { name: "Midnight Teal Elegance", color: "from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30" },
-  ];
+  const [bazaarList, setBazaarList] = useState<any[]>([]);
+  const [boxStyleList, setBoxStyleList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadBazaar = async () => {
+      try {
+        const { data: bData } = await supabase
+          .from("bazaar_items")
+          .select("*")
+          .eq("is_active", true);
+
+        const { data: bsData } = await supabase
+          .from("box_styles")
+          .select("*")
+          .eq("is_active", true);
+
+        if (bData && bData.length > 0) {
+          setBazaarList(bData);
+        } else {
+          setBazaarList([
+            { id: "bz-1", name: "Artisanal Kaju Katli (250g)", price: 450, image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=300&auto=format&fit=crop&q=80", category: "Sweets" },
+            { id: "bz-2", name: "Handcrafted Brass Diya (Pair)", price: 600, image: "https://images.unsplash.com/photo-1605884768395-5cb5dbfb21be?w=300&auto=format&fit=crop&q=80", category: "Decor" },
+            { id: "bz-3", name: "Organic Lavender Soy Candle", price: 350, image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80", category: "Wellness" },
+            { id: "bz-4", name: "Premium Kashmiri Saffron (1g)", price: 550, image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&auto=format&fit=crop&q=80", category: "Gourmet" },
+            { id: "bz-5", name: "Assorted Dry Fruits (200g)", price: 490, image: "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=300&auto=format&fit=crop&q=80", category: "Gourmet" },
+            { id: "bz-6", name: "Rose Water Facial Mist", price: 320, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80", category: "Wellness" }
+          ]);
+        }
+
+        if (bsData && bsData.length > 0) {
+          setBoxStyleList(bsData);
+          setSelectedBoxStyle(bsData[0].name);
+        } else {
+          const defaultStyles = [
+            { name: "Classic Royal Gold", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" },
+            { name: "Blossom Rani Pink", color: "from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20" },
+            { name: "Midnight Teal Elegance", color: "from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30" },
+          ];
+          setBoxStyleList(defaultStyles);
+          setSelectedBoxStyle(defaultStyles[0].name);
+        }
+      } catch (err) {
+        console.error("Error loading Hamper Studio catalog:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBazaar();
+  }, []);
 
   const ribbonStyles = [
     { name: "Premium Gold Satin", color: "bg-[#E2BA5F]" },
@@ -34,7 +80,7 @@ export default function BuildBox() {
 
   const categories = ["All", "Sweets", "Decor", "Wellness", "Gourmet"];
 
-  const filteredBazaar = bazaarItems.filter(
+  const filteredBazaar = bazaarList.filter(
     (item) => bazaarFilter === "All" || item.category === bazaarFilter
   );
 
@@ -43,7 +89,7 @@ export default function BuildBox() {
   const totalHamperPrice = hamperItemsTotal + boxPrice;
   const isFull = buildABoxItems.length >= boxCapacity;
 
-  const handleAddItem = (item: BazaarItem) => {
+  const handleAddItem = (item: any) => {
     const success = addToBox(item);
     if (!success) {
       // Could show toast or visual cue
@@ -77,7 +123,7 @@ export default function BuildBox() {
               <span>Step 1: Choose Packaging Style</span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {boxStyles.map((style) => {
+              {boxStyleList.map((style) => {
                 const isSelected = selectedBoxStyle === style.name;
                 return (
                   <button

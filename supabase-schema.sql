@@ -94,3 +94,68 @@ INSERT INTO public.products (id, name, price, image, description, category, badg
 ('cur-5', 'The Executive Coffee Blend', 2100, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80', 'Designed for premium desk settings: customized ceramic mug, single-origin Araku Valley coffee beans, and oats cookies.', 'Corporate', 'Corporate Elite'),
 ('cur-6', 'Sweet Serenity Hampers', 1750, 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&auto=format&fit=crop&q=80', 'Perfect housewarming wellness gift: Organic lavender room spray, jasmine soy wax candles, and wild acacia honey jar.', 'Housewarming', 'Self Care')
 ON CONFLICT (id) DO NOTHING;
+
+
+-- 5. Create Bazaar Items Table (For Build-a-Box Studio treats catalog)
+CREATE TABLE public.bazaar_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    name TEXT NOT NULL,
+    price NUMERIC NOT NULL,
+    image TEXT NOT NULL,
+    category TEXT NOT NULL CHECK (category IN ('Sweets', 'Decor', 'Wellness', 'Gourmet')),
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+-- Enable RLS
+ALTER TABLE public.bazaar_items ENABLE ROW LEVEL SECURITY;
+
+-- Allow Public Read Access
+CREATE POLICY "Allow public read access on bazaar_items" 
+ON public.bazaar_items FOR SELECT 
+USING (true);
+
+-- Allow Authenticated (Admins) Full Access
+CREATE POLICY "Allow authenticated full access on bazaar_items" 
+ON public.bazaar_items FOR ALL 
+USING (auth.role() = 'authenticated');
+
+
+-- 6. Create Box Styles Table (For Build-a-Box packaging types)
+CREATE TABLE public.box_styles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    name TEXT NOT NULL,
+    color TEXT NOT NULL, -- Tailwind classes
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+-- Enable RLS
+ALTER TABLE public.box_styles ENABLE ROW LEVEL SECURITY;
+
+-- Allow Public Read Access
+CREATE POLICY "Allow public read access on box_styles" 
+ON public.box_styles FOR SELECT 
+USING (true);
+
+-- Allow Authenticated (Admins) Full Access
+CREATE POLICY "Allow authenticated full access on box_styles" 
+ON public.box_styles FOR ALL 
+USING (auth.role() = 'authenticated');
+
+
+-- Seed Bazaar Items
+INSERT INTO public.bazaar_items (name, price, image, category, is_active) VALUES
+('Artisanal Kaju Katli (250g)', 450, 'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=300&auto=format&fit=crop&q=80', 'Sweets', true),
+('Handcrafted Brass Diya (Pair)', 600, 'https://images.unsplash.com/photo-1605884768395-5cb5dbfb21be?w=300&auto=format&fit=crop&q=80', 'Decor', true),
+('Organic Lavender Soy Candle', 350, 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80', 'Wellness', true),
+('Premium Kashmiri Saffron (1g)', 550, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&auto=format&fit=crop&q=80', 'Gourmet', true),
+('Assorted Dry Fruits (200g)', 490, 'https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=300&auto=format&fit=crop&q=80', 'Gourmet', true),
+('Rose Water Facial Mist', 320, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80', 'Wellness', true);
+
+-- Seed Box Styles
+INSERT INTO public.box_styles (name, color, is_active) VALUES
+('Classic Royal Gold', 'from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30', true),
+('Blossom Rani Pink', 'from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20', true),
+('Midnight Teal Elegance', 'from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30', true);
+
