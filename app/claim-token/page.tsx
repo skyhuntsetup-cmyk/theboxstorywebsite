@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { supabase } from "../../lib/supabase";
 import { Sparkles, Shield, Gift, MapPin, Truck, CheckCircle2, ChevronRight, Loader } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import Link from "next/link";
 
 export default function ClaimToken() {
   const [passcode, setPasscode] = useState("");
@@ -30,11 +28,10 @@ export default function ClaimToken() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClaimed, setIsClaimed] = useState(false);
 
-  // Mock corporate tokens database
   const mockTokens: { [key: string]: any } = {
     "CRED-LAUNCH-2026": {
       company: "CRED",
-      bgColor: "from-black to-slate-900",
+      bgColor: "from-slate-50 to-slate-100 border-slate-200",
       themeColor: "#D1126A",
       logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd5735e?w=100&auto=format&fit=crop&q=80",
       welcome: "Welcome to the CRED Team! Select your official onboarding assets.",
@@ -65,7 +62,7 @@ export default function ClaimToken() {
     },
     "TATA-FESTIVE-2026": {
       company: "TATA Consultancy Services",
-      bgColor: "from-blue-950 via-[#031d1d] to-[#021818]",
+      bgColor: "from-blue-50 to-blue-100/50 border-blue-200",
       themeColor: "#3B82F6",
       logo: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=100&auto=format&fit=crop&q=80",
       welcome: "Wishing you a warm festive season. Choose your TATA Diwali Celebration Hamper.",
@@ -84,7 +81,7 @@ export default function ClaimToken() {
     },
     "GOOGLE-ANNIVERSARY-2026": {
       company: "Google India",
-      bgColor: "from-[#021818] to-slate-950",
+      bgColor: "from-amber-50 to-amber-100/50 border-amber-200",
       themeColor: "#E2BA5F",
       logo: "https://images.unsplash.com/photo-1577937927133-66ef06acdf18?w=100&auto=format&fit=crop&q=80",
       welcome: "Congratulations on your work anniversary! Choose your custom milestones swag.",
@@ -154,7 +151,7 @@ export default function ClaimToken() {
     try {
       const payload = {
         deliveryMode: "physical",
-        subtotal: 0, // Paid by token
+        subtotal: 0,
         customerName: addressInfo.name,
         customerPhone: addressInfo.phone,
         customerEmail: addressInfo.email,
@@ -196,9 +193,9 @@ export default function ClaimToken() {
   };
 
   return (
-    <div className="min-h-[90vh] bg-gradient-to-b from-[#021818] via-[#042F2E] to-black text-[#FFFDF5] flex items-center justify-center px-6 py-12 relative overflow-hidden">
-      <div className="absolute top-20 left-10 w-[200px] h-[200px] bg-saffron/10 rounded-full blur-3xl filter animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-[300px] h-[300px] bg-rani-pink/5 rounded-full blur-3xl filter animate-pulse" />
+    <div className="min-h-[90vh] bg-[#FAF9F5] text-slate-800 flex items-center justify-center px-6 py-12 relative overflow-hidden">
+      <div className="absolute top-20 left-10 w-[200px] h-[200px] bg-saffron/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-[300px] h-[300px] bg-rani-pink/5 rounded-full blur-3xl" />
 
       <div className="w-full max-w-2xl relative z-10 text-left">
         <AnimatePresence mode="wait">
@@ -209,15 +206,15 @@ export default function ClaimToken() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-md mx-auto bg-white/5 border border-white/10 p-8 sm:p-12 rounded-[40px] shadow-2xl space-y-6 text-center"
+              className="max-w-md mx-auto bg-white border border-slate-200 p-8 sm:p-12 rounded-[40px] shadow-sm space-y-6 text-center"
             >
               <div className="w-16 h-16 bg-saffron/10 border border-saffron/30 rounded-full flex items-center justify-center mx-auto text-saffron">
                 <Shield className="w-8 h-8" />
               </div>
 
               <div className="space-y-2">
-                <h1 className="font-heading text-2xl font-black">Corporate Claim Portal</h1>
-                <p className="text-xs text-[#FFFDF5]/70 max-w-xs mx-auto leading-relaxed">
+                <h1 className="font-heading text-2xl font-black text-teal-deep">Corporate Claim Portal</h1>
+                <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
                   Enter your unique company claim passcode to unlock your customized onboarding or festive corporate kits.
                 </p>
               </div>
@@ -229,7 +226,7 @@ export default function ClaimToken() {
                   placeholder="E.g. CRED-LAUNCH-2026"
                   value={passcode}
                   onChange={(e) => setPasscode(e.target.value)}
-                  className="w-full bg-[#FFFDF5]/10 border border-white/15 focus:border-saffron/40 focus:ring-1 focus:ring-saffron/20 rounded-xl px-4 py-3 text-center font-bold tracking-wider text-xs focus:outline-none placeholder-white/30 text-white transition-all uppercase"
+                  className="w-full bg-[#FAF9F5] border border-slate-200 focus:border-saffron/40 focus:ring-1 focus:ring-saffron/20 rounded-xl px-4 py-3 text-center font-bold tracking-wider text-xs focus:outline-none placeholder-slate-400 text-slate-800 transition-all uppercase"
                 />
 
                 {errorMsg && (
@@ -266,16 +263,16 @@ export default function ClaimToken() {
               className="space-y-8"
             >
               {/* Branded welcome banner */}
-              <div className="bg-white/10 border border-white/5 p-6 sm:p-8 rounded-[32px] flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+              <div className="bg-white border border-slate-200 p-6 sm:p-8 rounded-[32px] flex items-center space-x-4 shadow-sm">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={companyInfo.logo} alt={companyInfo.company} className="w-full h-full object-cover" />
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[10px] bg-saffron/20 border border-saffron/30 text-saffron font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  <span className="text-[10px] bg-saffron/10 border border-saffron/25 text-saffron font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                     {companyInfo.company} Partner Gifting
                   </span>
-                  <p className="text-sm font-semibold text-[#FFFDF5] leading-relaxed">
+                  <p className="text-sm font-semibold text-slate-800 leading-relaxed pt-1.5">
                     {companyInfo.welcome}
                   </p>
                 </div>
@@ -283,7 +280,7 @@ export default function ClaimToken() {
 
               {/* Kit options */}
               <div className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-white/50">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-550">
                   Select Your Swag Onboarding Kit
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -296,16 +293,16 @@ export default function ClaimToken() {
                         onClick={() => setSelectedKit(kit)}
                         className={`p-6 rounded-[28px] border text-left flex flex-col justify-between h-48 transition-all ${
                           isSelected
-                            ? "border-saffron bg-saffron/10 shadow-lg scale-[1.01]"
-                            : "border-white/10 bg-white/5 hover:border-white/25"
+                            ? "border-saffron bg-saffron/5 shadow-sm scale-[1.01]"
+                            : "border-slate-200 bg-white hover:border-slate-300"
                         }`}
                       >
                         <div className="space-y-2">
-                          <h4 className="font-heading font-bold text-base text-white">{kit.name}</h4>
-                          <p className="text-[10px] text-white/70 leading-relaxed line-clamp-3">{kit.desc}</p>
+                          <h4 className="font-heading font-bold text-base text-slate-800">{kit.name}</h4>
+                          <p className="text-[10px] text-slate-500 leading-relaxed line-clamp-3">{kit.desc}</p>
                         </div>
                         <span className={`text-[10px] font-bold px-3 py-1 rounded-full self-start ${
-                          isSelected ? "bg-saffron text-teal-deep" : "bg-white/10 text-white"
+                          isSelected ? "bg-saffron text-teal-deep" : "bg-slate-105 text-slate-600 border border-slate-200"
                         }`}>
                           {isSelected ? "Selected" : "Select Option"}
                         </span>
@@ -316,8 +313,8 @@ export default function ClaimToken() {
               </div>
 
               {/* Form address coordinates */}
-              <form onSubmit={handleClaim} className="bg-[#FFFDF5] text-teal-deep p-6 sm:p-8 rounded-[32px] border border-teal-deep/5 space-y-6 shadow-xl">
-                <div className="border-b border-teal-deep/10 pb-3 flex items-center space-x-2">
+              <form onSubmit={handleClaim} className="bg-white text-teal-deep p-6 sm:p-8 rounded-[32px] border border-slate-200 space-y-6 shadow-md">
+                <div className="border-b border-slate-100 pb-3 flex items-center space-x-2">
                   <MapPin className="w-5 h-5 text-rani-pink" />
                   <h3 className="font-heading text-lg font-bold">Provide Delivery Coordinates</h3>
                 </div>
@@ -331,7 +328,7 @@ export default function ClaimToken() {
                       placeholder="E.g. Tanvi Sharma"
                       value={addressInfo.name}
                       onChange={(e) => setAddressInfo({ ...addressInfo, name: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
                   <div className="space-y-1">
@@ -342,7 +339,7 @@ export default function ClaimToken() {
                       placeholder="E.g. +91 99999 88888"
                       value={addressInfo.phone}
                       onChange={(e) => setAddressInfo({ ...addressInfo, phone: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
                 </div>
@@ -356,7 +353,7 @@ export default function ClaimToken() {
                       placeholder="E.g. employee@tata.com"
                       value={addressInfo.email}
                       onChange={(e) => setAddressInfo({ ...addressInfo, email: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
                   {selectedKit?.hasTshirt ? (
@@ -365,7 +362,7 @@ export default function ClaimToken() {
                       <select
                         value={tshirtSize}
                         onChange={(e) => setTshirtSize(e.target.value)}
-                        className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-3 py-2.5 text-xs text-teal-deep focus:outline-none focus:border-rani-pink/40"
+                        className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-teal-deep focus:outline-none focus:border-rani-pink/40"
                       >
                         <option value="S">Small (S)</option>
                         <option value="M">Medium (M)</option>
@@ -375,7 +372,7 @@ export default function ClaimToken() {
                       </select>
                     </div>
                   ) : (
-                    <div className="flex items-center text-[10px] text-teal-deep/55 bg-teal-deep/5 border border-teal-deep/10 px-4 rounded-xl">
+                    <div className="flex items-center text-[10px] text-slate-500 bg-slate-50 border border-slate-200 px-4 rounded-xl">
                       <span>No clothing size selections required for this specific kit.</span>
                     </div>
                   )}
@@ -389,7 +386,7 @@ export default function ClaimToken() {
                     placeholder="House / Flat / Building, Street name"
                     value={addressInfo.address}
                     onChange={(e) => setAddressInfo({ ...addressInfo, address: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                    className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                   />
                 </div>
 
@@ -402,7 +399,7 @@ export default function ClaimToken() {
                       placeholder="Delhi"
                       value={addressInfo.city}
                       onChange={(e) => setAddressInfo({ ...addressInfo, city: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none"
+                      className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none"
                     />
                   </div>
                   <div className="space-y-1">
@@ -413,7 +410,7 @@ export default function ClaimToken() {
                       placeholder="Delhi"
                       value={addressInfo.state}
                       onChange={(e) => setAddressInfo({ ...addressInfo, state: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none"
+                      className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none"
                     />
                   </div>
                   <div className="space-y-1">
@@ -424,7 +421,7 @@ export default function ClaimToken() {
                       placeholder="110001"
                       value={addressInfo.zip}
                       onChange={(e) => setAddressInfo({ ...addressInfo, zip: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none"
+                      className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none"
                     />
                   </div>
                 </div>
@@ -453,7 +450,7 @@ export default function ClaimToken() {
               key="claimed"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white text-teal-deep p-8 rounded-[40px] text-center space-y-6 shadow-2xl"
+              className="bg-white text-teal-deep p-8 rounded-[40px] text-center space-y-6 shadow-md border border-slate-200"
             >
               <div className="w-20 h-20 bg-saffron/10 border border-saffron/20 rounded-full flex items-center justify-center mx-auto text-saffron animate-bounce">
                 <CheckCircle2 className="w-10 h-10" />
@@ -464,13 +461,13 @@ export default function ClaimToken() {
                   Fulfillment Registered
                 </span>
                 <h2 className="font-heading text-3xl font-black">Kit is Registered!</h2>
-                <p className="text-xs text-teal-deep/70 max-w-sm mx-auto leading-relaxed">
+                <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
                   Excellent! We have logged your shipping parameters. 
                   The **{selectedKit?.name}** will be prepared and delivered directly to your doorstep.
                 </p>
               </div>
 
-              <div className="pt-2 flex items-center justify-center space-x-2 text-[10px] text-teal-deep/50">
+              <div className="pt-2 flex items-center justify-center space-x-2 text-[10px] text-slate-450">
                 <Truck className="w-3.5 h-3.5 animate-pulse" />
                 <span>Delivery updates and tracking credentials will be sent to your work email.</span>
               </div>

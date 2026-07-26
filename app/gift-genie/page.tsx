@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import { curatedProducts, Product } from "../../data/products";
-import { ProductCard } from "../../components/ProductCard";
-import { Sparkles, Send, Bot, User, ArrowRight, RefreshCw, Star } from "lucide-react";
+import { Sparkles, Send, Bot, User, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -62,7 +61,6 @@ export default function GiftGenie() {
         filtered = curatedProducts.slice(0, 3);
       }
 
-      // Budget filter if present
       if (query.includes("under") || query.includes("below") || query.includes("within")) {
         const numbers = query.match(/\d+/g);
         if (numbers && numbers.length > 0) {
@@ -84,29 +82,29 @@ export default function GiftGenie() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0c001a] via-[#05000f] to-black text-white py-12 px-6 relative overflow-hidden flex flex-col justify-between">
-      {/* Floating magical particles */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl filter animate-pulse -z-10" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl filter animate-pulse -z-10" />
+    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-12 px-6 relative overflow-hidden flex flex-col justify-between">
+      {/* Light background glows */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-amber-100 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-50 rounded-full blur-3xl -z-10" />
 
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-between space-y-8">
         
         {/* Editorial header */}
         <section className="text-center space-y-4">
-          <div className="inline-flex items-center space-x-1.5 bg-indigo-500/15 border border-indigo-500/25 px-3.5 py-1.5 rounded-full text-xs font-bold text-indigo-300 uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-spin-slow" />
-            <span>Cosmic AI Assistant</span>
+          <div className="inline-flex items-center space-x-1.5 bg-teal-deep/5 border border-teal-deep/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-deep uppercase tracking-widest">
+            <Sparkles className="w-3.5 h-3.5 text-teal-deep" />
+            <span>AI Assistant</span>
           </div>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-saffron tracking-tight">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-teal-deep tracking-tight">
             AI Gift Genie
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
             Whisper your parameters to the genie. Unravel the perfect celebratory bundles automatically.
           </p>
         </section>
 
         {/* Chat History Panel */}
-        <div className="flex-1 min-h-[400px] bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-[40px] p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-2xl overflow-hidden relative">
+        <div className="flex-1 min-h-[400px] bg-white border border-slate-200 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-sm rounded-[40px] overflow-hidden relative">
           
           <div className="flex-1 overflow-y-auto space-y-6 max-h-[450px] pr-1">
             <AnimatePresence>
@@ -119,7 +117,7 @@ export default function GiftGenie() {
                   className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} items-start space-x-3.5`}
                 >
                   {msg.sender === "bot" && (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                    <div className="w-8 h-8 rounded-full bg-teal-deep flex items-center justify-center text-white flex-shrink-0 shadow-sm">
                       <Bot className="w-4.5 h-4.5" />
                     </div>
                   )}
@@ -127,8 +125,8 @@ export default function GiftGenie() {
                   <div className="space-y-4 max-w-[85%] text-left">
                     <div className={`p-4 rounded-3xl text-xs sm:text-sm leading-relaxed shadow-sm ${
                       msg.sender === "user"
-                        ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-tr-none"
-                        : "bg-white/[0.04] border border-white/5 text-slate-200 rounded-tl-none"
+                        ? "bg-teal-deep text-white rounded-tr-none"
+                        : "bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-none"
                     }`}>
                       {msg.text}
                     </div>
@@ -140,17 +138,17 @@ export default function GiftGenie() {
                           <motion.div
                             key={prod.id}
                             whileHover={{ scale: 1.02 }}
-                            className="bg-[#05000f] border border-white/10 rounded-2xl overflow-hidden p-3 space-y-3"
+                            className="bg-white border border-slate-200 rounded-2xl overflow-hidden p-3 space-y-3 shadow-sm"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={prod.image} alt={prod.name} className="w-full aspect-[4/3] object-cover rounded-xl" />
                             <div className="space-y-1">
-                              <span className="text-[11px] font-bold text-white block truncate leading-snug">{prod.name}</span>
+                              <span className="text-[11px] font-bold text-slate-800 block truncate leading-snug">{prod.name}</span>
                               <span className="text-[10px] text-saffron font-bold block">₹{prod.price}</span>
                             </div>
                             <Link
                               href={`/collections`}
-                              className="w-full py-1.5 bg-white/10 hover:bg-white/15 text-white rounded-lg font-bold text-[9px] block text-center uppercase tracking-wider"
+                              className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-bold text-[9px] block text-center uppercase tracking-wider transition-colors"
                             >
                               Details
                             </Link>
@@ -161,7 +159,7 @@ export default function GiftGenie() {
                   </div>
 
                   {msg.sender === "user" && (
-                    <div className="w-8 h-8 rounded-full bg-saffron flex items-center justify-center text-teal-deep flex-shrink-0 shadow-md">
+                    <div className="w-8 h-8 rounded-full bg-saffron flex items-center justify-center text-teal-deep flex-shrink-0 shadow-sm">
                       <User className="w-4.5 h-4.5 stroke-[2.5]" />
                     </div>
                   )}
@@ -172,12 +170,12 @@ export default function GiftGenie() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex justify-start items-center space-x-3"
+                  className="flex justify-start items-center space-x-3 animate-pulse"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white flex-shrink-0 animate-spin">
+                  <div className="w-8 h-8 rounded-full bg-teal-deep flex items-center justify-center text-white flex-shrink-0 animate-spin">
                     <RefreshCw className="w-4 h-4" />
                   </div>
-                  <span className="text-xs text-slate-400 animate-pulse">Genie is filtering hampers...</span>
+                  <span className="text-xs text-slate-500">Genie is filtering hampers...</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -190,7 +188,7 @@ export default function GiftGenie() {
                 <button
                   key={idx}
                   onClick={() => handleSend(preset)}
-                  className="text-[10px] font-bold bg-white/5 border border-white/10 px-3.5 py-2 rounded-full hover:bg-white/10 text-indigo-300 transition-colors uppercase tracking-wider"
+                  className="text-[10px] font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-full hover:bg-slate-100 text-teal-deep transition-colors uppercase tracking-wider"
                 >
                   {preset}
                 </button>
@@ -204,18 +202,18 @@ export default function GiftGenie() {
               e.preventDefault();
               handleSend(input);
             }}
-            className="flex items-center space-x-2 border-t border-white/5 pt-4"
+            className="flex items-center space-x-2 border-t border-slate-100 pt-4"
           >
             <input
               type="text"
               placeholder="Tell the Genie e.g. corporate gifts under ₹2500..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="flex-1 bg-white/[0.04] border border-white/15 focus:border-purple-500 rounded-xl px-4 py-3 text-xs focus:outline-none placeholder-white/30 text-white transition-colors"
+              className="flex-1 bg-slate-50 border border-slate-200 focus:border-teal-deep rounded-xl px-4 py-3 text-xs focus:outline-none placeholder-slate-400 text-slate-800 transition-colors"
             />
             <button
               type="submit"
-              className="p-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all transform active:scale-95"
+              className="p-3 bg-teal-deep text-white rounded-xl shadow hover:bg-teal-deep/90 transition-all transform active:scale-95"
             >
               <Send className="w-4.5 h-4.5" />
             </button>

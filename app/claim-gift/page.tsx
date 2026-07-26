@@ -79,7 +79,6 @@ function ClaimGiftContent() {
           if (data && data.length > 0) {
             setBazaarList(data);
           } else {
-            // fallback treats
             setBazaarList([
               { id: "bz-1", name: "Artisanal Kaju Katli (250g)", price: 450, image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=300&auto=format&fit=crop&q=80", category: "Sweets" },
               { id: "bz-2", name: "Handcrafted Brass Diya (Pair)", price: 600, image: "https://images.unsplash.com/photo-1605884768395-5cb5dbfb21be?w=300&auto=format&fit=crop&q=80", category: "Decor" },
@@ -155,7 +154,6 @@ function ClaimGiftContent() {
         shipping_address: addressInfo,
       };
 
-      // Write chosen items to the order record in database!
       if (isCustomizable) {
         updatePayload.items = selectedItems;
       }
@@ -182,20 +180,20 @@ function ClaimGiftContent() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
         <Loader className="w-10 h-10 text-saffron animate-spin" />
-        <p className="text-sm text-[#FFFDF5]/70">Retrieving details of your custom gift...</p>
+        <p className="text-sm text-slate-500">Retrieving details of your custom gift...</p>
       </div>
     );
   }
 
   if (errorMsg) {
     return (
-      <div className="max-w-md mx-auto text-center space-y-4 bg-white/5 border border-white/10 p-8 rounded-3xl">
-        <Gift className="w-12 h-12 text-[#FFFDF5]/20 mx-auto" />
+      <div className="max-w-md mx-auto text-center space-y-4 bg-white border border-slate-200 p-8 rounded-3xl shadow-sm">
+        <Gift className="w-12 h-12 text-slate-300 mx-auto" />
         <h2 className="font-heading text-xl font-bold text-saffron">Invalid Gift Link</h2>
-        <p className="text-xs text-[#FFFDF5]/70 leading-relaxed">{errorMsg}</p>
+        <p className="text-xs text-slate-500 leading-relaxed">{errorMsg}</p>
         <a
           href="/"
-          className="inline-block text-xs font-bold bg-[#FFFDF5] text-teal-deep px-6 py-3 rounded-full hover:bg-gold-light transition-colors"
+          className="inline-block text-xs font-bold bg-[#FAF9F5] border border-slate-200 text-teal-deep px-6 py-3 rounded-full hover:bg-gold-light transition-colors"
         >
           Go to Home
         </a>
@@ -207,11 +205,10 @@ function ClaimGiftContent() {
   const greetingNote = order?.magical_link_details?.giftNote || "Hope this hamper brings celebration and joy into your home!";
   const isCustomizable = order?.magical_link_details?.recipientSelects && !isClaimed;
   
-  // If claimed, read items from DB order record (which includes selectedItems now!)
   const boxItems = order?.status === "claimed" ? (order?.items || []) : (isCustomizable ? selectedItems : (order?.items || []));
 
   return (
-    <div className="w-full max-w-2xl relative z-10">
+    <div className="w-full max-w-2xl relative z-10 text-slate-800">
       <AnimatePresence mode="wait">
         {/* STATE 1: Unopened box */}
         {!isOpen && (
@@ -227,10 +224,10 @@ function ClaimGiftContent() {
                 <Sparkles className="w-3.5 h-3.5 animate-pulse" />
                 <span>A Gift Awaits You</span>
               </div>
-              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-teal-deep leading-tight">
                 You&apos;ve Received <br />a Box of Joy!
               </h1>
-              <p className="text-sm text-[#FFFDF5]/70 max-w-sm mx-auto leading-relaxed">
+              <p className="text-sm text-slate-600 max-w-sm mx-auto leading-relaxed">
                 From <strong className="text-saffron font-bold">{senderName}</strong>. Click below to unwrap your custom handcrafted celebration hamper.
               </p>
             </div>
@@ -248,9 +245,9 @@ function ClaimGiftContent() {
                   duration: 3,
                   ease: "easeInOut",
                 }}
-                className="w-48 h-48 bg-gradient-to-tr from-rani-pink to-saffron rounded-[36px] flex items-center justify-center shadow-[0_20px_50px_rgba(209,18,106,0.35)] border border-[#FFFDF5]/20 hover:scale-105 active:scale-95 transition-transform duration-300 relative group cursor-pointer"
+                className="w-48 h-48 bg-gradient-to-tr from-rani-pink to-saffron rounded-[36px] flex items-center justify-center shadow-[0_20px_50px_rgba(209,18,106,0.15)] border border-white/20 hover:scale-105 active:scale-95 transition-transform duration-300 relative group cursor-pointer"
               >
-                <div className="absolute inset-2 border-2 border-dashed border-[#FFFDF5]/25 rounded-[28px] flex items-center justify-center">
+                <div className="absolute inset-2 border-2 border-dashed border-white/25 rounded-[28px] flex items-center justify-center">
                   <Gift className="w-20 h-20 text-white transition-transform group-hover:scale-110" />
                 </div>
                 <div className="absolute top-0 bottom-0 left-[47%] right-[47%] bg-gold/85 backdrop-blur-sm z-10" />
@@ -260,7 +257,7 @@ function ClaimGiftContent() {
 
             <button
               onClick={handleOpenBox}
-              className="px-8 py-3.5 bg-[#FFFDF5] text-teal-deep rounded-full text-sm font-bold shadow-lg hover:bg-gold-light hover:shadow-xl transition-all"
+              className="px-8 py-3.5 bg-teal-deep text-white rounded-full text-sm font-bold shadow-md hover:bg-teal-deep/90 hover:shadow-lg transition-all"
             >
               Tap to Unwrap
             </button>
@@ -277,14 +274,14 @@ function ClaimGiftContent() {
             className="space-y-8"
           >
             {/* Header card with note */}
-            <div className="bg-[#FFFDF5]/10 border border-white/5 p-6 sm:p-8 rounded-[32px] space-y-4 text-center">
-              <span className="text-[10px] bg-saffron/20 border border-saffron/30 text-saffron font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+            <div className="bg-white border border-slate-200/80 p-6 sm:p-8 rounded-[32px] space-y-4 text-center shadow-sm">
+              <span className="text-[10px] bg-saffron/10 border border-saffron/20 text-saffron font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                 Handwritten Note from {senderName}
               </span>
-              <p className="font-heading text-lg sm:text-xl italic text-gold-light leading-relaxed max-w-lg mx-auto">
+              <p className="font-heading text-lg sm:text-xl italic text-teal-deep leading-relaxed max-w-lg mx-auto">
                 &ldquo;{greetingNote}&rdquo;
               </p>
-              <div className="flex justify-center items-center space-x-1.5 text-xs text-[#FFFDF5]/60">
+              <div className="flex justify-center items-center space-x-1.5 text-xs text-slate-500">
                 <Heart className="w-3.5 h-3.5 text-rani-pink fill-rani-pink" />
                 <span>Sent with Love</span>
               </div>
@@ -292,13 +289,13 @@ function ClaimGiftContent() {
 
             {/* IF CUSTOMIZABLE: Display selection board */}
             {isCustomizable ? (
-              <div className="space-y-4 bg-white/5 border border-white/5 p-6 rounded-3xl">
-                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+              <div className="space-y-4 bg-white border border-slate-200 p-6 rounded-3xl shadow-sm text-left">
+                <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                   <div className="text-left">
                     <span className="text-[10px] font-bold text-saffron uppercase block">Customize Your Box</span>
-                    <h3 className="font-heading text-base font-bold text-white">Choose Up to {maxItems} Treats</h3>
+                    <h3 className="font-heading text-base font-bold text-slate-800">Choose Up to {maxItems} Treats</h3>
                   </div>
-                  <span className="text-xs bg-saffron/10 border border-saffron/20 text-saffron font-bold px-3 py-1 rounded-full">
+                  <span className="text-xs bg-saffron/15 border border-saffron/25 text-saffron font-bold px-3 py-1 rounded-full">
                     {selectedItems.length} / {maxItems} Filled
                   </span>
                 </div>
@@ -313,20 +310,20 @@ function ClaimGiftContent() {
                         onClick={() => handleSelectItem(item)}
                         className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                           isSelected
-                            ? "border-saffron bg-saffron/10 scale-[1.01]"
-                            : "border-white/15 bg-white/5 hover:border-white/30"
+                            ? "border-saffron bg-saffron/5 scale-[1.01]"
+                            : "border-slate-200 bg-slate-50 hover:border-slate-300"
                         }`}
                       >
                         <div className="flex items-center space-x-3">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-lg" />
+                          <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-lg border border-slate-200" />
                           <div className="text-left space-y-0.5">
-                            <span className="text-xs font-semibold text-white block leading-tight">{item.name}</span>
-                            <span className="text-[10px] text-white/50">{item.category}</span>
+                            <span className="text-xs font-semibold text-slate-800 block leading-tight">{item.name}</span>
+                            <span className="text-[10px] text-slate-400">{item.category}</span>
                           </div>
                         </div>
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
-                          isSelected ? "bg-saffron border-saffron text-teal-deep" : "border-white/30 text-transparent"
+                          isSelected ? "bg-saffron border-saffron text-teal-deep" : "border-slate-300 text-transparent"
                         }`}>
                           <Check className="w-3 h-3 stroke-[3]" />
                         </div>
@@ -338,16 +335,16 @@ function ClaimGiftContent() {
             ) : (
               /* IF PRE-CURATED: Display contents */
               <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#FFFDF5]/50 text-left">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-450 text-left">
                   Hamper Contents
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {boxItems.map((item: any, index: number) => (
                     <div
                       key={index}
-                      className="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-between text-center space-y-3"
+                      className="bg-white border border-slate-200/80 p-4 rounded-2xl flex flex-col items-center justify-between text-center space-y-3 shadow-sm"
                     >
-                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={item.image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&auto=format&fit=crop&q=80"}
@@ -356,7 +353,7 @@ function ClaimGiftContent() {
                         />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-xs font-semibold leading-tight block">
+                        <span className="text-xs font-semibold leading-tight block text-slate-800">
                           {item.name}
                         </span>
                         {item.isCustomBox && (
@@ -372,9 +369,9 @@ function ClaimGiftContent() {
             {/* Claim Address Form */}
             <form
               onSubmit={handleClaimSubmit}
-              className="bg-[#FFFDF5] text-teal-deep p-6 sm:p-8 rounded-[32px] border border-teal-deep/5 space-y-6 shadow-xl text-left"
+              className="bg-white text-[#042F2E] p-6 sm:p-8 rounded-[32px] border border-slate-200 space-y-6 shadow-md text-left"
             >
-              <div className="border-b border-teal-deep/10 pb-3 flex items-center space-x-2">
+              <div className="border-b border-slate-100 pb-3 flex items-center space-x-2">
                 <MapPin className="w-5 h-5 text-rani-pink" />
                 <h3 className="font-heading text-lg font-bold">Provide Delivery Address</h3>
               </div>
@@ -388,7 +385,7 @@ function ClaimGiftContent() {
                     placeholder="E.g. Tanvi Sharma"
                     value={addressInfo.name}
                     onChange={(e) => setAddressInfo({ ...addressInfo, name: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                    className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                   />
                 </div>
                 <div className="space-y-1">
@@ -399,7 +396,7 @@ function ClaimGiftContent() {
                     placeholder="E.g. +91 99999 88888"
                     value={addressInfo.phone}
                     onChange={(e) => setAddressInfo({ ...addressInfo, phone: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                    className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                   />
                 </div>
               </div>
@@ -412,7 +409,7 @@ function ClaimGiftContent() {
                   placeholder="House / Office details, Building, Street"
                   value={addressInfo.address}
                   onChange={(e) => setAddressInfo({ ...addressInfo, address: e.target.value })}
-                  className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                  className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                 />
               </div>
 
@@ -425,7 +422,7 @@ function ClaimGiftContent() {
                     placeholder="E.g. Delhi"
                     value={addressInfo.city}
                     onChange={(e) => setAddressInfo({ ...addressInfo, city: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                    className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -436,7 +433,7 @@ function ClaimGiftContent() {
                     placeholder="E.g. Delhi NCR"
                     value={addressInfo.state}
                     onChange={(e) => setAddressInfo({ ...addressInfo, state: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                    className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -447,7 +444,7 @@ function ClaimGiftContent() {
                     placeholder="110001"
                     value={addressInfo.zip}
                     onChange={(e) => setAddressInfo({ ...addressInfo, zip: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                    className="w-full bg-[#FAF9F5] border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -476,7 +473,7 @@ function ClaimGiftContent() {
             key="claimed"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white text-teal-deep p-8 rounded-[40px] text-center space-y-6 shadow-2xl"
+            className="bg-white text-[#042F2E] p-8 rounded-[40px] text-center space-y-6 shadow-md border border-slate-200"
           >
             <div className="w-20 h-20 bg-saffron/10 border border-saffron/20 rounded-full flex items-center justify-center mx-auto text-saffron animate-bounce">
               <CheckCircle className="w-10 h-10" />
@@ -487,15 +484,15 @@ function ClaimGiftContent() {
                 Success
               </span>
               <h2 className="font-heading text-3xl font-black">Gift is Registered!</h2>
-              <p className="text-xs text-teal-deep/70 max-w-sm mx-auto leading-relaxed">
+              <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
                 We have registered your delivery coordinates. 
                 The custom hamper sent by <strong className="text-saffron font-bold">{senderName}</strong> will be shipped shortly.
               </p>
             </div>
 
             {/* Display final selected items to recipient */}
-            <div className="space-y-2 max-w-sm mx-auto bg-teal-deep/5 p-4 rounded-2xl border border-teal-deep/5">
-              <span className="text-[10px] font-bold text-teal-deep/45 uppercase block mb-1">Your Custom Selection</span>
+            <div className="space-y-2 max-w-sm mx-auto bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <span className="text-[10px] font-bold text-slate-450 uppercase block mb-1">Your Custom Selection</span>
               <div className="flex flex-wrap gap-1 justify-center">
                 {boxItems.map((item: any, idx: number) => (
                   <span key={idx} className="bg-teal-deep/10 text-teal-deep px-2 py-0.5 rounded text-[10px] font-semibold">
@@ -505,7 +502,7 @@ function ClaimGiftContent() {
               </div>
             </div>
 
-            <div className="pt-2 flex items-center justify-center space-x-2 text-[10px] text-teal-deep/50">
+            <div className="pt-2 flex items-center justify-center space-x-2 text-[10px] text-slate-400">
               <Truck className="w-3.5 h-3.5 animate-pulse" />
               <span>ETA: 3 to 4 business days. Delivery tracking details will be sent via SMS.</span>
             </div>
@@ -518,14 +515,14 @@ function ClaimGiftContent() {
 
 export default function ClaimGift() {
   return (
-    <div className="min-h-[90vh] bg-gradient-to-b from-[#021818] via-[#042F2E] to-black text-[#FFFDF5] flex items-center justify-center px-6 py-12 relative overflow-hidden">
-      <div className="absolute top-20 left-10 w-[200px] h-[200px] bg-saffron/10 rounded-full blur-3xl filter animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-[300px] h-[300px] bg-rani-pink/5 rounded-full blur-3xl filter animate-pulse" />
+    <div className="min-h-[90vh] bg-[#FAF9F5] text-slate-800 flex items-center justify-center px-6 py-12 relative overflow-hidden">
+      <div className="absolute top-20 left-10 w-[200px] h-[200px] bg-saffron/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-[300px] h-[300px] bg-rani-pink/5 rounded-full blur-3xl" />
       
       <Suspense fallback={
         <div className="flex flex-col items-center justify-center space-y-4">
           <Loader className="w-10 h-10 text-saffron animate-spin" />
-          <p className="text-sm text-[#FFFDF5]/70">Loading claim portal...</p>
+          <p className="text-sm text-slate-500">Loading claim portal...</p>
         </div>
       }>
         <ClaimGiftContent />
