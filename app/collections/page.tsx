@@ -37,7 +37,7 @@ export default function Collections() {
   }, [selectedCategory, selectedPriceRange]);
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-10 px-6">
+    <div className="min-h-screen bg-background text-slate-800 py-10 px-6">
       <div className="max-w-6xl mx-auto space-y-12">
         
         {/* Banner: Clean Minimalist Editorial Layout */}

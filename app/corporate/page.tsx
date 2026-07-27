@@ -91,27 +91,26 @@ export default function CorporateGifting() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 py-12 px-6">
+    <div className="min-h-screen bg-background text-slate-800 py-12 px-6">
       <div className="max-w-6xl mx-auto space-y-24">
         
-        {/* Banner Section: Sleek B2B Layout */}
-        <section className="relative rounded-3xl overflow-hidden bg-slate-900 text-white p-8 md:p-20 shadow-lg text-left">
-          <div className="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-800 -z-10" />
+        {/* Banner Section: Sleek B2B Layout (Light Theme) */}
+        <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-amber-50 via-background to-rose-50 text-slate-800 p-8 md:p-20 shadow-sm border border-slate-200 text-left">
           <div className="max-w-2xl space-y-6">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full inline-block">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-slate-500 bg-background border border-slate-200 px-3 py-1.5 rounded-full inline-block">
               Corporate Bulk Services
             </span>
-            <h1 className="font-heading text-4xl sm:text-5xl font-black leading-tight tracking-tight">
+            <h1 className="font-heading text-4xl sm:text-5xl font-black leading-tight tracking-tight text-teal-deep">
               Corporate Gifting <br />
-              <span className="text-sky-400">Reimagined.</span>
+              <span className="text-rani-pink">Reimagined.</span>
             </h1>
-            <p className="text-slate-350 text-xs sm:text-sm leading-relaxed">
+            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
               Automated address collection, custom swag sourcing, and high-quality rigid hampers built to leave a lasting B2B impression.
             </p>
             <div className="pt-2">
               <a
                 href="#brief-form"
-                className="inline-flex items-center space-x-2 bg-white text-slate-950 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-100 shadow transition-all"
+                className="inline-flex items-center space-x-2 bg-teal-deep text-white px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-deep/90 shadow transition-all"
               >
                 <span>Brief our Designers</span>
                 <ChevronRight className="w-4 h-4" />
@@ -302,18 +301,18 @@ export default function CorporateGifting() {
                   key="success"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-slate-950 text-white p-8 rounded-2xl text-center space-y-4"
+                  className="bg-background border border-slate-200 text-slate-800 p-8 rounded-2xl text-center space-y-4"
                 >
-                  <div className="w-16 h-16 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center mx-auto text-emerald-400">
+                  <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 rounded-full flex items-center justify-center mx-auto text-emerald-600">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="font-heading text-2xl font-bold">Brief Logged!</h3>
-                  <p className="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
+                  <h3 className="font-heading text-2xl font-bold text-teal-deep">Brief Logged!</h3>
+                  <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
                     Thank you, your brief has been submitted. A corporate gifting consultant will reach out via email/phone in under 12 business hours.
                   </p>
                   <button
                     onClick={() => setIsSubmitted(false)}
-                    className="mt-4 text-xs font-bold px-6 py-2.5 bg-white text-slate-950 rounded-lg hover:bg-slate-100 transition-colors"
+                    className="mt-4 text-xs font-bold px-6 py-2.5 bg-teal-deep text-white rounded-lg hover:bg-teal-deep/90 transition-colors"
                   >
                     Submit Another Brief
                   </button>

@@ -99,7 +99,7 @@ export default function Home() {
       {/* 1. HERO SECTION */}
       <section className="relative min-h-[85vh] flex items-center px-6 overflow-hidden">
         {/* Dynamic Warm Mesh Background */}
-        <div className="absolute inset-0 -z-10 bg-[#FFFDF5]">
+        <div className="absolute inset-0 -z-10 bg-background">
           <div className="absolute top-10 left-10 w-[300px] h-[300px] bg-saffron/15 rounded-full blur-3xl mix-blend-multiply filter animate-pulse" />
           <div className="absolute bottom-20 right-10 w-[400px] h-[400px] bg-rani-pink/10 rounded-full blur-3xl mix-blend-multiply filter animate-pulse" />
           <div className="absolute top-1/2 left-1/3 w-[250px] h-[250px] bg-teal-deep/5 rounded-full blur-3xl filter" />
@@ -132,14 +132,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Link
                 href="/build"
-                className="group flex items-center justify-center space-x-2 bg-rani-pink hover:bg-rani-pink/95 text-[#FFFDF5] px-8 py-4 rounded-full font-bold text-base shadow-[0_15px_30px_rgba(209,18,106,0.25)] hover:shadow-[0_20px_40px_rgba(209,18,106,0.35)] transition-all duration-300 transform hover:-translate-y-0.5"
+                className="group flex items-center justify-center space-x-2 bg-rani-pink hover:bg-rani-pink/95 text-[#FAF4E8] px-8 py-4 rounded-full font-bold text-base shadow-[0_15px_30px_rgba(209,18,106,0.25)] hover:shadow-[0_20px_40px_rgba(209,18,106,0.35)] transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 <span>Build Your Box</span>
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/collections"
-                className="flex items-center justify-center space-x-2 bg-[#FFFDF5] hover:bg-teal-deep/5 text-teal-deep border-2 border-teal-deep px-8 py-4 rounded-full font-bold text-base shadow-sm transition-all duration-300 transform hover:-translate-y-0.5"
+                className="flex items-center justify-center space-x-2 bg-background hover:bg-teal-deep/5 text-teal-deep border-2 border-teal-deep px-8 py-4 rounded-full font-bold text-base shadow-sm transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 <span>Explore Collections</span>
               </Link>
@@ -158,7 +158,7 @@ export default function Home() {
               <motion.div
                 animate={{ y: [0, -10, 0], rotate: [0, 2, 0] }}
                 transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                className="absolute top-4 left-6 w-full h-full border border-gold/30 bg-gradient-to-tr from-[#FFFDF5]/85 to-gold/20 rounded-3xl backdrop-blur-md shadow-[0_30px_60px_rgba(226,186,95,0.15)] flex flex-col p-8 justify-between z-20"
+                className="absolute top-4 left-6 w-full h-full border border-gold/30 bg-gradient-to-tr from-[#FAF4E8]/85 to-gold/20 rounded-3xl backdrop-blur-md shadow-[0_30px_60px_rgba(226,186,95,0.15)] flex flex-col p-8 justify-between z-20"
               >
                 <div className="flex justify-between items-start">
                   <span className="text-[10px] uppercase font-bold tracking-widest text-saffron bg-saffron/10 border border-saffron/20 px-3 py-1 rounded-full">
@@ -182,14 +182,14 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              <div className="absolute top-12 left-12 w-full h-full bg-teal-deep rounded-3xl shadow-[0_40px_80px_rgba(4,47,46,0.15)] z-10" />
+              <div className="absolute top-12 left-12 w-full h-full bg-[#FAF4E8] border border-slate-200 rounded-3xl shadow-sm z-10" />
 
               <motion.div
                 animate={{ y: [-15, 15, -15] }}
                 transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
                 className="absolute -bottom-6 -right-6 w-20 h-20 bg-rani-pink rounded-full blur-sm opacity-80 z-20 flex items-center justify-center shadow-lg"
               >
-                <Gift className="w-8 h-8 text-[#FFFDF5]" />
+                <Gift className="w-8 h-8 text-[#FAF4E8]" />
               </motion.div>
             </div>
           </motion.div>
@@ -197,13 +197,13 @@ export default function Home() {
       </section>
 
       {/* 2. INFINITE OCCASIONS MARQUEE */}
-      <section className="bg-teal-deep py-6 overflow-hidden border-y-4 border-gold">
+      <section className="bg-amber-100 py-6 overflow-hidden border-y-4 border-gold">
         <div className="flex whitespace-nowrap overflow-hidden">
           <div className="flex animate-marquee space-x-12">
             {[...occasions, ...occasions].map((occ, idx) => (
               <span
                 key={idx}
-                className="flex items-center space-x-3 text-[#FFFDF5] font-heading font-black text-xl md:text-2xl tracking-widest"
+                className="flex items-center space-x-3 text-teal-deep font-heading font-black text-xl md:text-2xl tracking-widest"
               >
                 <span>{occ}</span>
                 <Sparkles className="w-5 h-5 text-saffron" />
@@ -335,7 +335,7 @@ export default function Home() {
             </p>
             <Link
               href="/build"
-              className="inline-flex items-center space-x-2 bg-teal-deep hover:bg-teal-deep/90 text-[#FFFDF5] px-6 py-3.5 rounded-full font-bold text-sm shadow-md hover:shadow-lg transition-all"
+              className="inline-flex items-center space-x-2 bg-teal-deep hover:bg-teal-deep/90 text-[#FAF4E8] px-6 py-3.5 rounded-full font-bold text-sm shadow-md hover:shadow-lg transition-all"
             >
               <span>Launch Configurator</span>
               <Zap className="w-4 h-4 text-saffron" />
@@ -369,10 +369,10 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-6">
         <motion.div
           whileHover={{ y: -4 }}
-          className="relative rounded-[40px] overflow-hidden bg-gradient-to-r from-teal-deep to-[#031d1d] p-8 md:p-12 text-[#FFFDF5] border border-[#FFFDF5]/10 shadow-[0_20px_50px_rgba(4,47,46,0.25)] flex flex-col md:flex-row justify-between items-center gap-8 text-left"
+          className="relative rounded-[40px] overflow-hidden bg-gradient-to-r from-amber-50 via-background to-rose-50 border border-amber-200 p-8 md:p-12 text-slate-800 shadow-sm flex flex-col md:flex-row justify-between items-center gap-8 text-left"
         >
-          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-48 h-48 bg-rani-pink/15 rounded-full blur-2xl filter animate-pulse" />
-          <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-48 h-48 bg-gold/10 rounded-full blur-2xl filter animate-pulse" />
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-48 h-48 bg-rani-pink/5 rounded-full blur-2xl filter animate-pulse" />
+          <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-48 h-48 bg-gold/5 rounded-full blur-2xl filter animate-pulse" />
 
           <div className="space-y-4 relative z-10 max-w-xl text-center md:text-left">
             <div className="inline-flex items-center space-x-1.5 bg-saffron/10 border border-saffron/20 px-3.5 py-1.5 rounded-full">
@@ -381,21 +381,21 @@ export default function Home() {
                 Interactive Assistant
               </span>
             </div>
-            <h3 className="font-heading text-2xl md:text-3xl font-black tracking-tight">
+            <h3 className="font-heading text-2xl md:text-3xl font-black text-teal-deep tracking-tight">
               Stuck on gift selection? <br />
               Let the <span className="text-saffron">Gift Genie AI</span> choose.
             </h3>
-            <p className="text-xs md:text-sm text-[#FFFDF5]/70 max-w-lg">
+            <p className="text-xs md:text-sm text-slate-650">
               Describe who you are buying for, their interests, and your budget, and our AI Genie will select the exact combinations to make them smile.
             </p>
           </div>
 
           <Link
             href="/gift-genie"
-            className="flex-shrink-0 flex items-center space-x-2 bg-gradient-to-r from-saffron to-rani-pink hover:from-saffron hover:to-rani-pink text-[#FFFDF5] font-bold text-sm px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 relative z-10"
+            className="flex-shrink-0 flex items-center space-x-2 bg-teal-deep hover:bg-teal-deep/90 text-[#FAF4E8] font-bold text-sm px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 relative z-10"
           >
             <span>Consult the Genie</span>
-            <Sparkles className="w-4 h-4 text-[#FFFDF5]" />
+            <Sparkles className="w-4 h-4 text-[#FAF4E8]" />
           </Link>
         </motion.div>
       </section>
@@ -472,7 +472,7 @@ export default function Home() {
                       exit={{ height: 0, opacity: 0 }}
                       className="border-t border-teal-deep/5"
                     >
-                      <p className="p-6 text-xs text-teal-deep/75 leading-relaxed bg-[#FFFDF5]/40">
+                      <p className="p-6 text-xs text-teal-deep/75 leading-relaxed bg-background/40">
                         {faq.a}
                       </p>
                     </motion.div>

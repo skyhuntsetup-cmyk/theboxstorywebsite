@@ -300,7 +300,7 @@ export default function AdminDashboard() {
               placeholder={`Search ${activeTab}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-rani-pink/40"
+              className="w-full bg-background border border-teal-deep/15 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-rani-pink/40"
             />
           </div>
         )}
@@ -318,7 +318,7 @@ export default function AdminDashboard() {
           {activeTab === "orders" && (
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-[#FFFDF5] border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
+                <thead className="bg-background border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
                   <tr>
                     <th className="p-4">Order ID / Date</th>
                     <th className="p-4">Customer</th>
@@ -412,7 +412,7 @@ export default function AdminDashboard() {
           {activeTab === "inquiries" && (
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-[#FFFDF5] border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
+                <thead className="bg-background border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
                   <tr>
                     <th className="p-4">Date / Brand</th>
                     <th className="p-4">Contact Person</th>
@@ -468,7 +468,7 @@ export default function AdminDashboard() {
           {activeTab === "products" && (
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-[#FFFDF5] border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
+                <thead className="bg-background border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
                   <tr>
                     <th className="p-4">Product ID / Name</th>
                     <th className="p-4">Category</th>
@@ -540,7 +540,7 @@ export default function AdminDashboard() {
                         placeholder="E.g. Rose Barfi (150g)"
                         value={newBazaar.name}
                         onChange={(e) => setNewBazaar({ ...newBazaar, name: e.target.value })}
-                        className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
+                        className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
                       />
                     </div>
 
@@ -553,7 +553,7 @@ export default function AdminDashboard() {
                           placeholder="399"
                           value={newBazaar.price}
                           onChange={(e) => setNewBazaar({ ...newBazaar, price: e.target.value })}
-                          className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
                         />
                       </div>
                       <div className="space-y-1">
@@ -561,7 +561,7 @@ export default function AdminDashboard() {
                         <select
                           value={newBazaar.category}
                           onChange={(e) => setNewBazaar({ ...newBazaar, category: e.target.value })}
-                          className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-lg px-2 py-2 text-xs focus:outline-none text-teal-deep focus:border-rani-pink/40"
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-2 text-xs focus:outline-none text-teal-deep focus:border-rani-pink/40"
                         >
                           <option value="Sweets">Sweets</option>
                           <option value="Decor">Decor</option>
@@ -579,7 +579,7 @@ export default function AdminDashboard() {
                         placeholder="https://images.unsplash.com/..."
                         value={newBazaar.image}
                         onChange={(e) => setNewBazaar({ ...newBazaar, image: e.target.value })}
-                        className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
+                        className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
                       />
                     </div>
 
@@ -594,7 +594,7 @@ export default function AdminDashboard() {
                   {/* List of active items */}
                   <div className="md:col-span-8 overflow-y-auto max-h-[360px] border border-teal-deep/5 rounded-2xl">
                     <table className="w-full text-xs text-left">
-                      <thead className="bg-[#FFFDF5] uppercase font-bold text-teal-deep/60 border-b border-teal-deep/5">
+                      <thead className="bg-background uppercase font-bold text-teal-deep/60 border-b border-teal-deep/5">
                         <tr>
                           <th className="p-3">Product Name</th>
                           <th className="p-3">Category</th>
@@ -665,7 +665,7 @@ export default function AdminDashboard() {
                         placeholder="E.g. Sapphire Velvet Drawer"
                         value={newBox.name}
                         onChange={(e) => setNewBox({ ...newBox, name: e.target.value })}
-                        className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
+                        className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
                       />
                     </div>
 
@@ -677,7 +677,7 @@ export default function AdminDashboard() {
                         placeholder="from-blue-900/20 to-blue-500/20 border-blue-500/20"
                         value={newBox.color}
                         onChange={(e) => setNewBox({ ...newBox, color: e.target.value })}
-                        className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono"
+                        className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono"
                       />
                       <span className="text-[9px] text-teal-deep/50 block">Tailwind gradient class settings.</span>
                     </div>
@@ -693,7 +693,7 @@ export default function AdminDashboard() {
                   {/* List of box styles */}
                   <div className="md:col-span-8 overflow-y-auto max-h-[300px] border border-teal-deep/5 rounded-2xl">
                     <table className="w-full text-xs text-left">
-                      <thead className="bg-[#FFFDF5] uppercase font-bold text-teal-deep/60 border-b border-teal-deep/5">
+                      <thead className="bg-background uppercase font-bold text-teal-deep/60 border-b border-teal-deep/5">
                         <tr>
                           <th className="p-3">Box Style Name</th>
                           <th className="p-3">Color Preview</th>

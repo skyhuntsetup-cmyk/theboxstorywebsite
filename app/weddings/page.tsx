@@ -72,17 +72,17 @@ export default function WeddingGifting() {
       <div className="max-w-6xl mx-auto space-y-24">
         
         {/* Banner Section: Royal Maharaja Cream-Gold Theme */}
-        <section className="relative rounded-[40px] overflow-hidden bg-gradient-to-br from-amber-50 via-[#FFFDF5] to-rose-50 p-8 md:p-20 shadow-sm border border-amber-200">
+        <section className="relative rounded-[40px] overflow-hidden bg-gradient-to-br from-amber-50 via-background to-rose-50 p-8 md:p-20 shadow-sm border border-amber-200">
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-100 rounded-full blur-3xl -z-10" />
           
           <div className="max-w-2xl space-y-6 relative z-10">
-            <div className="inline-flex items-center space-x-1.5 bg-[#FFFDF5] border border-amber-250 px-4 py-2 rounded-full text-xs font-bold tracking-widest text-amber-950 uppercase shadow-sm">
+            <div className="inline-flex items-center space-x-1.5 bg-background border border-amber-250 px-4 py-2 rounded-full text-xs font-bold tracking-widest text-amber-950 uppercase shadow-sm">
               <Heart className="w-3.5 h-3.5 text-rani-pink fill-rani-pink animate-pulse" />
               <span>Royal Indian Weddings</span>
             </div>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-black text-amber-950 leading-tight tracking-tight">
               Heritage Gifting <br />
-              <span className="text-[#D1126A] italic font-normal font-serif">&amp; Custom Favors</span>
+              <span className="text-rani-pink italic font-normal font-serif">&amp; Custom Favors</span>
             </h1>
             <div className="w-20 h-0.5 bg-amber-950" />
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">

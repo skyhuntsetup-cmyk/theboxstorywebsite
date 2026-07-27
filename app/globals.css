@@ -1,22 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FFFDF5;
-  --foreground: #042F2E;
+  --background: #FAF4E8; /* Warm Sandalwood Off-white */
+  --foreground: #022423; /* Very Deep Teal (Contrast ratio ~15:1) */
   
-  --color-teal-deep: #042F2E;
-  --color-rani-pink: #D1126A;
-  --color-saffron: #F97316;
-  --color-gold: #E2BA5F;
-  --color-gold-light: #F7E9C8;
+  --color-white: #FCFAF2; /* Premium Ivory Cream (Replacing stark white) */
+  --color-teal-deep: #022423;
+  --color-rani-pink: #9D174D; /* Deep Rani Pink (Contrast ratio ~5.4:1) */
+  --color-saffron: #B45309; /* Burnt Saffron (Contrast ratio ~4.7:1) */
+  --color-emerald: #065F46; /* Deep Emerald Green (Contrast ratio ~6.5:1) */
+  --color-gold: #B45309; /* Using rich bronze gold for accessibility compliant indicators */
+  --color-gold-light: #F3E5C8;
 }
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-white: var(--color-white);
   --color-teal-deep: var(--color-teal-deep);
   --color-rani-pink: var(--color-rani-pink);
   --color-saffron: var(--color-saffron);
+  --color-emerald: var(--color-emerald);
   --color-gold: var(--color-gold);
   --color-gold-light: var(--color-gold-light);
   
@@ -31,15 +35,28 @@ body {
   overflow-x: hidden;
 }
 
+/* Custom Accessibility Outline & Focus Visible rings */
+*:focus-visible {
+  outline: 2px solid var(--color-gold) !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 10px rgba(180, 83, 9, 0.4) !important;
+}
+
+/* Subtle Indian Geometric Mandala Watermark Pattern */
+.cultural-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z' fill='none' stroke='%23B45309' stroke-width='1' stroke-opacity='0.03'/%3E%3Ccircle cx='40' cy='40' r='8' fill='none' stroke='%23B45309' stroke-width='1' stroke-opacity='0.03'/%3E%3Cpath d='M40 10 L70 40 L40 70 L10 40 Z' fill='none' stroke='%239D174D' stroke-width='0.5' stroke-opacity='0.02'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FFFDF5;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: #042F2E;
+  background: var(--color-teal-deep);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

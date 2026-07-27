@@ -47,7 +47,7 @@ export const CartDrawer = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#FFFDF5] text-teal-deep shadow-[-10px_0_50px_rgba(4,47,46,0.15)] border-l border-teal-deep/10 z-50 flex flex-col"
+            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-background text-teal-deep shadow-[-10px_0_50px_rgba(4,47,46,0.15)] border-l border-teal-deep/10 z-50 flex flex-col"
           >
             {/* Drawer Header */}
             <div className="p-6 border-b border-teal-deep/10 flex items-center justify-between">
@@ -58,6 +58,7 @@ export const CartDrawer = () => {
               <button
                 onClick={() => setCartOpen(false)}
                 className="p-1.5 rounded-full hover:bg-teal-deep/5 transition-all text-teal-deep/60 hover:text-teal-deep"
+                aria-label="Close Shopping Cart"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -77,7 +78,7 @@ export const CartDrawer = () => {
                   <Link
                     href="/collections"
                     onClick={() => setCartOpen(false)}
-                    className="inline-flex items-center space-x-2 text-sm font-semibold bg-teal-deep hover:bg-teal-deep/90 text-[#FFFDF5] px-6 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all"
+                    className="inline-flex items-center space-x-2 text-sm font-semibold bg-teal-deep hover:bg-teal-deep/90 text-[#FAF4E8] px-6 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all"
                   >
                     <span>Browse Collections</span>
                     <ArrowRight className="w-4 h-4" />
@@ -141,7 +142,7 @@ export const CartDrawer = () => {
 
                         <div className="flex items-center justify-between">
                           {/* Quantity Controls */}
-                          <div className="flex items-center border border-teal-deep/15 rounded-full p-1 bg-[#FFFDF5]">
+                          <div className="flex items-center border border-teal-deep/15 rounded-full p-1 bg-background">
                             <button
                               onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
                               className="p-1 hover:bg-teal-deep/5 rounded-full text-teal-deep/75 transition-colors"
@@ -193,7 +194,7 @@ export const CartDrawer = () => {
                 <Link
                   href="/checkout"
                   onClick={() => setCartOpen(false)}
-                  className="w-full flex items-center justify-center space-x-2 py-4 bg-teal-deep hover:bg-teal-deep/90 text-[#FFFDF5] rounded-full font-semibold text-base shadow-[0_15px_30px_rgba(4,47,46,0.15)] transition-all transform hover:-translate-y-0.5 hover:shadow-[0_18px_35px_rgba(4,47,46,0.2)]"
+                  className="w-full flex items-center justify-center space-x-2 py-4 bg-teal-deep hover:bg-teal-deep/90 text-[#FAF4E8] rounded-full font-semibold text-base shadow-[0_15px_30px_rgba(4,47,46,0.15)] transition-all transform hover:-translate-y-0.5 hover:shadow-[0_18px_35px_rgba(4,47,46,0.2)]"
                 >
                   <span>Proceed to Checkout</span>
                   <ArrowRight className="w-4 h-4" />

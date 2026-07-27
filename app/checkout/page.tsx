@@ -51,14 +51,14 @@ export default function Checkout() {
         angle: 60,
         spread: 55,
         origin: { x: 0 },
-        colors: ["#D1126A", "#F97316", "#E2BA5F"],
+        colors: ["#9D174D", "#B45309", "#E2BA5F"],
       });
       confetti({
         particleCount: 5,
         angle: 120,
         spread: 55,
         origin: { x: 1 },
-        colors: ["#D1126A", "#F97316", "#E2BA5F"],
+        colors: ["#9D174D", "#B45309", "#E2BA5F"],
       });
 
       if (Date.now() < end) {
@@ -133,7 +133,7 @@ export default function Checkout() {
           </div>
 
           <div className="space-y-3">
-            <span className="text-[10px] uppercase font-bold tracking-widest text-[#D1126A] bg-[#D1126A]/10 px-3.5 py-1.5 rounded-full">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-[#9D174D] bg-[#9D174D]/10 px-3.5 py-1.5 rounded-full">
               Order Placed Successfully
             </span>
             <h1 className="font-heading text-3xl font-black text-teal-deep">
@@ -197,7 +197,7 @@ export default function Checkout() {
           <p className="text-sm text-teal-deep/75">Your celebration bag is empty. Please add items or configure recipient select modes.</p>
           <Link
             href="/collections"
-            className="inline-flex items-center space-x-2 text-xs font-bold bg-teal-deep text-[#FFFDF5] px-6 py-3 rounded-full"
+            className="inline-flex items-center space-x-2 text-xs font-bold bg-teal-deep text-[#FAF4E8] px-6 py-3 rounded-full"
           >
             <span>Browse Products</span>
           </Link>
@@ -222,7 +222,7 @@ export default function Checkout() {
                   className={`p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between h-24 ${
                     deliveryMode === "physical"
                       ? "border-teal-deep bg-teal-deep/5 ring-2 ring-teal-deep/10"
-                      : "border-teal-deep/10 opacity-70 hover:opacity-100 bg-[#FFFDF5]"
+                      : "border-teal-deep/10 opacity-70 hover:opacity-100 bg-[#FAF4E8]"
                   }`}
                 >
                   <MapPin className="w-5 h-5 text-teal-deep" />
@@ -238,7 +238,7 @@ export default function Checkout() {
                   className={`p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between h-24 ${
                     deliveryMode === "magical"
                       ? "border-teal-deep bg-teal-deep/5 ring-2 ring-teal-deep/10"
-                      : "border-teal-deep/10 opacity-70 hover:opacity-100 bg-[#FFFDF5]"
+                      : "border-teal-deep/10 opacity-70 hover:opacity-100 bg-[#FAF4E8]"
                   }`}
                 >
                   <Send className="w-5 h-5 text-rani-pink" />
@@ -269,7 +269,7 @@ export default function Checkout() {
                       placeholder="First Name"
                       value={shippingInfo.firstName}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, firstName: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                     <input
                       type="text"
@@ -277,7 +277,7 @@ export default function Checkout() {
                       placeholder="Last Name"
                       value={shippingInfo.lastName}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, lastName: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
 
@@ -287,7 +287,7 @@ export default function Checkout() {
                     placeholder="Address Line 1"
                     value={shippingInfo.address}
                     onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                    className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                   />
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -297,7 +297,7 @@ export default function Checkout() {
                       placeholder="City"
                       value={shippingInfo.city}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, city: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                     <input
                       type="text"
@@ -305,7 +305,7 @@ export default function Checkout() {
                       placeholder="State"
                       value={shippingInfo.state}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, state: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                     <input
                       type="text"
@@ -313,7 +313,7 @@ export default function Checkout() {
                       placeholder="ZIP / Postal Code"
                       value={shippingInfo.zip}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, zip: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
 
@@ -324,7 +324,7 @@ export default function Checkout() {
                       placeholder="Mobile Phone"
                       value={shippingInfo.phone}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                     <input
                       type="email"
@@ -332,7 +332,7 @@ export default function Checkout() {
                       placeholder="Email Address"
                       value={shippingInfo.email}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
                 </motion.div>
@@ -358,7 +358,7 @@ export default function Checkout() {
                         placeholder="E.g. Tanvi Sharma"
                         value={magicalInfo.recipientName}
                         onChange={(e) => setMagicalInfo({ ...magicalInfo, recipientName: e.target.value })}
-                        className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                        className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                       />
                     </div>
                     <div className="space-y-1">
@@ -369,7 +369,7 @@ export default function Checkout() {
                         placeholder="E.g. +91 99999 88888"
                         value={magicalInfo.recipientContact}
                         onChange={(e) => setMagicalInfo({ ...magicalInfo, recipientContact: e.target.value })}
-                        className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                        className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                       />
                     </div>
                   </div>
@@ -381,7 +381,7 @@ export default function Checkout() {
                       placeholder="Write a message. It will render in a beautiful handwriting font on their claim page..."
                       value={magicalInfo.giftNote}
                       onChange={(e) => setMagicalInfo({ ...magicalInfo, giftNote: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-2xl px-4 py-3 text-sm italic font-medium focus:outline-none focus:border-rani-pink/40 resize-none font-heading text-teal-deep/90"
+                      className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-2xl px-4 py-3 text-sm italic font-medium focus:outline-none focus:border-rani-pink/40 resize-none font-heading text-teal-deep/90"
                     />
                   </div>
 
@@ -403,7 +403,7 @@ export default function Checkout() {
                         <select
                           value={budgetTier}
                           onChange={(e) => setBudgetTier(Number(e.target.value))}
-                          className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-3 py-2 text-xs font-bold text-teal-deep focus:outline-none focus:border-rani-pink/40"
+                          className="w-full bg-[#FAF4E8] border border-teal-deep/15 rounded-xl px-3 py-2 text-xs font-bold text-teal-deep focus:outline-none focus:border-rani-pink/40"
                         >
                           <option value={1500}>Bronze Tier - ₹1,500 budget (choose up to 3 items)</option>
                           <option value={2500}>Silver Tier - ₹2,500 budget (choose up to 4 items)</option>
@@ -420,7 +420,7 @@ export default function Checkout() {
 
           {/* Right Summary Panel */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-teal-deep text-[#FFFDF5] p-6 rounded-[32px] border border-white/10 shadow-lg space-y-6">
+            <div className="bg-teal-deep text-[#FAF4E8] p-6 rounded-[32px] border border-white/10 shadow-lg space-y-6">
               <h3 className="font-heading text-xl font-bold border-b border-white/10 pb-4">
                 Summary of Joy
               </h3>
@@ -439,7 +439,7 @@ export default function Checkout() {
                 </div>
               ) : (
                 <div className="text-xs p-4 bg-white/5 rounded-2xl border border-white/5 space-y-1.5">
-                  <span className="text-[10px] font-bold text-saffron uppercase block">Bespoke Option Active</span>
+                  <span className="text-[10px] font-bold text-saffron uppercase block mb-1">Bespoke Option Active</span>
                   <span className="font-semibold text-white/90">Recipient Selects Hamper Treats</span>
                   <span className="text-white/50 block">No pre-selected box contents will be shipped. Recipient picks items.</span>
                 </div>
@@ -447,11 +447,11 @@ export default function Checkout() {
 
               {/* Pricing breakdown */}
               <div className="border-t border-white/10 pt-4 space-y-2 text-xs">
-                <div className="flex justify-between text-[#FFFDF5]/70">
+                <div className="flex justify-between text-[#FAF4E8]/70">
                   <span>Subtotal</span>
                   <span>₹{checkoutTotal}</span>
                 </div>
-                <div className="flex justify-between text-[#FFFDF5]/70">
+                <div className="flex justify-between text-[#FAF4E8]/70">
                   <span>Shipping</span>
                   <span className="text-gold">FREE</span>
                 </div>

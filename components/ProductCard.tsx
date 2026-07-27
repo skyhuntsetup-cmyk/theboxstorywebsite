@@ -42,7 +42,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Badge Overlay */}
         {product.badge && (
-          <span className="absolute top-4 left-4 bg-saffron text-[#FFFDF5] text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
+          <span className="absolute top-4 left-4 bg-saffron text-[#FAF4E8] text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
             {product.badge}
           </span>
         )}
@@ -51,8 +51,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="absolute inset-0 bg-teal-deep/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3">
           <button 
             onClick={() => addToCart(product)}
-            className="p-3 bg-white text-teal-deep hover:bg-rani-pink hover:text-[#FFFDF5] rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+            className="p-3 bg-white text-teal-deep hover:bg-rani-pink hover:text-[#FAF4E8] rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
             title="Add to Bag"
+            aria-label={`Quick add ${product.name} to Cart`}
           >
             <ShoppingBag className="w-5 h-5" />
           </button>
@@ -77,7 +78,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           <button
             onClick={() => addToCart(product)}
-            className="inline-flex items-center space-x-1 px-4 py-2 bg-teal-deep hover:bg-rani-pink text-[#FFFDF5] hover:text-[#FFFDF5] text-xs font-bold rounded-full transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
+            className="inline-flex items-center space-x-1 px-4 py-2 bg-teal-deep hover:bg-rani-pink text-[#FAF4E8] hover:text-[#FAF4E8] text-xs font-bold rounded-full transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
+            aria-label={`Add ${product.name} to Bag`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>Add to Bag</span>

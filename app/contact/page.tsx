@@ -68,7 +68,7 @@ export default function Contact() {
           {contactOptions.map((opt, idx) => (
             <div
               key={idx}
-              className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm flex space-x-4 items-start"
+              className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex space-x-4 items-start"
             >
               <div className="p-3 bg-teal-deep/5 rounded-xl text-teal-deep">
                 <opt.icon className="w-5 h-5" />
@@ -85,7 +85,7 @@ export default function Contact() {
         </div>
 
         {/* Right Side: Message Form */}
-        <div className="lg:col-span-7 bg-white/60 backdrop-blur-sm p-8 rounded-3xl border border-teal-deep/5 shadow-sm">
+        <div className="lg:col-span-7 bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 shadow-sm">
           <AnimatePresence mode="wait">
             {!isSubmitted ? (
               <motion.form
@@ -105,7 +105,7 @@ export default function Contact() {
                       placeholder="E.g. Rishabh Arora"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-background border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -116,7 +116,7 @@ export default function Contact() {
                       placeholder="E.g. hello@domain.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
+                      className="w-full bg-background border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40"
                     />
                   </div>
                 </div>
@@ -126,7 +126,7 @@ export default function Contact() {
                   <select
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none text-teal-deep focus:border-rani-pink/40"
+                    className="w-full bg-background border border-teal-deep/15 rounded-xl px-4 py-3 text-xs focus:outline-none text-teal-deep focus:border-rani-pink/40"
                   >
                     <option value="Customer Support">Customer Support / Order Help</option>
                     <option value="Wedding Query">Wedding Gifting Inquiry</option>
@@ -143,7 +143,7 @@ export default function Contact() {
                     placeholder="Write your query or custom request here..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-[#FFFDF5] border border-teal-deep/15 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40 resize-none"
+                    className="w-full bg-background border border-teal-deep/15 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-rani-pink/40 resize-none"
                   />
                 </div>
 
@@ -178,7 +178,7 @@ export default function Contact() {
                 </p>
                 <button
                   onClick={() => setIsSubmitted(false)}
-                  className="mt-4 text-xs font-semibold px-6 py-2.5 bg-teal-deep text-[#FFFDF5] rounded-full hover:bg-teal-deep/90 transition-colors"
+                  className="mt-4 text-xs font-semibold px-6 py-2.5 bg-teal-deep text-[#FAF4E8] rounded-full hover:bg-teal-deep/90 transition-colors"
                 >
                   Send Another Message
                 </button>

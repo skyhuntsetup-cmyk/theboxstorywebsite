@@ -27,7 +27,7 @@ export const Navbar = () => {
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-6xl z-50">
-      <nav className="backdrop-blur-md bg-[#FFFDF5]/75 border border-[#042F2E]/10 px-6 py-4 rounded-full flex items-center justify-between shadow-[0_10px_30px_rgba(4,47,46,0.06)] transition-all duration-300 hover:border-[#042F2E]/20">
+      <nav className="backdrop-blur-md bg-[#FAF4E8]/75 border border-[#042F2E]/10 px-6 py-4 rounded-full flex items-center justify-between shadow-[0_10px_30px_rgba(4,47,46,0.06)] transition-all duration-300 hover:border-[#042F2E]/20">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center space-x-2 group">
           <span className="font-heading text-2xl md:text-3xl font-extrabold tracking-tight text-teal-deep">
@@ -45,7 +45,7 @@ export const Navbar = () => {
                 href={link.href}
                 className={`relative px-4 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-200 ${
                   isActive
-                    ? "text-[#FFFDF5] bg-teal-deep"
+                    ? "text-[#FAF4E8] bg-teal-deep"
                     : "text-teal-deep/80 hover:text-teal-deep hover:bg-teal-deep/5"
                 }`}
               >
@@ -71,7 +71,7 @@ export const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Link
             href="/gift-genie"
-            className="hidden sm:flex items-center space-x-1.5 text-xs font-semibold px-4 py-2 border border-saffron/30 hover:border-saffron bg-[#FFFDF5] text-saffron rounded-full transition-all duration-300 shadow-sm hover:shadow-md"
+            className="hidden sm:flex items-center space-x-1.5 text-xs font-semibold px-4 py-2 border border-saffron/30 hover:border-saffron bg-[#FAF4E8] text-saffron rounded-full transition-all duration-300 shadow-sm hover:shadow-md"
           >
             <Sparkles className="w-3.5 h-3.5 animate-bounce" />
             <span>AI Finder</span>
@@ -92,7 +92,7 @@ export const Navbar = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.4, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                  className="absolute -top-1.5 -right-1.5 bg-rani-pink text-[#FFFDF5] text-[10px] font-bold rounded-full w-5.5 h-5.5 flex items-center justify-center border-2 border-[#FFFDF5]"
+                  className="absolute -top-1.5 -right-1.5 bg-rani-pink text-[#FAF4E8] text-[10px] font-bold rounded-full w-5.5 h-5.5 flex items-center justify-center border-2 border-[#FAF4E8]"
                 >
                   {totalItems}
                 </motion.span>
