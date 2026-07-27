@@ -5,17 +5,18 @@ import { supabase } from "../../lib/supabase";
 import { 
   BarChart3, ShoppingBag, MessageSquare, Package, Loader, 
   CheckCircle, ArrowRight, Truck, Mail, Phone, Calendar, Search, RefreshCw,
-  Eye, EyeOff, Plus, Trash2, Box as BoxIcon
+  Eye, EyeOff, Plus, Trash2, Box as BoxIcon, ExternalLink, Edit3, Globe, Tag
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<"orders" | "inquiries" | "products" | "bazaar">("orders");
+  const [activeTab, setActiveTab] = useState<"orders" | "inquiries" | "products" | "bazaar" | "inventory">("orders");
   const [orders, setOrders] = useState<any[]>([]);
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [bazaarItems, setBazaarItems] = useState<any[]>([]);
   const [boxStyles, setBoxStyles] = useState<any[]>([]);
+  const [offlineInventory, setOfflineInventory] = useState<any[]>([]);
   
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,11 +28,31 @@ export default function AdminDashboard() {
     paidOrders: 0,
     claimedGifts: 0,
     totalInquiries: 0,
+    totalInventoryValue: 0,
+    totalSKUs: 0,
   });
 
   // Creation forms
   const [newBazaar, setNewBazaar] = useState({ name: "", price: "", image: "", category: "Sweets" });
   const [newBox, setNewBox] = useState({ name: "", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" });
+  const [newInventory, setNewInventory] = useState({
+    product_code: "",
+    name: "",
+    vendor_name: "",
+    purchase_price: "",
+    selling_price: "",
+    photo_drive_link: "",
+    stock_quantity: "0",
+  });
+
+  // Editing state for inventory
+  const [editingInventoryCode, setEditingInventoryCode] = useState<string | null>(null);
+  const [editingInventory, setEditingInventory] = useState<any>(null);
+
+  // Sync to website modal state
+  const [syncingItem, setSyncingItem] = useState<any | null>(null);
+  const [syncCategory, setSyncCategory] = useState<string>("Diwali"); // Default for products
+  const [syncBazaarCategory, setSyncBazaarCategory] = useState<"Sweets" | "Decor" | "Wellness" | "Gourmet">("Sweets");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +88,12 @@ export default function AdminDashboard() {
           .select("*")
           .order("name");
 
+        // 6. Fetch Offline Inventory
+        const { data: invData } = await supabase
+          .from("offline_inventory")
+          .select("*")
+          .order("product_code");
+
         if (oData) {
           setOrders(oData);
           
@@ -75,11 +102,17 @@ export default function AdminDashboard() {
           const paid = oData.filter(o => o.status === "paid").length;
           const claimed = oData.filter(o => o.status === "claimed").length;
 
+          // Calculate Offline Inventory Value
+          const invValue = invData ? invData.reduce((acc, curr) => acc + (Number(curr.purchase_price || 0) * Number(curr.stock_quantity || 0)), 0) : 0;
+          const skuCount = invData ? invData.length : 0;
+
           setStats({
             totalRevenue: revenue,
             paidOrders: paid,
             claimedGifts: claimed,
             totalInquiries: iData ? iData.length : 0,
+            totalInventoryValue: invValue,
+            totalSKUs: skuCount,
           });
         }
         
@@ -87,6 +120,7 @@ export default function AdminDashboard() {
         if (pData) setProducts(pData);
         if (bData) setBazaarItems(bData);
         if (bsData) setBoxStyles(bsData);
+        if (invData) setOfflineInventory(invData);
 
       } catch (err) {
         console.error("Error loading admin data:", err);
@@ -203,6 +237,152 @@ export default function AdminDashboard() {
     }
   };
 
+  const addInventoryItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newInventory.product_code || !newInventory.name || !newInventory.vendor_name || !newInventory.purchase_price || !newInventory.selling_price) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from("offline_inventory")
+        .insert([{
+          product_code: newInventory.product_code,
+          name: newInventory.name,
+          vendor_name: newInventory.vendor_name,
+          purchase_price: Number(newInventory.purchase_price),
+          selling_price: Number(newInventory.selling_price),
+          photo_drive_link: newInventory.photo_drive_link || null,
+          stock_quantity: Number(newInventory.stock_quantity || 0),
+          is_synced: false
+        }]);
+
+      if (error) {
+        alert("Failed to add: " + error.message);
+      } else {
+        setNewInventory({
+          product_code: "",
+          name: "",
+          vendor_name: "",
+          purchase_price: "",
+          selling_price: "",
+          photo_drive_link: "",
+          stock_quantity: "0",
+        });
+        setRefreshTrigger(prev => prev + 1);
+      }
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    }
+  };
+
+  const deleteInventoryItem = async (code: string) => {
+    if (!confirm("Are you sure you want to delete this inventory item?")) return;
+    try {
+      const { error } = await supabase
+        .from("offline_inventory")
+        .delete()
+        .eq("product_code", code);
+
+      if (error) {
+        alert("Failed to delete: " + error.message);
+      } else {
+        setRefreshTrigger(prev => prev + 1);
+      }
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    }
+  };
+
+  const updateInventoryItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingInventory) return;
+    try {
+      const { error } = await supabase
+        .from("offline_inventory")
+        .update({
+          name: editingInventory.name,
+          vendor_name: editingInventory.vendor_name,
+          purchase_price: Number(editingInventory.purchase_price),
+          selling_price: Number(editingInventory.selling_price),
+          photo_drive_link: editingInventory.photo_drive_link || null,
+          stock_quantity: Number(editingInventory.stock_quantity || 0),
+        })
+        .eq("product_code", editingInventory.product_code);
+
+      if (error) {
+        alert("Failed to update: " + error.message);
+      } else {
+        setEditingInventoryCode(null);
+        setEditingInventory(null);
+        setRefreshTrigger(prev => prev + 1);
+      }
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    }
+  };
+
+  const executeWebsiteSync = async (type: "curated" | "bazaar") => {
+    if (!syncingItem) return;
+    try {
+      if (type === "curated") {
+        // Sync to products table
+        const { error } = await supabase
+          .from("products")
+          .insert([{
+            id: syncingItem.product_code,
+            name: syncingItem.name,
+            price: Number(syncingItem.selling_price),
+            image: syncingItem.photo_drive_link || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80",
+            description: `Offline Store exclusive catalog item by ${syncingItem.vendor_name}. Code: ${syncingItem.product_code}`,
+            category: syncCategory,
+            badge: "Offline Treasure"
+          }]);
+
+        if (error) {
+          alert("Failed to sync as product: " + error.message);
+          return;
+        }
+      } else {
+        // Sync to bazaar_items table
+        const { error } = await supabase
+          .from("bazaar_items")
+          .insert([{
+            name: syncingItem.name,
+            price: Number(syncingItem.selling_price),
+            image: syncingItem.photo_drive_link || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300&auto=format&fit=crop&q=80",
+            category: syncBazaarCategory,
+            is_active: true
+          }]);
+
+        if (error) {
+          alert("Failed to sync as bazaar item: " + error.message);
+          return;
+        }
+      }
+
+      // Update sync flag on offline_inventory
+      const { error: updateError } = await supabase
+        .from("offline_inventory")
+        .update({
+          is_synced: true,
+          synced_type: type
+        })
+        .eq("product_code", syncingItem.product_code);
+
+      if (updateError) {
+        console.error("Warning: Sync succeeded but flag update failed:", updateError.message);
+      }
+
+      setSyncingItem(null);
+      alert("Successfully listed item on the website!");
+      setRefreshTrigger(prev => prev + 1);
+
+    } catch (err: any) {
+      alert("Error during sync: " + err.message);
+    }
+  };
+
   const filteredOrders = orders.filter(o => 
     o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (o.customer_name && o.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -213,6 +393,12 @@ export default function AdminDashboard() {
     i.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     i.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
     i.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredInventory = offlineInventory.filter(item => 
+    item.product_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.vendor_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -233,7 +419,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Board */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-center text-teal-deep/50 mb-3">
             <span className="text-[10px] uppercase font-bold tracking-wider">Total Sales</span>
@@ -269,12 +455,30 @@ export default function AdminDashboard() {
           <p className="font-heading text-2xl font-black text-teal-deep">{stats.totalInquiries}</p>
           <span className="text-[10px] text-teal-deep/40">Corporate submissions</span>
         </div>
+
+        <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
+          <div className="flex justify-between items-center text-teal-deep/50 mb-3">
+            <span className="text-[10px] uppercase font-bold tracking-wider">Inventory Value</span>
+            <Tag className="w-4 h-4 text-saffron" />
+          </div>
+          <p className="font-heading text-2xl font-black text-teal-deep">₹{stats.totalInventoryValue}</p>
+          <span className="text-[10px] text-teal-deep/40">Total cost of offline stock</span>
+        </div>
+
+        <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
+          <div className="flex justify-between items-center text-teal-deep/50 mb-3">
+            <span className="text-[10px] uppercase font-bold tracking-wider">Total SKUs</span>
+            <Package className="w-4 h-4 text-rani-pink" />
+          </div>
+          <p className="font-heading text-2xl font-black text-teal-deep">{stats.totalSKUs}</p>
+          <span className="text-[10px] text-teal-deep/40">Offline product codes</span>
+        </div>
       </div>
 
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "bazaar"].map((tab) => (
+          {["orders", "inquiries", "products", "bazaar", "inventory"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -287,7 +491,7 @@ export default function AdminDashboard() {
                   : "text-teal-deep/60 hover:text-teal-deep hover:bg-teal-deep/5"
               }`}
             >
-              {tab === "bazaar" ? "Bazaar & Packaging" : tab}
+              {tab === "bazaar" ? "Bazaar & Packaging" : tab === "inventory" ? "Offline Inventory" : tab}
             </button>
           ))}
         </div>
@@ -738,8 +942,446 @@ export default function AdminDashboard() {
               </div>
             </div>
           )}
+
+          {/* TAB 5: OFFLINE INVENTORY */}
+          {activeTab === "inventory" && (
+            <div className="p-6 space-y-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
+                <div>
+                  <h3 className="font-heading text-lg font-bold text-teal-deep">Offline Store Inventory</h3>
+                  <p className="text-[10px] text-teal-deep/50">Manage local stock parameters, margins, vendor listings, and publish directly to the website.</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Left Side: Create / Edit SKU Form */}
+                <div className="lg:col-span-4">
+                  {editingInventoryCode && editingInventory ? (
+                    <form onSubmit={updateInventoryItem} className="bg-saffron/5 p-6 rounded-2xl border border-saffron/15 space-y-4">
+                      <h4 className="font-heading text-sm font-bold text-saffron flex items-center space-x-1.5">
+                        <Edit3 className="w-4 h-4" />
+                        <span>Edit SKU: {editingInventoryCode}</span>
+                      </h4>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Product Name *</label>
+                        <input
+                          type="text"
+                          required
+                          value={editingInventory.name}
+                          onChange={(e) => setEditingInventory({ ...editingInventory, name: e.target.value })}
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Vendor Name *</label>
+                        <input
+                          type="text"
+                          required
+                          value={editingInventory.vendor_name}
+                          onChange={(e) => setEditingInventory({ ...editingInventory, vendor_name: e.target.value })}
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Purchase Cost *</label>
+                          <input
+                            type="number"
+                            required
+                            value={editingInventory.purchase_price}
+                            onChange={(e) => setEditingInventory({ ...editingInventory, purchase_price: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Retail Price *</label>
+                          <input
+                            type="number"
+                            required
+                            value={editingInventory.selling_price}
+                            onChange={(e) => setEditingInventory({ ...editingInventory, selling_price: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Stock Count *</label>
+                          <input
+                            type="number"
+                            required
+                            value={editingInventory.stock_quantity}
+                            onChange={(e) => setEditingInventory({ ...editingInventory, stock_quantity: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Markup Margin</label>
+                          <div className="w-full bg-teal-deep/5 border border-teal-deep/10 text-teal-deep font-bold rounded-lg px-3 py-2 text-xs">
+                            {editingInventory.selling_price && editingInventory.purchase_price
+                              ? `${(((Number(editingInventory.selling_price) - Number(editingInventory.purchase_price)) / Number(editingInventory.purchase_price)) * 100).toFixed(0)}%`
+                              : "0%"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Drive Photos Link</label>
+                        <input
+                          type="url"
+                          placeholder="https://drive.google.com/..."
+                          value={editingInventory.photo_drive_link || ""}
+                          onChange={(e) => setEditingInventory({ ...editingInventory, photo_drive_link: e.target.value })}
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="flex space-x-2 pt-2">
+                        <button
+                          type="submit"
+                          className="flex-1 py-2.5 bg-saffron hover:bg-saffron/90 text-white rounded-lg font-bold text-xs shadow transition-all"
+                        >
+                          Save Changes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingInventoryCode(null);
+                            setEditingInventory(null);
+                          }}
+                          className="px-4 py-2.5 bg-teal-deep/5 hover:bg-teal-deep/10 text-teal-deep rounded-lg font-bold text-xs transition-all"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={addInventoryItem} className="bg-teal-deep/5 p-6 rounded-2xl border border-teal-deep/5 space-y-4">
+                      <h4 className="font-heading text-sm font-bold text-teal-deep flex items-center space-x-1.5">
+                        <Plus className="w-4 h-4 text-rani-pink" />
+                        <span>Register New SKU</span>
+                      </h4>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Product Code / SKU *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="E.g. SKU-101"
+                          value={newInventory.product_code}
+                          onChange={(e) => setNewInventory({ ...newInventory, product_code: e.target.value })}
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Product Name *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="E.g. Handmade Silver Diya"
+                          value={newInventory.name}
+                          onChange={(e) => setNewInventory({ ...newInventory, name: e.target.value })}
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Vendor Name *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="E.g. Jaipur Crafts Ltd"
+                          value={newInventory.vendor_name}
+                          onChange={(e) => setNewInventory({ ...newInventory, vendor_name: e.target.value })}
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Purchase Cost *</label>
+                          <input
+                            type="number"
+                            required
+                            placeholder="650"
+                            value={newInventory.purchase_price}
+                            onChange={(e) => setNewInventory({ ...newInventory, purchase_price: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Retail Price *</label>
+                          <input
+                            type="number"
+                            required
+                            placeholder="1200"
+                            value={newInventory.selling_price}
+                            onChange={(e) => setNewInventory({ ...newInventory, selling_price: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Stock Qty *</label>
+                          <input
+                            type="number"
+                            required
+                            placeholder="15"
+                            value={newInventory.stock_quantity}
+                            onChange={(e) => setNewInventory({ ...newInventory, stock_quantity: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60">Expected Margin</label>
+                          <div className="w-full bg-teal-deep/5 border border-teal-deep/10 text-teal-deep font-bold rounded-lg px-3 py-2 text-xs">
+                            {newInventory.selling_price && newInventory.purchase_price
+                              ? `${(((Number(newInventory.selling_price) - Number(newInventory.purchase_price)) / Number(newInventory.purchase_price)) * 100).toFixed(0)}%`
+                              : "0%"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-teal-deep/60">Google Drive Photos Link</label>
+                        <input
+                          type="url"
+                          placeholder="https://drive.google.com/..."
+                          value={newInventory.photo_drive_link}
+                          onChange={(e) => setNewInventory({ ...newInventory, photo_drive_link: e.target.value })}
+                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full py-2.5 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-lg font-bold text-xs shadow transition-all"
+                      >
+                        Register SKU Item
+                      </button>
+                    </form>
+                  )}
+                </div>
+
+                {/* Right Side: Tabular SKU database */}
+                <div className="lg:col-span-8 overflow-x-auto border border-teal-deep/5 rounded-2xl bg-white/50 backdrop-blur-sm">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-background uppercase font-bold text-teal-deep/60 border-b border-teal-deep/5">
+                      <tr>
+                        <th className="p-3">SKU / Name</th>
+                        <th className="p-3">Vendor</th>
+                        <th className="p-3 text-right">Purchase</th>
+                        <th className="p-3 text-right">Selling</th>
+                        <th className="p-3 text-center">Stock</th>
+                        <th className="p-3 text-center">Photos</th>
+                        <th className="p-3 text-center">Sync status</th>
+                        <th className="p-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-teal-deep/5">
+                      {filteredInventory.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} className="p-6 text-center text-teal-deep/45">
+                            No matching offline inventory SKUs found.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredInventory.map((item) => (
+                          <tr key={item.product_code} className="hover:bg-teal-deep/5 transition-colors">
+                            <td className="p-3">
+                              <span className="font-semibold block text-teal-deep">{item.name}</span>
+                              <span className="text-[10px] text-teal-deep/45 font-mono uppercase">{item.product_code}</span>
+                            </td>
+                            <td className="p-3 text-teal-deep/75 font-medium">{item.vendor_name}</td>
+                            <td className="p-3 text-right text-teal-deep/60">₹{item.purchase_price}</td>
+                            <td className="p-3 text-right font-bold text-teal-deep">₹{item.selling_price}</td>
+                            <td className="p-3 text-center">
+                              <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                                item.stock_quantity <= 3
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-teal-deep/5 text-teal-deep"
+                              }`}>
+                                {item.stock_quantity} units
+                              </span>
+                            </td>
+                            <td className="p-3 text-center">
+                              {item.photo_drive_link ? (
+                                <a
+                                  href={item.photo_drive_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex p-1 bg-amber-50 hover:bg-amber-100 border border-gold/20 text-saffron rounded-lg shadow-sm"
+                                  title="View Google Drive Photos"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </a>
+                              ) : (
+                                <span className="text-[10px] text-teal-deep/30">-</span>
+                              )}
+                            </td>
+                            <td className="p-3 text-center">
+                              {item.is_synced ? (
+                                <span className="inline-flex items-center space-x-0.5 bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[9px] uppercase">
+                                  <Globe className="w-2.5 h-2.5" />
+                                  <span>{item.synced_type === "curated" ? "Curated" : "Bazaar"}</span>
+                                </span>
+                              ) : (
+                                <span className="inline-block bg-teal-deep/5 text-teal-deep/50 px-2 py-0.5 rounded-full text-[9px]">
+                                  Offline only
+                                </span>
+                              )}
+                            </td>
+                            <td className="p-3 text-right">
+                              <div className="inline-flex space-x-1">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingInventoryCode(item.product_code);
+                                    setEditingInventory({ ...item });
+                                  }}
+                                  className="p-1.5 bg-teal-deep/5 hover:bg-teal-deep/10 text-teal-deep rounded-lg"
+                                  title="Edit SKU Details"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setSyncingItem(item)}
+                                  className="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg"
+                                  title="Sync to Website"
+                                >
+                                  <Globe className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => deleteInventoryItem(item.product_code)}
+                                  className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg"
+                                  title="Delete SKU"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
+
+      {/* Website Sync Dialog Modal */}
+      <AnimatePresence>
+        {syncingItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSyncingItem(null)}
+              className="absolute inset-0 bg-teal-deep/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 15, opacity: 0 }}
+              className="bg-white border border-teal-deep/10 w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative z-10 text-left"
+            >
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-saffron uppercase tracking-widest">Publish to Website</span>
+                <h3 className="font-heading text-xl font-bold text-teal-deep">List "{syncingItem.name}"</h3>
+                <p className="text-[10px] text-teal-deep/50 font-mono uppercase">SKU: {syncingItem.product_code}</p>
+              </div>
+
+              <div className="space-y-4">
+                {/* Mode A: Curated Product */}
+                <div className="p-4 bg-teal-deep/5 border border-teal-deep/10 rounded-2xl space-y-3">
+                  <h4 className="font-bold text-xs text-teal-deep flex items-center space-x-1.5">
+                    <ShoppingBag className="w-4 h-4 text-rani-pink" />
+                    <span>Option 1: Sync as Pre-curated Box</span>
+                  </h4>
+                  <p className="text-[10px] text-teal-deep/70">Will list this item directly inside the collections catalogue at `/collections` under a chosen theme category.</p>
+                  
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-teal-deep/50 uppercase">Category Tag</label>
+                    <select
+                      value={syncCategory}
+                      onChange={(e) => setSyncCategory(e.target.value)}
+                      className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-1 text-xs text-teal-deep focus:outline-none"
+                    >
+                      <option value="Diwali">Diwali Celebrations</option>
+                      <option value="Weddings">Wedding Ceremonies</option>
+                      <option value="Anniversary">Anniversary Romance</option>
+                      <option value="Corporate">Corporate Elite</option>
+                      <option value="Housewarming">Housewarming Serenity</option>
+                    </select>
+                  </div>
+                  
+                  <button
+                    type="button"
+                    onClick={() => executeWebsiteSync("curated")}
+                    className="w-full py-2 bg-teal-deep hover:bg-teal-deep/90 text-[#FAF4E8] rounded-xl font-bold text-xs tracking-wide transition-all shadow-sm"
+                  >
+                    Publish Curated Listing (₹{syncingItem.selling_price})
+                  </button>
+                </div>
+
+                {/* Mode B: Bazaar Custom treat */}
+                <div className="p-4 bg-saffron/5 border border-saffron/10 rounded-2xl space-y-3">
+                  <h4 className="font-bold text-xs text-teal-deep flex items-center space-x-1.5">
+                    <Tag className="w-4 h-4 text-saffron" />
+                    <span>Option 2: Sync as Hamper Studio Treat</span>
+                  </h4>
+                  <p className="text-[10px] text-teal-deep/70">Will register this treat inside the Build-a-Box configurator studio database. Users can choose it as a sub-item in custom gift baskets.</p>
+
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-teal-deep/50 uppercase">Bazaar Section</label>
+                    <select
+                      value={syncBazaarCategory}
+                      onChange={(e) => setSyncBazaarCategory(e.target.value as any)}
+                      className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-1 text-xs text-teal-deep focus:outline-none"
+                    >
+                      <option value="Sweets">Sweets (Mithai/Dry Fruits)</option>
+                      <option value="Decor">Decor (Diyas/Toran)</option>
+                      <option value="Wellness">Wellness (Candles/Mists)</option>
+                      <option value="Gourmet">Gourmet (Tea/Flasks)</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => executeWebsiteSync("bazaar")}
+                    className="w-full py-2 bg-saffron hover:bg-saffron/90 text-white rounded-xl font-bold text-xs tracking-wide transition-all shadow-sm"
+                  >
+                    Publish Custom Treat (₹{syncingItem.selling_price})
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex space-x-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSyncingItem(null)}
+                  className="w-full py-3 bg-teal-deep/5 hover:bg-teal-deep/10 text-teal-deep rounded-xl font-bold text-xs transition-all text-center"
+                >
+                  Cancel & Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -166,3 +166,27 @@ INSERT INTO public.box_styles (name, color, is_active) VALUES
 ('Blossom Rani Pink', 'from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20', true),
 ('Midnight Teal Elegance', 'from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30', true);
 
+
+-- 7. Create Offline Inventory Table
+CREATE TABLE public.offline_inventory (
+    product_code TEXT PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    name TEXT NOT NULL,
+    vendor_name TEXT NOT NULL,
+    purchase_price NUMERIC NOT NULL,
+    selling_price NUMERIC NOT NULL,
+    photo_drive_link TEXT,
+    stock_quantity INTEGER NOT NULL DEFAULT 0,
+    is_synced BOOLEAN NOT NULL DEFAULT false,
+    synced_type TEXT CHECK (synced_type IN ('curated', 'bazaar'))
+);
+
+-- Enable RLS
+ALTER TABLE public.offline_inventory ENABLE ROW LEVEL SECURITY;
+
+-- Allow Authenticated (Admins) Full Access
+CREATE POLICY "Allow authenticated full access on offline_inventory" 
+ON public.offline_inventory FOR ALL 
+USING (auth.role() = 'authenticated');
+
+
