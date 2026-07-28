@@ -86,10 +86,10 @@ export default function CleanCatalogReader() {
   );
 
   return (
-    <div className="min-h-screen bg-[#faf4e7] text-slate-800 flex flex-col h-screen overflow-hidden">
+    <div className="min-h-screen bg-[#faf4e7] text-slate-800 flex flex-col h-[calc(100vh-96px)] overflow-hidden">
       
       {/* Top Bar Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-teal-deep/5 px-6 py-4 flex items-center justify-between z-10 shrink-0 shadow-sm">
+      <header className="bg-white/80 backdrop-blur-md border-b border-teal-deep/5 px-6 py-4 mt-6 flex items-center justify-between z-10 shrink-0 shadow-sm animate-fade-in">
         <div className="flex items-center space-x-4">
           <Link 
             href="/corporate"
@@ -206,21 +206,21 @@ export default function CleanCatalogReader() {
                 key={pageNum}
                 ref={(el) => { pageRefs.current[pageNum] = el; }}
                 data-page={pageNum}
-                className={`relative bg-[#faf4e7] p-2 rounded-3xl border transition-all duration-300 max-w-2xl w-full shadow-sm ${
+                className={`relative rounded-3xl overflow-hidden border transition-all duration-300 max-w-2xl w-full shadow-sm ${
                   activePage === pageNum ? "border-saffron shadow-md scale-[1.01]" : "border-teal-deep/5"
                 }`}
               >
                 {/* Image Page block */}
                 <div 
                   onClick={() => setZoomedImage(`/images/catalog/page_${pageNum}.png`)}
-                  className="w-full aspect-[1/1.4] bg-white rounded-2xl overflow-hidden relative cursor-zoom-in group shadow-[inset_0_0_12px_rgba(0,0,0,0.02)]"
+                  className="w-full bg-[#faf4e7] relative cursor-zoom-in group"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={`/images/catalog/page_${pageNum}.png`} 
                     alt={`Catalog Page ${pageNum}`} 
                     loading="lazy"
-                    className="w-full h-full object-contain"
+                    className="w-full h-auto block"
                   />
                   <div className="absolute inset-0 bg-teal-deep/0 group-hover:bg-teal-deep/5 transition-colors" />
                   
