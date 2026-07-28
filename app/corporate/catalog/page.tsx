@@ -13,81 +13,12 @@ export default function CatalogFlipbook() {
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipDirection, setFlipDirection] = useState<"next" | "prev">("next");
 
-  const catalogPages = [
-    {
-      type: "cover",
-      title: "The Box Story",
-      subtitle: "Diwali Gifting Collection 2026",
-      tagline: "Bespoke Hampers, Artisanal Treats & Heritage Wraps",
-      bg: "bg-gradient-to-br from-amber-50 via-[#FAF4E8] to-amber-100/50",
-      description: "Jaipur Studio Catalog"
-    },
-    {
-      type: "editorial",
-      title: "The Art of Curation",
-      content: "Every box is individually curated in our Jaipur studio. We source high-grade brassware, pure Mysore sandalwood, and certified organic harvests. Our packing is entirely plastic-free, emphasizing sustainable elegance and luxury first impressions.",
-      bg: "bg-[#FCFAF2]",
-      image: "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=500&auto=format&fit=crop&q=80",
-      pageNumber: 1
-    },
-    {
-      type: "editorial",
-      title: "Bespoke Packaging Options",
-      content: "Choose from our signature gold-foiled rigid drawers, handcrafted pine wood boxes, and royal-saffron satin ribbons. We offer custom laser engravings, branded logo plates, and monograms matching your brand guidelines.",
-      bg: "bg-[#FCFAF2]",
-      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80",
-      pageNumber: 2
-    },
-    {
-      type: "product",
-      name: "The Royal Mithai Box",
-      price: "₹1,899",
-      category: "Festive Bestseller",
-      description: "An elegant assortment of artisanal dry fruit laddoos, Kaju katli, and two premium handcrafted clay-brass diyas.",
-      bg: "bg-white",
-      image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=500&auto=format&fit=crop&q=80",
-      pageNumber: 3
-    },
-    {
-      type: "product",
-      name: "Sandalwood & Brass Rituals",
-      price: "₹3,299",
-      category: "Premium Heritage",
-      description: "A premium ritual set consisting of a heavy brass incense burner, pure Mysore sandalwood incense cones, and premium cashew nuts.",
-      bg: "bg-white",
-      image: "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=500&auto=format&fit=crop&q=80",
-      pageNumber: 4
-    },
-    {
-      type: "portal",
-      title: "Employee Claim Panel",
-      content: "HR managers generate unique Claim Tokens or Magical Links. Employees visit our claim portals, play virtual unboxing animations, input sizing details (for hoodies/apparel), and log their shipping coordinates securely. No spreadsheets required.",
-      bg: "bg-[#FCFAF2]",
-      image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&auto=format&fit=crop&q=80",
-      pageNumber: 5
-    },
-    {
-      type: "stats",
-      title: "Corporate Swag Logistics",
-      desc: "Our automated dashboard handles high volumes with live reporting, size compilations, and doorstep validation trackers.",
-      stats: [
-        { num: "4.9L+", label: "Hampers Shipped" },
-        { num: "500+", label: "B2B Clients" },
-        { num: "100%", label: "On-Time Dispatch" }
-      ],
-      bg: "bg-white",
-      pageNumber: 6
-    },
-    {
-      type: "backcover",
-      title: "The Box Story",
-      tagline: "Unboxing joy, scaled for your organization.",
-      contact: "corporate@theboxstory.in",
-      whatsapp: "+91 99999 88888",
-      bg: "bg-gradient-to-br from-[#FAF4E8] to-amber-50",
-      pageNumber: 7
-    }
-  ];
+  const catalogPages = Array.from({ length: 57 }, (_, i) => ({
+    type: "image",
+    src: `/images/catalog/page_${i + 1}.png`,
+    pageNumber: i + 1,
+    bg: "bg-white"
+  }));
 
   const totalPageSets = Math.ceil(catalogPages.length / 2);
 
@@ -130,10 +61,24 @@ export default function CatalogFlipbook() {
     })
   };
 
-  const renderPageContent = (page: typeof catalogPages[0]) => {
+  const renderPageContent = (page: any) => {
     if (!page) return null;
 
     switch (page.type) {
+      case "image":
+        return (
+          <div className="h-full w-full select-none relative bg-white flex items-center justify-center overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={page.src} 
+              alt={`Catalog Page ${page.pageNumber}`} 
+              className="w-full h-full object-contain"
+            />
+            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-teal-deep/40 bg-white/80 backdrop-blur-sm border border-teal-deep/5 px-3 py-1 rounded-full">
+              Page {page.pageNumber} / 57
+            </span>
+          </div>
+        );
       case "cover":
         return (
           <div className="h-full flex flex-col justify-between p-10 select-none relative overflow-hidden">
@@ -247,7 +192,7 @@ export default function CatalogFlipbook() {
               </div>
 
               <div className="space-y-4">
-                {page.stats?.map((stat, i) => (
+                {page.stats?.map((stat: any, i: number) => (
                   <div key={i} className="flex justify-between items-center border-b border-teal-deep/5 pb-2">
                     <span className="text-xs text-teal-deep/60 font-semibold">{stat.label}</span>
                     <span className="font-heading font-black text-saffron text-base">{stat.num}</span>
