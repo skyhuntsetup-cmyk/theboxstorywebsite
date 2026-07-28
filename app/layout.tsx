@@ -50,7 +50,7 @@ export default function RootLayout({
               <div>
                 <h4 className="font-heading text-lg font-bold mb-4">Curations</h4>
                 <ul className="space-y-2 text-sm text-[#FAF4E8]/70">
-                  <li><a href="/collections" className="hover:text-rani-pink transition-colors">Festive Special</a></li>
+                  <li><a href="/collections/diwali" className="hover:text-rani-pink transition-colors">Diwali Collection</a></li>
                   <li><a href="/collections" className="hover:text-rani-pink transition-colors">Corporate Gifting</a></li>
                   <li><a href="/collections" className="hover:text-rani-pink transition-colors">Bridal & Weddings</a></li>
                   <li><a href="/build" className="hover:text-rani-pink transition-colors">Build Your Box</a></li>
