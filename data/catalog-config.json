@@ -1,0 +1,60 @@
+{
+  "totalPages": 57,
+  "themeColor": "#faf4e7",
+  "sections": [
+    {
+      "title": "Welcome Cover",
+      "startPage": 1,
+      "endPage": 1,
+      "description": "Diwali & Corporate Hampers Collection 2026"
+    },
+    {
+      "title": "The Art of Curation",
+      "startPage": 2,
+      "endPage": 2,
+      "description": "Our Jaipur studio packaging standards"
+    },
+    {
+      "title": "Bespoke Packaging",
+      "startPage": 3,
+      "endPage": 4,
+      "description": "Gold foiled draw boxes, pine wood chests & baskets"
+    },
+    {
+      "title": "Artisanal Hampers",
+      "startPage": 5,
+      "endPage": 15,
+      "description": "Festive dry fruit, mithai & brass-ware sets"
+    },
+    {
+      "title": "Premium Sandalwood",
+      "startPage": 16,
+      "endPage": 25,
+      "description": "Sandalwood, brass ritual bowls & clay diyas"
+    },
+    {
+      "title": "Employee Hub Portals",
+      "startPage": 26,
+      "endPage": 35,
+      "description": "Custom claim portals & apparel sizing solutions"
+    },
+    {
+      "title": "B2B Swag & Clothing",
+      "startPage": 36,
+      "endPage": 45,
+      "description": "Branded hoodies, notebooks & corporate tech kits"
+    },
+    {
+      "title": "Client Marquees",
+      "startPage": 46,
+      "endPage": 55,
+      "description": "Case studies & brand deliverables"
+    },
+    {
+      "title": "Order Placements",
+      "startPage": 56,
+      "endPage": 57,
+      "description": "WhatsApp ordering details & corporate contact"
+    }
+  ]
+}
