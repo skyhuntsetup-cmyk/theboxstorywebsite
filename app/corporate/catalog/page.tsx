@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { 
   ArrowLeft, ArrowRight, Sparkles, BookOpen, 
-  Download, MessageSquare, Phone, Laptop, Award, Check
+  Download, MessageSquare, Phone, Laptop, Award, Check,
+  Maximize2, Minimize2, Grid, ChevronUp, ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,6 +13,9 @@ export default function CatalogFlipbook() {
   const [currentPage, setCurrentPage] = useState(0); // 0, 2, 4, 6... (double-page spreads)
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipDirection, setFlipDirection] = useState<"next" | "prev">("next");
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [showThumbnails, setShowThumbnails] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const catalogPages = Array.from({ length: 57 }, (_, i) => ({
     type: "image",
@@ -22,8 +26,25 @@ export default function CatalogFlipbook() {
 
   const totalPageSets = Math.ceil(catalogPages.length / 2);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (zoomedImage) {
+        if (e.key === "Escape") setZoomedImage(null);
+        return;
+      }
+      if (e.key === "ArrowRight") {
+        nextPage();
+      } else if (e.key === "ArrowLeft") {
+        prevPage();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentPage, zoomedImage]);
+
   const nextPage = () => {
-    if (currentPage < (totalPageSets - 1) * 2) {
+    if (currentPage < (totalPageSets - 1) * 2 && !isFlipping) {
       setFlipDirection("next");
       setIsFlipping(true);
       setTimeout(() => {
@@ -34,7 +55,7 @@ export default function CatalogFlipbook() {
   };
 
   const prevPage = () => {
-    if (currentPage > 0) {
+    if (currentPage > 0 && !isFlipping) {
       setFlipDirection("prev");
       setIsFlipping(true);
       setTimeout(() => {
@@ -44,240 +65,141 @@ export default function CatalogFlipbook() {
     }
   };
 
+  const jumpToPageSet = (index: number) => {
+    // Ensure index is even
+    const target = index % 2 === 0 ? index : index - 1;
+    if (target >= 0 && target < catalogPages.length) {
+      setFlipDirection(target > currentPage ? "next" : "prev");
+      setIsFlipping(true);
+      setTimeout(() => {
+        setCurrentPage(target);
+        setIsFlipping(false);
+      }, 300);
+    }
+  };
+
   const pageSpreadVariants = {
     initial: (dir: "next" | "prev") => ({
-      rotateY: dir === "next" ? 45 : -45,
+      rotateY: dir === "next" ? 85 : -85,
+      transformOrigin: dir === "next" ? "left center" : "right center",
       opacity: 0,
     }),
     animate: {
       rotateY: 0,
       opacity: 1,
-      transition: { duration: 0.4, ease: "easeOut" as const }
+      transition: { duration: 0.5, ease: "easeOut" as const }
     },
     exit: (dir: "next" | "prev") => ({
-      rotateY: dir === "next" ? -45 : 45,
+      rotateY: dir === "next" ? -85 : 85,
+      transformOrigin: dir === "next" ? "right center" : "left center",
       opacity: 0,
-      transition: { duration: 0.3, ease: "easeIn" as const }
+      transition: { duration: 0.4, ease: "easeIn" as const }
     })
   };
 
-  const renderPageContent = (page: any) => {
-    if (!page) return null;
-
-    switch (page.type) {
-      case "image":
-        return (
-          <div className="h-full w-full select-none relative bg-white flex items-center justify-center overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src={page.src} 
-              alt={`Catalog Page ${page.pageNumber}`} 
-              className="w-full h-full object-contain"
-            />
-            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-teal-deep/40 bg-white/80 backdrop-blur-sm border border-teal-deep/5 px-3 py-1 rounded-full">
-              Page {page.pageNumber} / 57
-            </span>
-          </div>
-        );
-      case "cover":
-        return (
-          <div className="h-full flex flex-col justify-between p-10 select-none relative overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#022423_1px,transparent_1px)] [background-size:16px_16px]" />
-            <div className="flex justify-between items-center relative z-10">
-              <span className="text-[9px] font-black uppercase tracking-widest text-saffron bg-saffron/10 px-3 py-1.5 rounded-full border border-saffron/20">
-                {page.description}
-              </span>
-              <BookOpen className="w-5 h-5 text-teal-deep/30" />
-            </div>
-
-            <div className="space-y-6 text-left relative z-10 my-auto">
-              <span className="text-xs font-bold text-rani-pink tracking-widest uppercase">The Box Story</span>
-              <h2 className="font-heading text-3xl sm:text-4xl font-black text-teal-deep leading-tight">
-                {page.subtitle}
-              </h2>
-              <div className="w-16 h-1 bg-saffron rounded-full" />
-              <p className="text-[11px] text-teal-deep/70 max-w-xs font-light leading-relaxed">
-                {page.tagline}
-              </p>
-            </div>
-
-            <div className="text-[9px] font-mono text-teal-deep/30 tracking-widest text-left">
-              © 2026 THE BOX STORY STUDY
-            </div>
-          </div>
-        );
-
-      case "editorial":
-        return (
-          <div className="h-full flex flex-col justify-between p-10 select-none">
-            <div className="space-y-6">
-              <h3 className="font-heading text-xl font-black text-teal-deep text-left">{page.title}</h3>
-              {page.image && (
-                <div className="w-full h-40 rounded-2xl overflow-hidden border border-teal-deep/5 shadow-sm">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={page.image} alt={page.title} className="w-full h-full object-cover" />
-                </div>
-              )}
-              <p className="text-xs text-teal-deep/80 leading-relaxed font-light text-left">
-                {page.content}
-              </p>
-            </div>
-            {page.pageNumber && (
-              <span className="text-[10px] font-mono text-teal-deep/40 text-center block">Page {page.pageNumber}</span>
-            )}
-          </div>
-        );
-
-      case "product":
-        return (
-          <div className="h-full flex flex-col justify-between p-10 select-none bg-white">
-            <div className="space-y-6">
-              <div className="flex justify-between items-start">
-                <span className="text-[9px] uppercase font-black text-rani-pink bg-rani-pink/5 px-2.5 py-1 rounded-full border border-rani-pink/10">
-                  {page.category}
-                </span>
-                <span className="font-heading font-black text-teal-deep text-lg">{page.price}</span>
-              </div>
-
-              {page.image && (
-                <div className="w-full h-40 rounded-2xl overflow-hidden border border-teal-deep/5 shadow-sm">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={page.image} alt={page.name} className="w-full h-full object-cover" />
-                </div>
-              )}
-
-              <div className="space-y-2 text-left">
-                <h4 className="font-heading text-base font-black text-teal-deep">{page.name}</h4>
-                <p className="text-[11px] text-teal-deep/70 leading-relaxed font-light">
-                  {page.description}
-                </p>
-              </div>
-            </div>
-            {page.pageNumber && (
-              <span className="text-[10px] font-mono text-teal-deep/40 text-center block">Page {page.pageNumber}</span>
-            )}
-          </div>
-        );
-
-      case "portal":
-        return (
-          <div className="h-full flex flex-col justify-between p-10 select-none">
-            <div className="space-y-6">
-              <h3 className="font-heading text-xl font-black text-teal-deep text-left">{page.title}</h3>
-              {page.image && (
-                <div className="w-full h-40 rounded-2xl overflow-hidden border border-teal-deep/5 shadow-sm">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={page.image} alt={page.title} className="w-full h-full object-cover" />
-                </div>
-              )}
-              <p className="text-xs text-teal-deep/80 leading-relaxed font-light text-left">
-                {page.content}
-              </p>
-            </div>
-            {page.pageNumber && (
-              <span className="text-[10px] font-mono text-teal-deep/40 text-center block">Page {page.pageNumber}</span>
-            )}
-          </div>
-        );
-
-      case "stats":
-        return (
-          <div className="h-full flex flex-col justify-between p-10 select-none bg-white">
-            <div className="space-y-8 text-left">
-              <div className="space-y-2">
-                <h3 className="font-heading text-xl font-black text-teal-deep">{page.title}</h3>
-                <p className="text-[11px] text-teal-deep/60 leading-relaxed font-light">
-                  {page.desc}
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {page.stats?.map((stat: any, i: number) => (
-                  <div key={i} className="flex justify-between items-center border-b border-teal-deep/5 pb-2">
-                    <span className="text-xs text-teal-deep/60 font-semibold">{stat.label}</span>
-                    <span className="font-heading font-black text-saffron text-base">{stat.num}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {page.pageNumber && (
-              <span className="text-[10px] font-mono text-teal-deep/40 text-center block">Page {page.pageNumber}</span>
-            )}
-          </div>
-        );
-
-      case "backcover":
-        return (
-          <div className="h-full flex flex-col justify-between p-10 select-none text-left">
-            <div className="space-y-2">
-              <span className="text-xs font-bold text-rani-pink tracking-wider block">Submit Brief</span>
-              <h3 className="font-heading text-2xl font-black text-teal-deep leading-tight">Scale Gifting Campaigns</h3>
-              <p className="text-[11px] text-teal-deep/70 font-light leading-relaxed">
-                {page.tagline}
-              </p>
-            </div>
-
-            <div className="space-y-4 bg-teal-deep/5 p-4 rounded-2xl border border-teal-deep/10">
-              <div className="flex items-center space-x-2 text-xs text-teal-deep/80 font-bold">
-                <MessageSquare className="w-4 h-4 text-rani-pink" />
-                <span>{page.contact}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-xs text-teal-deep/80 font-bold">
-                <Phone className="w-4 h-4 text-saffron" />
-                <span>{page.whatsapp}</span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Link 
-                href="/corporate#brief-form"
-                className="w-full py-2.5 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl text-center font-bold text-xs uppercase shadow block"
-              >
-                Inquire Now
-              </Link>
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
+  const renderPageContent = (page: any, isRight: boolean) => {
+    if (!page) {
+      // Empty page representing the back cover template or empty page
+      return (
+        <div className="h-full w-full bg-[#FCFAF2] select-none flex flex-col items-center justify-center border-l border-teal-deep/5">
+          <BookOpen className="w-8 h-8 text-teal-deep/20 animate-pulse mb-2" />
+          <span className="text-[10px] uppercase font-bold tracking-widest text-teal-deep/30">End of Catalogue</span>
+        </div>
+      );
     }
+
+    return (
+      <div 
+        onClick={() => setZoomedImage(page.src)}
+        className="h-full w-full select-none relative bg-white flex items-center justify-center overflow-hidden cursor-zoom-in group"
+      >
+        {/* Full Page image layout */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img 
+          src={page.src} 
+          alt={`Catalog Page ${page.pageNumber}`} 
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.01]"
+        />
+
+        {/* Hover zoom icon badge */}
+        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-teal-deep/75 backdrop-blur-sm p-2 rounded-xl text-white shadow">
+          <Maximize2 className="w-3.5 h-3.5" />
+        </div>
+
+        {/* Tactile page flip indicator */}
+        <div className={`absolute inset-y-0 w-8 pointer-events-none opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-r ${
+          isRight 
+            ? "right-0 from-transparent to-teal-deep/60" 
+            : "left-0 from-teal-deep/60 to-transparent"
+        }`} />
+
+        <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-teal-deep/40 bg-[#FCFAF2]/80 backdrop-blur-sm border border-teal-deep/5 px-3 py-1 rounded-full shadow-sm">
+          Page {page.pageNumber} / 57
+        </span>
+      </div>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-16 px-6 flex flex-col items-center justify-between">
+    <div className="min-h-screen bg-[#faf4e7] text-slate-800 py-12 px-6 flex flex-col justify-between items-center transition-colors duration-300 relative overflow-x-hidden">
       
-      {/* Top Header */}
+      {/* Top Navbar Header */}
       <div className="w-full max-w-5xl flex justify-between items-center border-b border-teal-deep/5 pb-4 mb-8">
         <div className="flex items-center space-x-4">
           <Link 
             href="/corporate"
-            className="p-2 bg-white hover:bg-teal-deep/5 border border-teal-deep/15 text-teal-deep rounded-full transition-colors flex items-center justify-center"
+            className="p-2 bg-white hover:bg-teal-deep/5 border border-teal-deep/15 text-teal-deep rounded-full transition-all hover:scale-105 flex items-center justify-center shadow-sm"
             title="Back to Corporate Gifting"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="font-heading text-xl font-bold text-teal-deep">Digital Lookbook</h1>
-            <p className="text-[10px] text-teal-deep/50 uppercase tracking-widest font-black">Interactive Catalogue Edition 2026</p>
+            <h1 className="font-heading text-xl font-black text-teal-deep">Digital Catalog Studio</h1>
+            <p className="text-[9px] text-teal-deep/50 uppercase tracking-widest font-black flex items-center space-x-1">
+              <span>Interactive Canva Edition</span>
+              <Sparkles className="w-3 h-3 text-saffron" />
+            </p>
           </div>
         </div>
 
-        <button 
-          onClick={() => alert("Downloading PDF catalog...")}
-          className="flex items-center space-x-1.5 bg-teal-deep hover:bg-teal-deep/95 text-white px-4 py-2 rounded-xl font-bold text-xs shadow transition-all"
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>Download PDF</span>
-        </button>
+        <div className="flex space-x-2">
+          <button 
+            onClick={() => setShowThumbnails(!showThumbnails)}
+            className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl font-bold text-xs shadow-sm border transition-all ${
+              showThumbnails 
+                ? "bg-saffron border-saffron text-white" 
+                : "bg-white border-teal-deep/15 text-teal-deep hover:bg-teal-deep/5"
+            }`}
+          >
+            <Grid className="w-3.5 h-3.5" />
+            <span>Thumbnails</span>
+          </button>
+          <button 
+            onClick={() => alert("Downloading PDF catalog...")}
+            className="flex items-center space-x-1.5 bg-teal-deep hover:bg-teal-deep/95 text-white px-4 py-2 rounded-xl font-bold text-xs shadow transition-all hover:scale-[1.02]"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Download PDF</span>
+          </button>
+        </div>
       </div>
 
-      {/* Main Flipbook Container */}
-      <div className="w-full max-w-5xl flex justify-center items-center my-auto perspective-[1200px]">
-        <div className="grid grid-cols-1 md:grid-cols-2 bg-[#FAF4E8] rounded-[32px] overflow-hidden shadow-2xl border-4 border-gold/40 relative aspect-[14/9] w-full min-h-[480px]">
+      {/* Main Flipbook Box */}
+      <div className="w-full max-w-5xl flex justify-center items-center my-auto perspective-[1800px]">
+        {/* Prev Hover edge target */}
+        <button 
+          onClick={prevPage}
+          disabled={currentPage === 0}
+          className="hidden md:flex absolute left-4 w-12 h-4/5 items-center justify-center bg-teal-deep/0 hover:bg-teal-deep/5 text-teal-deep/20 hover:text-teal-deep rounded-3xl transition-all z-20 group disabled:opacity-0 disabled:pointer-events-none"
+        >
+          <ArrowLeft className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform" />
+        </button>
+
+        {/* Double Page Binder */}
+        <div className="grid grid-cols-1 md:grid-cols-2 bg-[#FCFAF2] rounded-[36px] overflow-hidden shadow-2xl border-4 border-gold/30 relative aspect-[14/9] w-full min-h-[480px]">
           
           <AnimatePresence custom={flipDirection} mode="wait">
-            {/* Left Page Page Spread */}
+            {/* Left Page (Even) */}
             <motion.div
               key={`left-${currentPage}`}
               custom={flipDirection}
@@ -285,14 +207,12 @@ export default function CatalogFlipbook() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className={`border-r border-teal-deep/10 shadow-[inset_-10px_0_20px_rgba(2,36,35,0.02)] h-full overflow-hidden ${
-                catalogPages[currentPage]?.bg || "bg-white"
-              }`}
+              className="border-r border-teal-deep/10 shadow-[inset_-12px_0_24px_rgba(2,36,35,0.03)] h-full overflow-hidden bg-white relative"
             >
-              {renderPageContent(catalogPages[currentPage])}
+              {renderPageContent(catalogPages[currentPage], false)}
             </motion.div>
 
-            {/* Right Page Page Spread */}
+            {/* Right Page (Odd) */}
             <motion.div
               key={`right-${currentPage}`}
               custom={flipDirection}
@@ -300,54 +220,152 @@ export default function CatalogFlipbook() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className={`shadow-[inset_10px_0_20px_rgba(2,36,35,0.02)] h-full overflow-hidden ${
-                catalogPages[currentPage + 1]?.bg || "bg-[#FCFAF2]"
-              }`}
+              className="shadow-[inset_12px_0_24px_rgba(2,36,35,0.03)] h-full overflow-hidden bg-white relative"
             >
-              {renderPageContent(catalogPages[currentPage + 1])}
+              {renderPageContent(catalogPages[currentPage + 1], true)}
             </motion.div>
           </AnimatePresence>
 
-          {/* Book Spine Center shadow overlay */}
-          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-4 bg-gradient-to-r from-teal-deep/10 via-teal-deep/20 to-teal-deep/10 pointer-events-none" />
+          {/* Binding Spine shadow overlay */}
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-5 bg-gradient-to-r from-teal-deep/5 via-teal-deep/15 to-teal-deep/5 pointer-events-none z-10" />
         </div>
+
+        {/* Next Hover edge target */}
+        <button 
+          onClick={nextPage}
+          disabled={currentPage >= (totalPageSets - 1) * 2}
+          className="hidden md:flex absolute right-4 w-12 h-4/5 items-center justify-center bg-teal-deep/0 hover:bg-teal-deep/5 text-teal-deep/20 hover:text-teal-deep rounded-3xl transition-all z-20 group disabled:opacity-0 disabled:pointer-events-none"
+        >
+          <ArrowRight className="w-6 h-6 transform group-hover:translate-x-1 transition-transform" />
+        </button>
       </div>
 
-      {/* Bottom Controls */}
-      <div className="w-full max-w-lg mt-12 flex flex-col items-center space-y-4">
+      {/* Bottom Controls panel */}
+      <div className="w-full max-w-lg mt-8 flex flex-col items-center space-y-4">
         <div className="flex justify-between items-center w-full">
           <button
             onClick={prevPage}
             disabled={currentPage === 0 || isFlipping}
-            className="flex items-center space-x-1.5 px-4 py-2.5 bg-white border border-teal-deep/15 hover:border-teal-deep/35 rounded-xl disabled:opacity-40 font-bold text-xs text-teal-deep transition-all shadow-sm"
+            className="flex items-center space-x-1 px-4 py-2.5 bg-white border border-teal-deep/15 hover:border-teal-deep/35 text-teal-deep rounded-xl disabled:opacity-40 font-bold text-xs transition-all shadow-sm"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Prev Page</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Prev</span>
           </button>
 
-          <span className="text-xs font-mono font-bold text-teal-deep bg-teal-deep/5 px-4 py-1.5 rounded-full">
-            Pages {currentPage + 1} - {currentPage + 2} of {catalogPages.length}
+          <span className="text-xs font-mono font-bold text-teal-deep bg-teal-deep/5 px-4 py-1.5 rounded-full shadow-sm">
+            Spread {Math.floor(currentPage / 2) + 1} / {totalPageSets} (Pages {currentPage + 1}-{Math.min(currentPage + 2, catalogPages.length)})
           </span>
 
           <button
             onClick={nextPage}
             disabled={currentPage >= (totalPageSets - 1) * 2 || isFlipping}
-            className="flex items-center space-x-1.5 px-4 py-2.5 bg-white border border-teal-deep/15 hover:border-teal-deep/35 rounded-xl disabled:opacity-40 font-bold text-xs text-teal-deep transition-all shadow-sm"
+            className="flex items-center space-x-1 px-4 py-2.5 bg-white border border-teal-deep/15 hover:border-teal-deep/35 text-teal-deep rounded-xl disabled:opacity-40 font-bold text-xs transition-all shadow-sm"
           >
-            <span>Next Page</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Next</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Progress bar indicator */}
-        <div className="w-full h-1.5 bg-teal-deep/5 rounded-full overflow-hidden">
+        {/* Progress Timeline slider */}
+        <div className="w-full h-1.5 bg-teal-deep/5 rounded-full overflow-hidden relative cursor-pointer group">
           <motion.div 
             className="h-full bg-saffron"
             animate={{ width: `${((currentPage + 2) / catalogPages.length) * 100}%` }}
             transition={{ duration: 0.3 }}
           />
         </div>
+        <span className="text-[10px] text-teal-deep/40 font-bold uppercase tracking-wider">Tip: Use Left / Right Keyboard Arrow Keys to flip pages</span>
       </div>
+
+      {/* Interactive Collapsible Thumbnails Drawer */}
+      <AnimatePresence>
+        {showThumbnails && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="w-full max-w-5xl mt-6 border-t border-teal-deep/5 pt-6 overflow-hidden"
+          >
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-xs font-bold text-teal-deep uppercase tracking-widest">Jump to page layout</span>
+              <button 
+                onClick={() => setShowThumbnails(false)} 
+                className="text-[10px] font-bold text-rani-pink hover:underline"
+              >
+                Close
+              </button>
+            </div>
+            
+            <div 
+              ref={scrollRef}
+              className="flex space-x-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-teal-deep scrollbar-track-background"
+            >
+              {catalogPages.map((page, idx) => {
+                const isActive = currentPage === idx || currentPage + 1 === idx;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => jumpToPageSet(idx)}
+                    className={`flex-shrink-0 w-20 aspect-[1/1.4] rounded-lg overflow-hidden border-2 transition-all relative group ${
+                      isActive 
+                        ? "border-saffron shadow-md scale-95" 
+                        : "border-teal-deep/5 hover:border-teal-deep/20"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src={page.src} 
+                      alt={`Thumb ${idx + 1}`} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                    <div className="absolute bottom-1 right-1 bg-teal-deep/80 text-[8px] font-mono text-white px-1.5 py-0.5 rounded">
+                      {idx + 1}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* High-Resolution Zoom Lightbox overlay */}
+      <AnimatePresence>
+        {zoomedImage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setZoomedImage(null)}
+              className="absolute inset-0 bg-teal-deep/90 backdrop-blur-md"
+            />
+            {/* Close button */}
+            <button 
+              onClick={() => setZoomedImage(null)}
+              className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-20"
+              title="Close Zoom"
+            >
+              <Minimize2 className="w-5 h-5" />
+            </button>
+            {/* Zoom Image */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative max-w-4xl max-h-[90vh] z-10"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src={zoomedImage} 
+                alt="Zoomed Catalogue Page" 
+                className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
