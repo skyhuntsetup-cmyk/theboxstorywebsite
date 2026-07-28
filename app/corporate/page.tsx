@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { 
   Briefcase, Building, Gift, CheckCircle2, ChevronRight, MessageSquare, 
-  Sparkles, Users, Award, Percent, Globe, Laptop, HelpCircle 
+  Sparkles, Users, Award, Percent, Globe, Laptop, HelpCircle, Star, ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -75,6 +76,27 @@ export default function CorporateGifting() {
     },
   ];
 
+  const testimonials = [
+    {
+      quote: "The Box Story's automated claiming portal made our annual employee appreciation campaign completely painless. Employees selected their own diwali diya styles, and tracking was transparent.",
+      author: "Sneha Reddy",
+      role: "VP of People, CRED",
+      rating: 5
+    },
+    {
+      quote: "Excellent customization options! They laser-engraved our brand logo on insulated Stanley cups and shipped them to 200+ clients across India on time. Outstanding support.",
+      author: "Rohan Das",
+      role: "Operations Director, Razorpay",
+      rating: 5
+    },
+    {
+      quote: "Outstanding unboxing experience! Our new hires loved the custom diaries, hoodies, and saffron sweets. The Box Story is our default onboarding kit partner.",
+      author: "Aditi Iyer",
+      role: "HR Lead, Google India",
+      rating: 5
+    }
+  ];
+
   const faqs = [
     {
       q: "What is the Minimum Order Quantity (MOQ) for corporate orders?",
@@ -104,7 +126,7 @@ export default function CorporateGifting() {
               Corporate Gifting <br />
               <span className="text-rani-pink">Reimagined.</span>
             </h1>
-            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            <p className="text-slate-650 text-xs sm:text-sm leading-relaxed">
               Automated address collection, custom swag sourcing, and high-quality rigid hampers built to leave a lasting B2B impression.
             </p>
             <div className="pt-2">
@@ -141,6 +163,47 @@ export default function CorporateGifting() {
           ))}
         </section>
 
+        {/* Exploratory Subpages: Client Panel & Past Work */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white border border-slate-200 rounded-3xl p-8 text-left space-y-4 hover:shadow-md transition-shadow relative overflow-hidden group">
+            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+              Client Portal
+            </span>
+            <h3 className="font-heading text-xl font-black text-slate-900 group-hover:text-rani-pink transition-colors">
+              Employee Claim Panel
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Discover how we build custom unboxing hubs where your team members can enter voucher codes, select sizes, and claim packages.
+            </p>
+            <Link
+              href="/corporate/client-panel"
+              className="inline-flex items-center space-x-1.5 text-xs font-bold text-teal-deep hover:text-saffron transition-colors"
+            >
+              <span>Explore Portal Solutions</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-3xl p-8 text-left space-y-4 hover:shadow-md transition-shadow relative overflow-hidden group">
+            <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/5 border border-saffron/15 px-2.5 py-1 rounded-full inline-block">
+              Portfolio
+            </span>
+            <h3 className="font-heading text-xl font-black text-slate-900 group-hover:text-rani-pink transition-colors">
+              Our Past Work & Case Studies
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Read the case studies behind Google’s tech welcome kits, CRED's Diwali gold-foiled boxes, and heritage weddings favors.
+            </p>
+            <Link
+              href="/corporate/past-work"
+              className="inline-flex items-center space-x-1.5 text-xs font-bold text-teal-deep hover:text-saffron transition-colors"
+            >
+              <span>View Past Work</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </section>
+
         {/* Services & Capabilities */}
         <section className="space-y-12">
           <div className="space-y-3 text-center">
@@ -166,7 +229,7 @@ export default function CorporateGifting() {
         {/* Inquiries Form Section */}
         <section id="brief-form" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm text-left">
           <div className="lg:col-span-5 space-y-6">
-            <span className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="text-xs font-bold text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase tracking-wider">
               Project Brief
             </span>
             <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
@@ -200,7 +263,7 @@ export default function CorporateGifting() {
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-600">Your Name</label>
+                      <label className="text-xs font-bold text-slate-600">Your Name *</label>
                       <input
                         type="text"
                         required
@@ -211,11 +274,11 @@ export default function CorporateGifting() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-600">Company Name</label>
+                      <label className="text-xs font-bold text-slate-600">Company Name *</label>
                       <input
                         type="text"
                         required
-                        placeholder="CRED / TATA"
+                        placeholder="E.g. Google India"
                         value={formData.company}
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-slate-400"
@@ -225,7 +288,7 @@ export default function CorporateGifting() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-600">Work Email</label>
+                      <label className="text-xs font-bold text-slate-600">Work Email *</label>
                       <input
                         type="email"
                         required
@@ -236,7 +299,7 @@ export default function CorporateGifting() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-600">Contact Phone</label>
+                      <label className="text-xs font-bold text-slate-600">Contact Phone *</label>
                       <input
                         type="tel"
                         required
@@ -319,6 +382,42 @@ export default function CorporateGifting() {
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+        </section>
+
+        {/* Testimonials Segment: What Our Corporate Clients Say */}
+        <section className="space-y-10 text-center">
+          <div className="space-y-2">
+            <span className="text-[10px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
+              Reviews & Validation
+            </span>
+            <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">
+              What Our Clients Say
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((t, idx) => (
+              <div key={idx} className="bg-white border border-slate-200 p-8 rounded-3xl text-left flex flex-col justify-between h-72 shadow-sm">
+                <div className="space-y-4">
+                  <div className="flex space-x-1 text-saffron">
+                    {[...Array(t.rating)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-saffron" />
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-600 italic leading-relaxed">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                </div>
+                <div className="border-t border-slate-100 pt-4 flex justify-between items-center mt-auto">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-slate-800">{t.author}</span>
+                    <span className="text-[10px] text-slate-500 font-semibold">{t.role}</span>
+                  </div>
+                  <Building className="w-4 h-4 text-teal-deep/30" />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
