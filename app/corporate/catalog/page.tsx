@@ -21,7 +21,7 @@ export default function CatalogFlipbook() {
     type: "image",
     src: `/images/catalog/page_${i + 1}.png`,
     pageNumber: i + 1,
-    bg: "bg-white"
+    bg: "bg-[#faf4e7]"
   }));
 
   const totalPageSets = Math.ceil(catalogPages.length / 2);
@@ -101,7 +101,7 @@ export default function CatalogFlipbook() {
     if (!page) {
       // Empty page representing the back cover template or empty page
       return (
-        <div className="h-full w-full bg-[#FCFAF2] select-none flex flex-col items-center justify-center border-l border-teal-deep/5">
+        <div className="h-full w-full bg-[#faf4e7] select-none flex flex-col items-center justify-center border-l border-teal-deep/5">
           <BookOpen className="w-8 h-8 text-teal-deep/20 animate-pulse mb-2" />
           <span className="text-[10px] uppercase font-bold tracking-widest text-teal-deep/30">End of Catalogue</span>
         </div>
@@ -111,7 +111,7 @@ export default function CatalogFlipbook() {
     return (
       <div 
         onClick={() => setZoomedImage(page.src)}
-        className="h-full w-full select-none relative bg-white flex items-center justify-center overflow-hidden cursor-zoom-in group"
+        className="h-full w-full select-none relative bg-[#faf4e7] flex items-center justify-center overflow-hidden cursor-zoom-in group"
       >
         {/* Full Page image layout */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -196,7 +196,7 @@ export default function CatalogFlipbook() {
         </button>
 
         {/* Double Page Binder */}
-        <div className="grid grid-cols-1 md:grid-cols-2 bg-[#FCFAF2] rounded-[36px] overflow-hidden shadow-2xl border-4 border-gold/30 relative aspect-[14/9] w-full min-h-[480px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 bg-[#faf4e7] rounded-[36px] overflow-hidden shadow-2xl border-4 border-gold/30 relative aspect-[14/9] w-full min-h-[480px]">
           
           <AnimatePresence custom={flipDirection} mode="wait">
             {/* Left Page (Even) */}
@@ -207,7 +207,7 @@ export default function CatalogFlipbook() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="border-r border-teal-deep/10 shadow-[inset_-12px_0_24px_rgba(2,36,35,0.03)] h-full overflow-hidden bg-white relative"
+              className="border-r border-teal-deep/10 shadow-[inset_-12px_0_24px_rgba(2,36,35,0.03)] h-full overflow-hidden bg-[#faf4e7] relative"
             >
               {renderPageContent(catalogPages[currentPage], false)}
             </motion.div>
@@ -220,7 +220,7 @@ export default function CatalogFlipbook() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="shadow-[inset_12px_0_24px_rgba(2,36,35,0.03)] h-full overflow-hidden bg-white relative"
+              className="shadow-[inset_12px_0_24px_rgba(2,36,35,0.03)] h-full overflow-hidden bg-[#faf4e7] relative"
             >
               {renderPageContent(catalogPages[currentPage + 1], true)}
             </motion.div>
