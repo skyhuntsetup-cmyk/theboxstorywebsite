@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Heart, Sparkles, Users, ShieldCheck } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function About() {
   const values = [

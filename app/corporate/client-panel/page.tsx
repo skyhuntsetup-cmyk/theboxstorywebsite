@@ -2,11 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import { 
-  Laptop, ShieldCheck, Users, Eye, CheckCircle2, 
+import {
+  Laptop, CheckCircle2,
   ArrowRight, Sparkles, Send, Database, BarChart3
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function ClientPanelPage() {
   const steps = [

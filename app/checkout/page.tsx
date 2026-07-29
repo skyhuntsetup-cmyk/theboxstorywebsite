@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useGift } from "../context/GiftContext";
+import { useGift, CartItem } from "../context/GiftContext";
 import { ShieldCheck, CreditCard, Send, MapPin, Sparkles, CheckCircle, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -38,7 +38,7 @@ export default function Checkout() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"none" | "authorizing" | "success">("none");
 
-  const subtotal = cartItems.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce((acc: number, item: CartItem) => acc + item.price * item.quantity, 0);
   const checkoutTotal = recipientSelects && deliveryMode === "magical" ? budgetTier : subtotal;
 
   const triggerConfetti = () => {
@@ -114,8 +114,8 @@ export default function Checkout() {
         alert("Transaction Failed: " + (data.error || "Please review connection settings."));
         setIsProcessingPayment(false);
       }
-    } catch (err: any) {
-      alert("Network Error: " + err.message);
+    } catch (err) {
+      alert("Network Error: " + (err instanceof Error ? err.message : String(err)));
       setIsProcessingPayment(false);
     }
   };
@@ -428,7 +428,7 @@ export default function Checkout() {
               {/* Items List */}
               {!recipientSelects ? (
                 <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
-                  {cartItems.map((item: any) => (
+                  {cartItems.map((item: CartItem) => (
                     <div key={item.id} className="flex justify-between items-center text-xs">
                       <span className="font-semibold truncate max-w-[200px]">
                         {item.name} <span className="text-white/55">x{item.quantity}</span>

@@ -1,9 +1,22 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useGift } from "../context/GiftContext";
+import { useGift, BoxItem } from "../context/GiftContext";
 import { Sparkles, Trash2, Box, ShoppingBag, Plus, Minus, Check } from "lucide-react";
 import { supabase } from "../../lib/supabase";
+
+interface BazaarListItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+}
+
+interface BoxStyleListItem {
+  name: string;
+  color: string;
+}
 
 export default function BuildBox() {
   const {
@@ -19,8 +32,8 @@ export default function BuildBox() {
   const [selectedRibbonStyle, setSelectedRibbonStyle] = useState<string>("Premium Gold Satin");
   const [bazaarFilter, setBazaarFilter] = useState<string>("All");
 
-  const [bazaarList, setBazaarList] = useState<any[]>([]);
-  const [boxStyleList, setBoxStyleList] = useState<any[]>([]);
+  const [bazaarList, setBazaarList] = useState<BazaarListItem[]>([]);
+  const [boxStyleList, setBoxStyleList] = useState<BoxStyleListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -84,11 +97,11 @@ export default function BuildBox() {
   );
 
   const boxPrice = 250; 
-  const hamperItemsTotal = buildABoxItems.reduce((acc: number, item: any) => acc + item.price, 0);
+  const hamperItemsTotal = buildABoxItems.reduce((acc: number, item: BoxItem) => acc + item.price, 0);
   const totalHamperPrice = hamperItemsTotal + boxPrice;
   const isFull = buildABoxItems.length >= boxCapacity;
 
-  const handleAddItem = (item: any) => {
+  const handleAddItem = (item: BoxItem) => {
     addToBox(item);
   };
 
@@ -299,7 +312,7 @@ export default function BuildBox() {
                     <span className="text-[11px]">No treats placed in the box yet.</span>
                   </div>
                 ) : (
-                  buildABoxItems.map((item: any, idx: number) => (
+                  buildABoxItems.map((item: BoxItem, idx: number) => (
                     <div
                       key={idx}
                       className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center justify-between"

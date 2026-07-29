@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  Briefcase, Building, Gift, CheckCircle2, ChevronRight, MessageSquare, 
-  Sparkles, Users, Award, Percent, Globe, Laptop, HelpCircle, Star, ArrowRight
+import {
+  Building, Gift, CheckCircle2, ChevronRight,
+  Globe, Laptop, Star, ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -41,8 +41,8 @@ export default function CorporateGifting() {
       } else {
         alert("Submission Failed: " + (data.error || "Please verify database connection."));
       }
-    } catch (err: any) {
-      alert("Network Error: " + err.message);
+    } catch (err) {
+      alert("Network Error: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setIsSubmitting(false);
     }
@@ -192,7 +192,7 @@ export default function CorporateGifting() {
               Our Past Work & Case Studies
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Read the case studies behind Google’s tech welcome kits, CRED's Diwali gold-foiled boxes, and heritage weddings favors.
+              Read the case studies behind Google&rsquo;s tech welcome kits, CRED&apos;s Diwali gold-foiled boxes, and heritage weddings favors.
             </p>
             <Link
               href="/corporate/past-work"

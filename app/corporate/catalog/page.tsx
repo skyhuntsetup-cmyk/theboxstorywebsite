@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { 
-  ArrowLeft, Sparkles, BookOpen, Download, Search, CheckCircle,
-  ChevronRight, Maximize2, Minimize2, ZoomIn, ZoomOut, Compass
+import {
+  ArrowLeft, Sparkles, Download, Search,
+  ChevronRight, Maximize2, Minimize2, ZoomIn, ZoomOut
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import catalogConfig from "../../../data/catalog-config.json";
@@ -77,7 +77,7 @@ export default function CleanCatalogReader() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activePage, zoomedImage]);
+  }, [activePage, zoomedImage, totalPages]);
 
   // Filtered sections based on query
   const filteredSections = sections.filter(sec => 

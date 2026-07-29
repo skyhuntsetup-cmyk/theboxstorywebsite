@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { curatedProducts, Product } from "../../data/products";
 import { Sparkles, Send, Bot, User, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +23,7 @@ export default function GiftGenie() {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const nextId = useRef(0);
 
   const presets = [
     "Corporate gifts for my team under ₹2500",
@@ -34,7 +35,7 @@ export default function GiftGenie() {
     if (!text.trim()) return;
 
     const userMsg: ChatMessage = {
-      id: `user-${Date.now()}`,
+      id: `user-${nextId.current++}`,
       sender: "user",
       text,
     };
@@ -70,7 +71,7 @@ export default function GiftGenie() {
       }
 
       const botMsg: ChatMessage = {
-        id: `bot-${Date.now()}`,
+        id: `bot-${nextId.current++}`,
         sender: "bot",
         text: `Here are the matching gift hamper combinations I found inside the catalog:`,
         recommendations: filtered.slice(0, 3),

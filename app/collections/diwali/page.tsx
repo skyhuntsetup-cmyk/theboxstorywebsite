@@ -2,15 +2,32 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  Sparkles, Gift, ArrowRight, X, ArrowLeft, BookOpen, 
-  MapPin, Clock, Star, Calendar, CheckCircle2, ChevronRight, HelpCircle
+import {
+  Sparkles, ArrowRight, X, ArrowLeft, BookOpen,
+  CheckCircle2, ChevronRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
+interface ProductVariant {
+  name: string;
+  price: number;
+}
+
+interface DiwaliProduct {
+  id: string;
+  name: string;
+  price: number;
+  tagline: string;
+  description: string;
+  detailPage: number;
+  photoPages: number[];
+  inclusions: string[];
+  variants: ProductVariant[];
+}
+
 export default function DiwaliCollection() {
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<DiwaliProduct | null>(null);
   const [activePhotoIdx, setActivePhotoIdx] = useState<number>(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
@@ -26,7 +43,7 @@ export default function DiwaliCollection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const diwaliProducts = [
+  const diwaliProducts: DiwaliProduct[] = [
     {
       id: "diwali-1",
       name: "Swarna Kalash",
@@ -541,8 +558,8 @@ export default function DiwaliCollection() {
       } else {
         alert("Failed to submit inquiry: " + (data.error || "Please try again."));
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setIsSubmitting(false);
     }
@@ -712,7 +729,7 @@ export default function DiwaliCollection() {
                   {/* Dot indicators */}
                   {selectedProduct.photoPages.length > 1 && (
                     <div className="flex space-x-1.5 mt-4">
-                      {selectedProduct.photoPages.map((_: any, idx: number) => (
+                      {selectedProduct.photoPages.map((_: number, idx: number) => (
                         <button
                           key={idx}
                           onClick={() => setActivePhotoIdx(idx)}
@@ -762,7 +779,7 @@ export default function DiwaliCollection() {
                     <div className="space-y-2">
                       <span className="text-[9px] font-black text-teal-deep/45 uppercase tracking-widest">Pricing & Weights</span>
                       <div className="space-y-2 bg-[#FCFAF2]/60 border border-teal-deep/5 p-4 rounded-xl">
-                        {selectedProduct.variants.map((v: any, idx: number) => (
+                        {selectedProduct.variants.map((v: ProductVariant, idx: number) => (
                           <div key={idx} className="flex justify-between items-center text-xs border-b border-teal-deep/5 pb-1.5 last:border-b-0 last:pb-0">
                             <span className="font-bold text-teal-deep/80">{v.name}</span>
                             <span className="font-heading font-black text-saffron font-mono">₹{v.price}</span>
@@ -846,7 +863,7 @@ export default function DiwaliCollection() {
                           <div className="text-center py-4 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-2">
                             <span className="font-bold text-xs text-emerald-800 block">Inquiry Submitted!</span>
                             <span className="text-[10px] text-emerald-700 leading-relaxed block max-w-xs mx-auto px-4">
-                              We have registered your request for "{selectedProduct.name}". Our Diwali consultant will WhatsApp you shortly!
+                              We have registered your request for &quot;{selectedProduct.name}&quot;. Our Diwali consultant will WhatsApp you shortly!
                             </span>
                           </div>
                         )}

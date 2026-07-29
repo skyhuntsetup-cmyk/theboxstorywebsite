@@ -1,27 +1,39 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Sparkles, Gift, MapPin, CheckCircle, Truck, Heart, Loader, Plus, Minus, Check } from "lucide-react";
+import { Sparkles, Gift, MapPin, CheckCircle, Truck, Heart, Loader, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { supabase } from "../../lib/supabase";
+import type { Order, OrderItem } from "../../lib/types";
+
+interface SelectableItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  quantity?: number;
+}
 
 function ClaimGiftContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id");
 
-  const [order, setOrder] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(!!orderId);
   const [errorMsg, setErrorMsg] = useState("");
+  const missingIdError = orderId ? "" : "No gift identifier found in the URL. Please verify your claim link.";
 
   const [isOpen, setIsOpen] = useState(false);
   const [isClaimed, setIsClaimed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Customizer state if recipientSelects is true
-  const [bazaarList, setBazaarList] = useState<any[]>([]);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [bazaarList, setBazaarList] = useState<SelectableItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<SelectableItem[]>([]);
 
   const [addressInfo, setAddressInfo] = useState({
     name: "",
@@ -33,11 +45,7 @@ function ClaimGiftContent() {
   });
 
   useEffect(() => {
-    if (!orderId) {
-      setErrorMsg("No gift identifier found in the URL. Please verify your claim link.");
-      setIsLoading(false);
-      return;
-    }
+    if (!orderId) return;
 
     const fetchOrder = async () => {
       try {
@@ -56,7 +64,7 @@ function ClaimGiftContent() {
             setIsOpen(true);
           }
         }
-      } catch (err: any) {
+      } catch {
         setErrorMsg("Failed to query gift coordinates.");
       } finally {
         setIsLoading(false);
@@ -97,7 +105,7 @@ function ClaimGiftContent() {
   const budgetLimit = order?.magical_link_details?.budgetTier || 2500;
   const maxItems = budgetLimit <= 1500 ? 3 : budgetLimit <= 2500 ? 4 : 5;
 
-  const handleSelectItem = (item: any) => {
+  const handleSelectItem = (item: SelectableItem) => {
     const isAlreadySelected = selectedItems.some(x => x.id === item.id);
     if (isAlreadySelected) {
       setSelectedItems(selectedItems.filter(x => x.id !== item.id));
@@ -149,7 +157,11 @@ function ClaimGiftContent() {
     setIsSubmitting(true);
 
     try {
-      const updatePayload: any = {
+      const updatePayload: {
+        status: string;
+        shipping_address: typeof addressInfo;
+        items?: SelectableItem[];
+      } = {
         status: "claimed",
         shipping_address: addressInfo,
       };
@@ -169,8 +181,8 @@ function ClaimGiftContent() {
         setIsClaimed(true);
         triggerConfetti();
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setIsSubmitting(false);
     }
@@ -185,18 +197,18 @@ function ClaimGiftContent() {
     );
   }
 
-  if (errorMsg) {
+  if (errorMsg || missingIdError) {
     return (
       <div className="max-w-md mx-auto text-center space-y-4 bg-white border border-slate-200 p-8 rounded-3xl shadow-sm">
         <Gift className="w-12 h-12 text-slate-300 mx-auto" />
         <h2 className="font-heading text-xl font-bold text-saffron">Invalid Gift Link</h2>
-        <p className="text-xs text-slate-500 leading-relaxed">{errorMsg}</p>
-        <a
+        <p className="text-xs text-slate-500 leading-relaxed">{errorMsg || missingIdError}</p>
+        <Link
           href="/"
           className="inline-block text-xs font-bold bg-[#FAF9F5] border border-slate-200 text-teal-deep px-6 py-3 rounded-full hover:bg-gold-light transition-colors"
         >
           Go to Home
-        </a>
+        </Link>
       </div>
     );
   }
@@ -339,7 +351,7 @@ function ClaimGiftContent() {
                   Hamper Contents
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {boxItems.map((item: any, index: number) => (
+                  {boxItems.map((item: OrderItem | SelectableItem, index: number) => (
                     <div
                       key={index}
                       className="bg-white border border-slate-200/80 p-4 rounded-2xl flex flex-col items-center justify-between text-center space-y-3 shadow-sm"
@@ -356,7 +368,7 @@ function ClaimGiftContent() {
                         <span className="text-xs font-semibold leading-tight block text-slate-800">
                           {item.name}
                         </span>
-                        {item.isCustomBox && (
+                        {"isCustomBox" in item && item.isCustomBox && (
                           <span className="text-[9px] text-gold font-bold">Custom Build</span>
                         )}
                       </div>
@@ -494,7 +506,7 @@ function ClaimGiftContent() {
             <div className="space-y-2 max-w-sm mx-auto bg-slate-50 p-4 rounded-2xl border border-slate-200">
               <span className="text-[10px] font-bold text-slate-450 uppercase block mb-1">Your Custom Selection</span>
               <div className="flex flex-wrap gap-1 justify-center">
-                {boxItems.map((item: any, idx: number) => (
+                {boxItems.map((item: OrderItem | SelectableItem, idx: number) => (
                   <span key={idx} className="bg-teal-deep/10 text-teal-deep px-2 py-0.5 rounded text-[10px] font-semibold">
                     {item.name}
                   </span>

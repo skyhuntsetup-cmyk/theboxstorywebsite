@@ -38,8 +38,8 @@ export default function WeddingGifting() {
       } else {
         alert("Submission Failed: " + (data.error || "Please verify database connection."));
       }
-    } catch (err: any) {
-      alert("Network Error: " + err.message);
+    } catch (err) {
+      alert("Network Error: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setIsSubmitting(false);
     }

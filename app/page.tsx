@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { curatedProducts } from "../data/products";
 import { ProductCard } from "../components/ProductCard";
-import { 
-  Sparkles, Gift, ArrowRight, CheckCircle2, ChevronRight, Zap, Star, 
-  Heart, Box, Building2, Eye, MessageSquare, Send, Users
+import {
+  Sparkles, Gift, ArrowRight, CheckCircle2, ChevronRight, Zap, Star,
+  Heart
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -29,7 +29,6 @@ const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function Home() {
-  const trending = curatedProducts.slice(0, 3);
   const bestsellers = curatedProducts.slice(0, 4); // Gifts that stand out
   const [activeTab, setActiveTab] = useState<"occasion" | "recipient">("occasion");
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -76,8 +75,8 @@ export default function Home() {
       } else {
         alert("Failed to submit inquiry: " + (data.error || "Please check connection."));
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setIsSubmitting(false);
     }

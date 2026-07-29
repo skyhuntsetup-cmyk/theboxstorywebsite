@@ -44,11 +44,15 @@ export const GiftProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isCartOpen, setCartOpen] = useState(false);
   const boxCapacity = 5;
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage on mount. This can only run client-side
+  // (localStorage isn't available during SSR), so hydrating cart state via
+  // effect + setState is intentional here, not an accidental render-time
+  // side effect.
   useEffect(() => {
     const savedCart = localStorage.getItem("tbs_cart");
     if (savedCart) {
       try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrating from localStorage, only possible post-mount
         setCartItems(JSON.parse(savedCart));
       } catch (e) {
         console.error("Failed to parse cart items", e);

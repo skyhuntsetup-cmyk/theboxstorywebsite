@@ -3,20 +3,24 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { 
-  BarChart3, ShoppingBag, MessageSquare, Package, Loader, 
-  CheckCircle, ArrowRight, Truck, Mail, Phone, Calendar, Search, RefreshCw,
-  Eye, EyeOff, Plus, Trash2, Box as BoxIcon, ExternalLink, Edit3, Globe, Tag
+  BarChart3, ShoppingBag, MessageSquare, Package, Loader,
+  CheckCircle, Mail, Phone, Calendar, Search, RefreshCw,
+  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem } from "../../lib/types";
+import type { Product } from "../../data/products";
+
+type AdminTab = "orders" | "inquiries" | "products" | "bazaar" | "inventory";
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<"orders" | "inquiries" | "products" | "bazaar" | "inventory">("orders");
-  const [orders, setOrders] = useState<any[]>([]);
-  const [inquiries, setInquiries] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [bazaarItems, setBazaarItems] = useState<any[]>([]);
-  const [boxStyles, setBoxStyles] = useState<any[]>([]);
-  const [offlineInventory, setOfflineInventory] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<AdminTab>("orders");
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [bazaarItems, setBazaarItems] = useState<BazaarItemRow[]>([]);
+  const [boxStyles, setBoxStyles] = useState<BoxStyleRow[]>([]);
+  const [offlineInventory, setOfflineInventory] = useState<OfflineInventoryItem[]>([]);
   
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,10 +51,10 @@ export default function AdminDashboard() {
 
   // Editing state for inventory
   const [editingInventoryCode, setEditingInventoryCode] = useState<string | null>(null);
-  const [editingInventory, setEditingInventory] = useState<any>(null);
+  const [editingInventory, setEditingInventory] = useState<OfflineInventoryItem | null>(null);
 
   // Sync to website modal state
-  const [syncingItem, setSyncingItem] = useState<any | null>(null);
+  const [syncingItem, setSyncingItem] = useState<OfflineInventoryItem | null>(null);
   const [syncCategory, setSyncCategory] = useState<string>("Diwali"); // Default for products
   const [syncBazaarCategory, setSyncBazaarCategory] = useState<"Sweets" | "Decor" | "Wellness" | "Gourmet">("Sweets");
 
@@ -144,8 +148,8 @@ export default function AdminDashboard() {
       } else {
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -161,8 +165,8 @@ export default function AdminDashboard() {
       } else {
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -178,8 +182,8 @@ export default function AdminDashboard() {
       } else {
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -206,8 +210,8 @@ export default function AdminDashboard() {
         setNewBazaar({ name: "", price: "", image: "", category: "Sweets" });
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -232,8 +236,8 @@ export default function AdminDashboard() {
         setNewBox({ name: "", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" });
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -271,8 +275,8 @@ export default function AdminDashboard() {
         });
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -289,8 +293,8 @@ export default function AdminDashboard() {
       } else {
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -317,8 +321,8 @@ export default function AdminDashboard() {
         setEditingInventory(null);
         setRefreshTrigger(prev => prev + 1);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -378,8 +382,8 @@ export default function AdminDashboard() {
       alert("Successfully listed item on the website!");
       setRefreshTrigger(prev => prev + 1);
 
-    } catch (err: any) {
-      alert("Error during sync: " + err.message);
+    } catch (err) {
+      alert("Error during sync: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -482,7 +486,7 @@ export default function AdminDashboard() {
             <button
               key={tab}
               onClick={() => {
-                setActiveTab(tab as any);
+                setActiveTab(tab as AdminTab);
                 setSearchQuery("");
               }}
               className={`text-xs px-4 py-2.5 rounded-xl font-bold uppercase tracking-wider transition-colors ${
@@ -570,7 +574,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="p-4">
                           <div className="flex flex-wrap gap-1 max-w-[200px]">
-                            {order.items?.map((item: any, idx: number) => (
+                            {order.items?.map((item: OrderItem, idx: number) => (
                               <span key={idx} className="bg-teal-deep/5 px-2 py-0.5 rounded text-[10px] block">
                                 {item.name} x{item.quantity}
                               </span>
@@ -656,7 +660,7 @@ export default function AdminDashboard() {
                           </div>
                         </td>
                         <td className="p-4">
-                          <p className="text-xs text-teal-deep/75 max-w-sm italic line-clamp-2" title={inq.details}>
+                          <p className="text-xs text-teal-deep/75 max-w-sm italic line-clamp-2" title={inq.details ?? undefined}>
                             {inq.details || "No custom specifications listed."}
                           </p>
                         </td>
@@ -992,7 +996,7 @@ export default function AdminDashboard() {
                             type="number"
                             required
                             value={editingInventory.purchase_price}
-                            onChange={(e) => setEditingInventory({ ...editingInventory, purchase_price: e.target.value })}
+                            onChange={(e) => setEditingInventory({ ...editingInventory, purchase_price: Number(e.target.value) })}
                             className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
                           />
                         </div>
@@ -1002,7 +1006,7 @@ export default function AdminDashboard() {
                             type="number"
                             required
                             value={editingInventory.selling_price}
-                            onChange={(e) => setEditingInventory({ ...editingInventory, selling_price: e.target.value })}
+                            onChange={(e) => setEditingInventory({ ...editingInventory, selling_price: Number(e.target.value) })}
                             className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
                           />
                         </div>
@@ -1015,7 +1019,7 @@ export default function AdminDashboard() {
                             type="number"
                             required
                             value={editingInventory.stock_quantity}
-                            onChange={(e) => setEditingInventory({ ...editingInventory, stock_quantity: e.target.value })}
+                            onChange={(e) => setEditingInventory({ ...editingInventory, stock_quantity: Number(e.target.value) })}
                             className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none"
                           />
                         </div>
@@ -1300,7 +1304,7 @@ export default function AdminDashboard() {
             >
               <div className="space-y-1">
                 <span className="text-[10px] font-bold text-saffron uppercase tracking-widest">Publish to Website</span>
-                <h3 className="font-heading text-xl font-bold text-teal-deep">List "{syncingItem.name}"</h3>
+                <h3 className="font-heading text-xl font-bold text-teal-deep">List &quot;{syncingItem.name}&quot;</h3>
                 <p className="text-[10px] text-teal-deep/50 font-mono uppercase">SKU: {syncingItem.product_code}</p>
               </div>
 
@@ -1349,7 +1353,7 @@ export default function AdminDashboard() {
                     <label className="text-[9px] font-bold text-teal-deep/50 uppercase">Bazaar Section</label>
                     <select
                       value={syncBazaarCategory}
-                      onChange={(e) => setSyncBazaarCategory(e.target.value as any)}
+                      onChange={(e) => setSyncBazaarCategory(e.target.value as "Sweets" | "Decor" | "Wellness" | "Gourmet")}
                       className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-1 text-xs text-teal-deep focus:outline-none"
                     >
                       <option value="Sweets">Sweets (Mithai/Dry Fruits)</option>

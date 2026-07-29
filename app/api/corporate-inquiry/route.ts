@@ -28,8 +28,9 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, inquiry: data });
-  } catch (err: any) {
+  } catch (err) {
     console.error("API error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

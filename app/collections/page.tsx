@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { curatedProducts } from "../../data/products";
 import { ProductCard } from "../../components/ProductCard";
-import { Filter, SlidersHorizontal, Gift, X, Tag, IndianRupee } from "lucide-react";
+import { SlidersHorizontal, Gift, X, Tag, IndianRupee } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Collections() {

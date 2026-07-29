@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // backend/ is a separate Medusa.js project (its own package.json,
+    // node_modules and git submodule) — not part of this Next.js app.
+    "backend/**",
   ]),
 ]);
 

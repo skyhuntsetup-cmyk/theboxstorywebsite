@@ -2,11 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import { 
-  Heart, Sparkles, Box, CheckCircle2, ChevronRight, Award, 
-  MapPin, Clock, Star, Calendar, ArrowRight, ShieldCheck
+import {
+  CheckCircle2, Award,
+  ArrowRight
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function PastWorkPage() {
   const caseStudies = [

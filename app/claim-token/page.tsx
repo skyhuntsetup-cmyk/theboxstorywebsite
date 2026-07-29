@@ -1,9 +1,32 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Shield, Gift, MapPin, Truck, CheckCircle2, ChevronRight, Loader } from "lucide-react";
+import { Shield, MapPin, Truck, CheckCircle2, ChevronRight, Loader } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+
+interface KitItem {
+  name: string;
+  price: number;
+  image: string;
+}
+
+interface Kit {
+  id: string;
+  name: string;
+  desc: string;
+  hasTshirt: boolean;
+  items: KitItem[];
+}
+
+interface CompanyInfo {
+  company: string;
+  bgColor: string;
+  themeColor: string;
+  logo: string;
+  welcome: string;
+  kits: Kit[];
+}
 
 export default function ClaimToken() {
   const [passcode, setPasscode] = useState("");
@@ -11,8 +34,8 @@ export default function ClaimToken() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const [companyInfo, setCompanyInfo] = useState<any>(null);
-  const [selectedKit, setSelectedKit] = useState<any>(null);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
+  const [selectedKit, setSelectedKit] = useState<Kit | null>(null);
   const [tshirtSize, setTshirtSize] = useState("L");
 
   const [addressInfo, setAddressInfo] = useState({
@@ -28,7 +51,7 @@ export default function ClaimToken() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClaimed, setIsClaimed] = useState(false);
 
-  const mockTokens: { [key: string]: any } = {
+  const mockTokens: { [key: string]: CompanyInfo } = {
     "CRED-LAUNCH-2026": {
       company: "CRED",
       bgColor: "from-slate-50 to-slate-100 border-slate-200",
@@ -146,6 +169,7 @@ export default function ClaimToken() {
 
   const handleClaim = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedKit || !companyInfo) return;
     setIsSubmitting(true);
 
     try {
@@ -164,7 +188,7 @@ export default function ClaimToken() {
           companyName: companyInfo.company,
           passcodeUsed: passcode,
         },
-        items: selectedKit.items.map((item: any) => ({
+        items: selectedKit.items.map((item: KitItem) => ({
           name: item.name,
           price: 0,
           quantity: 1,
@@ -185,8 +209,8 @@ export default function ClaimToken() {
       } else {
         alert("Fulfillment failed: " + (data.error || "Failed to connect."));
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setIsSubmitting(false);
     }
@@ -254,7 +278,7 @@ export default function ClaimToken() {
           )}
 
           {/* STEP 2: Branded Corporate Onboarding Page */}
-          {isValidated && !isClaimed && (
+          {isValidated && !isClaimed && companyInfo && (
             <motion.div
               key="portal"
               initial={{ opacity: 0, y: 30 }}
@@ -284,7 +308,7 @@ export default function ClaimToken() {
                   Select Your Swag Onboarding Kit
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {companyInfo.kits.map((kit: any) => {
+                  {companyInfo.kits.map((kit: Kit) => {
                     const isSelected = selectedKit?.id === kit.id;
                     return (
                       <button

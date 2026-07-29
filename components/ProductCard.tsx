@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useGift, CartItem } from "../app/context/GiftContext";
-import { ShoppingBag, Eye, Heart } from "lucide-react";
+import { useGift } from "../app/context/GiftContext";
+import { ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface ProductCardProps {
