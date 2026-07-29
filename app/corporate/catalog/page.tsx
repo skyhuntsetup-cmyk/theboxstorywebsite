@@ -213,14 +213,14 @@ export default function CleanCatalogReader() {
                 {/* Image Page block */}
                 <div 
                   onClick={() => setZoomedImage(`/images/catalog/page_${pageNum}.png`)}
-                  className="w-full bg-[#faf4e7] relative cursor-zoom-in group"
+                  className="w-full aspect-[1/1.4] bg-[#faf4e7] relative cursor-zoom-in group"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={`/images/catalog/page_${pageNum}.png`} 
                     alt={`Catalog Page ${pageNum}`} 
                     loading="lazy"
-                    className="w-full h-auto block"
+                    className="w-full h-full object-contain block"
                   />
                   <div className="absolute inset-0 bg-teal-deep/0 group-hover:bg-teal-deep/5 transition-colors" />
                   

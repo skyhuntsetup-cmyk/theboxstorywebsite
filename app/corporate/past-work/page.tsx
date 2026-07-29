@@ -1,57 +1,175 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
-  CheckCircle2, Award,
-  ArrowRight
+  CheckCircle2, Award, ArrowRight, X, ChevronLeft, ChevronRight, Eye
 } from "lucide-react";
 
 export default function PastWorkPage() {
-  const caseStudies = [
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [activeProjectIdx, setActiveProjectIdx] = useState<number>(0);
+  const [activeImageIdx, setActiveImageIdx] = useState<number>(0);
+
+  const projects = [
     {
-      company: "CRED",
-      title: "Diwali Corporate Hampers",
-      context: "Festive appreciation hampers for 500+ premium staff members across India.",
-      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&auto=format&fit=crop&q=80",
-      items: ["Laser-engraved copper tumblers", "Jaipur wildflower saffron honey", "Artisanal dry fruit laddoos", "Custom card monograms"],
-      story: "CRED requested unboxing hampers reflecting their high-contrast, premium aesthetic. We designed custom-dyed black textured rigid boxes housed inside a warm ivory sleeve. Employees redeemed their hampers directly via unique claims passcodes, entering their delivery addresses securely without HR intervention. All 500+ boxes were dispatched and tracked live in under 4 days.",
-      outcome: "100% on-time doorstep deliveries with zero address failures.",
-      badge: "Festive Bulk",
+      folder: "aakhya",
+      company: "Aakhya",
+      title: "Bespoke Cultural Curation",
+      badge: "Celebration Kits",
+      context: "Designed for premium celebrations, incorporating traditional art forms and hand-picked festive treats inside gold-foiled rigid sleeves.",
+      outcome: "Delivered to VIP clients with custom handwritten notes.",
+      images: [
+        "/images/past-work/aakhya/photo_1.jpeg",
+        "/images/past-work/aakhya/photo_2.jpeg",
+        "/images/past-work/aakhya/photo_3.jpeg",
+        "/images/past-work/aakhya/photo_4.jpeg"
+      ]
     },
     {
-      company: "Google India",
-      title: "Intern Onboarding Welcome Kits",
-      context: "Welcome swag kits for software engineering interns & new hires.",
-      image: "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=600&auto=format&fit=crop&q=80",
-      items: ["Custom organic cotton hoodies", "Mahogany notebook diaries", "Stanley-style vacuum flasks", "Gourmet oat cookies"],
-      story: "Google wanted to combine eco-friendly office essentials with custom-branded clothing. The major challenge was clothing size collections. By spinning up a branded micro-portal, interns selected their exact hoodie sizes and logged shipping addresses. Sizing reports synced directly to our apparel production team.",
-      outcome: "0% apparel sizing errors, fully automated shipping coordinates.",
+      folder: "eze",
+      company: "EZE",
+      title: "Modern Tech Welcome Kits",
+      badge: "Employee Swag",
+      context: "Minimalist corporate boxes built around high-quality utility items, sleek thermo-flasks, and custom branding.",
+      outcome: "100% positive feedback on workspace integration.",
+      images: [
+        "/images/past-work/eze/photo_1.jpeg",
+        "/images/past-work/eze/photo_2.jpeg",
+        "/images/past-work/eze/photo_3.jpeg",
+        "/images/past-work/eze/photo_4.jpeg",
+        "/images/past-work/eze/photo_5.jpeg",
+        "/images/past-work/eze/photo_6.jpeg",
+        "/images/past-work/eze/photo_7.jpeg",
+        "/images/past-work/eze/photo_8.jpeg",
+        "/images/past-work/eze/photo_9.jpeg"
+      ]
+    },
+    {
+      folder: "kontent-media",
+      company: "Kontent Media",
+      title: "Milestone Celebration Hampers",
+      badge: "Milestones",
+      context: "Custom packaging designed to mark major company milestones, combining gourmet sweets and corporate accessories.",
+      outcome: "Successfully shipped to teams across multiple office locations.",
+      images: [
+        "/images/past-work/kontent-media/photo_1.jpg",
+        "/images/past-work/kontent-media/photo_2.jpg",
+        "/images/past-work/kontent-media/photo_3.jpeg",
+        "/images/past-work/kontent-media/photo_4.jpg",
+        "/images/past-work/kontent-media/photo_5.jpg",
+        "/images/past-work/kontent-media/photo_6.jpg",
+        "/images/past-work/kontent-media/photo_7.jpg",
+        "/images/past-work/kontent-media/photo_8.jpeg",
+        "/images/past-work/kontent-media/photo_9.jpg",
+        "/images/past-work/kontent-media/photo_10.jpg"
+      ]
+    },
+    {
+      folder: "multiphase",
+      company: "Multiphase",
+      title: "Festive Diwali Hampers",
+      badge: "Diwali Bulk",
+      context: "Traditional hampers featuring hand-cast clay-brass diyas, premium organic dry fruit sweets, and gold-foiled boxes.",
+      outcome: "Seamless bulk distribution under tight festive timelines.",
+      images: [
+        "/images/past-work/multiphase/photo_1.jpeg",
+        "/images/past-work/multiphase/photo_2.jpeg",
+        "/images/past-work/multiphase/photo_3.jpeg",
+        "/images/past-work/multiphase/photo_4.jpeg",
+        "/images/past-work/multiphase/photo_5.jpeg",
+        "/images/past-work/multiphase/photo_6.jpeg",
+        "/images/past-work/multiphase/photo_7.jpeg",
+        "/images/past-work/multiphase/photo_8.jpeg",
+        "/images/past-work/multiphase/photo_9.jpeg",
+        "/images/past-work/multiphase/photo_10.jpeg",
+        "/images/past-work/multiphase/photo_11.jpeg",
+        "/images/past-work/multiphase/photo_12.jpeg"
+      ]
+    },
+    {
+      folder: "one-com",
+      company: "One.Com",
+      title: "Executive Gift Hampers",
+      badge: "Executive Client",
+      context: "High-contrast rigid slide-drawer hampers crafted with premium textured papers and gold-leaf details.",
+      outcome: "Premium brand impression for key corporate stakeholders.",
+      images: [
+        "/images/past-work/one-com/photo_1.jpeg",
+        "/images/past-work/one-com/photo_2.jpeg",
+        "/images/past-work/one-com/photo_3.jpeg",
+        "/images/past-work/one-com/photo_4.jpeg",
+        "/images/past-work/one-com/photo_5.jpeg",
+        "/images/past-work/one-com/photo_6.jpeg",
+        "/images/past-work/one-com/photo_7.jpeg"
+      ]
+    },
+    {
+      folder: "proterial-1",
+      company: "Proterial",
+      title: "Corporate Onboarding Packages",
       badge: "Onboarding Kits",
+      context: "Professional workspace essentials packaged in custom leatherette and pine wood boxes.",
+      outcome: "Elevated first-day employee experience.",
+      images: [
+        "/images/past-work/proterial-1/photo_1.jpeg",
+        "/images/past-work/proterial-1/photo_2.jpeg",
+        "/images/past-work/proterial-1/photo_3.jpeg"
+      ]
     },
     {
-      company: "Heritage Wedding, Jaipur",
-      title: "Maharaja Favor boxes",
-      context: "Luxury welcome favors for 350+ destination wedding invitees.",
-      image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80",
-      items: ["Heavy-cast brass incense bowls", "Mysore sandalwood cone blends", "Organic floral tea canisters", "Custom gold-foiled monograms"],
-      story: "A destination wedding at the Rambagh Palace required sensory, heritage favors. We designed boxes wrapped in royal-saffron satin ribbons, custom gold-leaf monograms, and packed them with Jaipur-sourced brassware. Favors were pre-positioned at guest reception desks.",
-      outcome: "Instant premium guest unboxing impression at guest check-in.",
-      badge: "Royal Wedding",
-    },
+      folder: "vsn",
+      company: "VSN",
+      title: "Employee Recognition Rewards",
+      badge: "Staff Rewards",
+      context: "Tailored recognition rewards boxes featuring custom-etched mugs, premium chocolates, and achievement badges.",
+      outcome: "Boosted employee engagement and milestone recognition.",
+      images: [
+        "/images/past-work/vsn/photo_1.jpeg",
+        "/images/past-work/vsn/photo_2.jpeg",
+        "/images/past-work/vsn/photo_3.jpeg",
+        "/images/past-work/vsn/photo_4.png",
+        "/images/past-work/vsn/photo_5.jpeg",
+        "/images/past-work/vsn/photo_6.jpeg",
+        "/images/past-work/vsn/photo_7.jpeg",
+        "/images/past-work/vsn/photo_8.jpeg"
+      ]
+    }
   ];
 
+  const handleOpenLightbox = (projectIdx: number, imgIdx: number) => {
+    setActiveProjectIdx(projectIdx);
+    setActiveImageIdx(imgIdx);
+    setSelectedImage(projects[projectIdx].images[imgIdx]);
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const project = projects[activeProjectIdx];
+    const nextIdx = (activeImageIdx + 1) % project.images.length;
+    setActiveImageIdx(nextIdx);
+    setSelectedImage(project.images[nextIdx]);
+  };
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const project = projects[activeProjectIdx];
+    const prevIdx = (activeImageIdx - 1 + project.images.length) % project.images.length;
+    setActiveImageIdx(prevIdx);
+    setSelectedImage(project.images[prevIdx]);
+  };
+
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-16 px-6">
-      <div className="max-w-4xl mx-auto space-y-16 text-left">
+    <div className="min-h-screen bg-background text-slate-800 py-16 px-6 cultural-pattern">
+      <div className="max-w-6xl mx-auto space-y-16 text-left">
         
         {/* Breadcrumbs */}
         <div className="text-xs space-x-2 text-slate-400">
-          <Link href="/" className="hover:text-teal-deep">Home</Link>
+          <Link href="/" className="hover:text-teal-deep transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/corporate" className="hover:text-teal-deep">Corporate Gifting</Link>
+          <Link href="/corporate" className="hover:text-teal-deep transition-colors">Corporate Gifting</Link>
           <span>/</span>
-          <span className="text-slate-650 font-bold">Past Work</span>
+          <span className="text-slate-600 font-bold">Past Work</span>
         </div>
 
         {/* Hero Section */}
@@ -64,64 +182,74 @@ export default function PastWorkPage() {
             Our Past Work & <br />
             <span className="text-rani-pink">Gifting Case Studies</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-650 leading-relaxed max-w-2xl font-light">
-            Explore how we partnered with enterprise tech brands, startup leaders, and royal weddings to design unforgettably premium unboxing experiences.
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl font-light">
+            Explore our curated history of branding partnerships. Below are real photo galleries showing completed orders for tech companies, startups, and luxury celebrations.
           </p>
         </section>
 
         {/* Case Studies Lists */}
         <section className="space-y-16">
-          {caseStudies.map((study, idx) => (
+          {projects.map((project, projectIdx) => (
             <div 
-              key={idx} 
-              className="bg-white border border-slate-200 rounded-[40px] overflow-hidden shadow-sm hover:shadow-md transition-shadow grid grid-cols-1 md:grid-cols-12 gap-0"
+              key={projectIdx} 
+              className="bg-[#FCFAF2]/80 backdrop-blur-sm border border-teal-deep/5 rounded-[40px] p-8 md:p-10 shadow-sm space-y-8 animate-fade-in"
             >
-              {/* Image side */}
-              <div className="md:col-span-5 relative min-h-[250px] bg-teal-deep/5 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={study.image} 
-                  alt={study.title} 
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <span className="absolute top-4 left-4 bg-saffron text-white text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm">
-                  {study.badge}
-                </span>
-              </div>
-
-              {/* Text details side */}
-              <div className="md:col-span-7 p-8 sm:p-10 space-y-6 flex flex-col justify-between">
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest block">{study.company}</span>
-                    <h3 className="font-heading text-2xl font-black text-teal-deep leading-tight">{study.title}</h3>
-                    <p className="text-[11px] text-slate-400 font-semibold italic">{study.context}</p>
+              {/* Header Info */}
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 border-b border-teal-deep/5 pb-6">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xs font-black text-rani-pink uppercase tracking-widest block">{project.company}</span>
+                    <span className="bg-saffron text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
+                      {project.badge}
+                    </span>
                   </div>
-
-                  <p className="text-xs text-slate-650 leading-relaxed">
-                    {study.story}
-                  </p>
-
-                  {/* Included treats */}
-                  <div className="space-y-1.5 pt-2">
-                    <span className="text-[9px] font-black text-teal-deep/55 uppercase tracking-wide block">Hamper Box Contents:</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {study.items.map((item, i) => (
-                        <span key={i} className="bg-teal-deep/5 text-teal-deep text-[10px] font-medium border border-teal-deep/10 px-2.5 py-0.5 rounded-full">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <h3 className="font-heading text-2xl md:text-3xl font-black text-teal-deep leading-tight">{project.title}</h3>
+                  <p className="text-xs text-slate-500 font-medium italic">{project.context}</p>
                 </div>
 
                 {/* Outcome box */}
-                <div className="border-t border-teal-deep/5 pt-4 mt-6 flex items-start space-x-2 bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100/50">
+                <div className="flex items-start space-x-2 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50 max-w-md shrink-0">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
-                  <div className="space-y-0.5 text-left">
+                  <div className="space-y-0.5">
                     <span className="text-[9px] font-black text-emerald-800 uppercase tracking-widest block">Project Outcome</span>
-                    <span className="text-xs text-emerald-850 font-bold leading-relaxed">{study.outcome}</span>
+                    <span className="text-xs text-emerald-850 font-bold leading-relaxed">{project.outcome}</span>
                   </div>
+                </div>
+              </div>
+
+              {/* Photo Gallery Horizontal Scroll Row */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black text-teal-deep/55 uppercase tracking-wider block">
+                    Project Gallery ({project.images.length} Photos)
+                  </span>
+                  <span className="text-[9px] text-slate-400 font-medium hidden sm:inline">
+                    Scroll horizontally or click to zoom 🔍
+                  </span>
+                </div>
+
+                <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-teal-deep/10 scrollbar-track-transparent">
+                  {project.images.map((imgUrl, imgIdx) => (
+                    <div 
+                      key={imgIdx}
+                      onClick={() => handleOpenLightbox(projectIdx, imgIdx)}
+                      className="relative h-48 w-64 md:h-56 md:w-72 flex-shrink-0 rounded-2xl overflow-hidden border border-teal-deep/5 bg-[#faf4e7] cursor-zoom-in group shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src={imgUrl} 
+                        alt={`${project.company} Photo ${imgIdx + 1}`} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-teal-deep/0 group-hover:bg-teal-deep/10 transition-colors flex items-center justify-center">
+                        <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                      </div>
+                      <span className="absolute bottom-2.5 right-2.5 bg-black/40 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
+                        {imgIdx + 1}/{project.images.length}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -148,6 +276,57 @@ export default function PastWorkPage() {
         </section>
 
       </div>
+
+      {/* Lightbox / Enlarged Image Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-350"
+          onClick={() => setSelectedImage(null)}
+        >
+          {/* Close button */}
+          <button 
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-full transition-all"
+            title="Close Lightbox"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Navigation Controls */}
+          <button 
+            onClick={handlePrev}
+            className="absolute left-4 p-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-full transition-all"
+            title="Previous Photo"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          <button 
+            onClick={handleNext}
+            className="absolute right-4 p-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-full transition-all"
+            title="Next Photo"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          {/* Large Image container */}
+          <div 
+            className="relative max-w-4xl max-h-[80vh] w-full h-full flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={selectedImage} 
+              alt="Enlarged Showcase View" 
+              className="max-w-full max-h-full object-contain rounded-2xl border border-white/10 shadow-2xl bg-slate-900"
+            />
+            <div className="mt-4 text-center text-white space-y-1">
+              <p className="text-sm font-bold">{projects[activeProjectIdx].company} — {projects[activeProjectIdx].title}</p>
+              <p className="text-xs text-white/60">Photo {activeImageIdx + 1} of {projects[activeProjectIdx].images.length}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
