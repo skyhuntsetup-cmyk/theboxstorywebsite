@@ -67,9 +67,9 @@ export default function RootLayout({
               <div>
                 <h4 className="font-heading text-lg font-bold mb-4">Contact</h4>
                 <p className="text-sm text-[#FAF4E8]/70 leading-relaxed">
-                  support@theboxstory.in<br />
-                  +91 98765 43210<br />
-                  Mumbai, India
+                  sayhi@theboxstory.co.in<br />
+                  +91 78387 83488<br />
+                  New Delhi, India
                 </p>
               </div>
             </div>

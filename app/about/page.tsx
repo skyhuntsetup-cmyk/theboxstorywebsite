@@ -1,24 +1,29 @@
 "use client";
 
 import React from "react";
-import { Heart, Sparkles, Users, ShieldCheck } from "lucide-react";
+import { Gift, Sparkles, Users, Building2, Heart } from "lucide-react";
 
 export default function About() {
-  const values = [
+  const services = [
     {
-      icon: Heart,
-      title: "Artisanal Integrity",
-      desc: "We partner directly with local clay potters, brass engravers, and organic tea farmers across India, ensuring fair trade and premium quality.",
+      icon: Gift,
+      title: "Personalized Gift Hampers",
+      desc: "Hampers built around the person you're gifting to, for birthdays, anniversaries, Valentine's Day, Rakhi, weddings, and new moms.",
     },
     {
       icon: Sparkles,
-      title: "Sensory Unboxing",
-      desc: "From the rigid gold-foiled exterior to the scent of organic lavender candles, our hampers are designed to engage all five senses.",
+      title: "Pre-Curated Gift Hampers",
+      desc: "Ready-to-send collections for when you want something thoughtful without starting from scratch.",
     },
     {
-      icon: ShieldCheck,
-      title: "Effortless Gifting",
-      desc: "Our customized studio and Magical Links remove shipping coordinates friction, letting you send premium hampers in two clicks.",
+      icon: Building2,
+      title: "Corporate Gifting Hampers",
+      desc: "Bulk and branded gifting for teams, clients, and employee milestones.",
+    },
+    {
+      icon: Heart,
+      title: "Wedding Invitation Hampers",
+      desc: "Hampers designed to accompany wedding invitations and make the first impression count.",
     },
   ];
 
@@ -35,11 +40,11 @@ export default function About() {
             <span>Our Story</span>
           </div>
           <h1 className="font-heading text-4xl sm:text-5xl font-black text-teal-deep leading-tight">
-            Crafting Gifting <br />
-            Experiences
+            To Help You Create <br />
+            Wonderful Stories
           </h1>
           <p className="text-sm md:text-base text-slate-600 leading-relaxed">
-            The Box Story was born out of a desire to replace corporate cardboard boxes and sterile gift hampers with luxurious, sensory unboxing experiences. 
+            Looking for the perfect gift for a loved one, family member, or colleague? Explore our collections to discover hampers that are sure to bring a smile to their face. If you can&apos;t find exactly what you need, reach out and we&apos;ll help you craft the ideal gift.
           </p>
         </div>
       </section>
@@ -48,33 +53,41 @@ export default function About() {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div className="space-y-6">
           <h2 className="font-heading text-3xl font-black text-teal-deep leading-tight">
-            Curated in Jaipur, <br />
-            Delivered Worldwide
+            Something for <br />
+            Every Occasion
           </h2>
           <p className="text-sm text-slate-650 leading-relaxed">
-            Every hamper starts as a sketch in our Jaipur design studio. We select custom textured papers, order hand-engraved copper and brass relics, and pair them with gourmet sweets prepared by third-generation sweetmakers.
+            From birthdays and anniversaries to Valentine&apos;s Day, Rakhi, weddings, new moms, and housewarmings — we build personalized hampers around the occasion and the person, not the other way around.
           </p>
           <p className="text-sm text-slate-650 leading-relaxed">
-            Our strict 5-item capacity rule ensures that every single box is packed cleanly, wrapped with premium satin ribbons, and padded with decorative paper shreds.
+            We&apos;re based in New Delhi, with one-day delivery available in Jaipur, and we ship gifts across India for the moments that matter.
           </p>
         </div>
         <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-teal-deep/5 border border-slate-200 shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&auto=format&fit=crop&q=80"
-            alt="Artisanal Hamper Packing"
+            alt="Curated gift hamper"
             className="w-full h-full object-cover"
           />
         </div>
       </section>
 
-      {/* Core Values */}
+      {/* Vision */}
+      <section className="rounded-[32px] bg-teal-deep text-[#FAF4E8] p-8 md:p-14 text-center space-y-4">
+        <p className="text-xs font-bold uppercase tracking-widest text-saffron">Our Vision</p>
+        <p className="font-heading text-xl md:text-2xl font-bold leading-snug max-w-3xl mx-auto">
+          To revolutionize the art of gifting by creating personalized and memorable experiences that celebrate life&apos;s special moments.
+        </p>
+      </section>
+
+      {/* Services */}
       <section className="space-y-12">
         <h2 className="font-heading text-3xl font-black text-teal-deep text-center">
-          What Guides Our Hands
+          What We Offer
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {values.map((val, idx) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((val, idx) => (
             <div
               key={idx}
               className="bg-white rounded-3xl border border-slate-200 p-8 space-y-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"

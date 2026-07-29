@@ -154,7 +154,7 @@ export default function Checkout() {
               <span className="text-[10px] font-bold text-teal-deep/50 uppercase">Your Magical Link</span>
               <div className="flex items-center justify-between bg-white border border-teal-deep/10 px-4 py-2.5 rounded-xl">
                 <code className="text-xs text-rani-pink font-semibold truncate select-all pr-4">
-                  {typeof window !== "undefined" ? `${window.location.origin}/claim-gift?id=${createdOrderId}` : `https://theboxstory.in/claim-gift?id=${createdOrderId}`}
+                  {typeof window !== "undefined" ? `${window.location.origin}/claim-gift?id=${createdOrderId}` : `https://theboxstory.co.in/claim-gift?id=${createdOrderId}`}
                 </code>
                 <Link
                   href={`/claim-gift?id=${createdOrderId}`}

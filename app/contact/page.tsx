@@ -29,20 +29,20 @@ export default function Contact() {
     {
       icon: Mail,
       label: "Support Email",
-      value: "hello@theboxstory.in",
+      value: "sayhi@theboxstory.co.in",
       desc: "For orders, custom builds, or claim links.",
     },
     {
       icon: Phone,
       label: "Call or WhatsApp",
-      value: "+91 98765 43210",
+      value: "+91 78387 83488 / +91 97179 99223",
       desc: "Mon-Sat, 10:00 AM - 7:00 PM IST.",
     },
     {
       icon: MapPin,
-      label: "Design Studio",
-      value: "C-Scheme, Jaipur, Rajasthan",
-      desc: "Visitor access by appointment only.",
+      label: "Based In",
+      value: "New Delhi, India",
+      desc: "One-day delivery available in Jaipur.",
     },
   ];
 
