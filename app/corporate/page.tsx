@@ -163,6 +163,79 @@ export default function CorporateGifting() {
           ))}
         </section>
 
+        {/* Corporate Gifting Profile & Why Choose Us */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-[#FCFAF2]/65 p-8 md:p-12 rounded-[40px] border border-teal-deep/5 text-left animate-fade-in">
+          {/* Left Column: Corporate Gifting Profile */}
+          <div className="lg:col-span-5 space-y-6">
+            <span className="text-xs font-bold text-saffron bg-saffron/10 px-3 py-1.5 rounded-full uppercase tracking-wider inline-block">
+              Corporate Profile
+            </span>
+            <h2 className="font-heading text-3xl font-black text-teal-deep leading-tight">
+              Thoughtful Gifting, Crafted with Precision
+            </h2>
+            <p className="text-xs md:text-sm text-slate-650 leading-relaxed font-light">
+              At The Box Story, we believe corporate gifting is a strategic investment in relationships. Whether celebrating a major milestone, welcoming new hires, or thanking valuable clients, we curate hampers that are designed to be opened slowly.
+            </p>
+            <p className="text-xs md:text-sm text-slate-650 leading-relaxed font-light">
+              Every hamper starts as a sketch in our Jaipur studio, combining premium products with artisanal craft pieces like clay potters&apos; diyas, Mysore sandalwood, and sweets from third-generation sweetmakers.
+            </p>
+            <div className="border-t border-teal-deep/10 pt-4 flex items-center space-x-4">
+              <span className="font-heading text-xs font-bold text-teal-deep">Legacy of Collaborations:</span>
+              <span className="text-[10px] text-slate-500 font-bold bg-[#FAF4E8] px-2.5 py-1 rounded-md border border-slate-200">Startups & Enterprises</span>
+              <span className="text-[10px] text-slate-500 font-bold bg-[#FAF4E8] px-2.5 py-1 rounded-md border border-slate-200">Destinations</span>
+            </div>
+          </div>
+
+          {/* Right Column: Why Choose Us (4 Cards Grid) */}
+          <div className="lg:col-span-7 space-y-6">
+            <h3 className="font-heading text-xl font-black text-teal-deep">
+              Why Partner with The Box Story?
+            </h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <div className="w-8 h-8 bg-saffron/15 text-saffron rounded-lg flex items-center justify-center font-bold">
+                  ✨
+                </div>
+                <h4 className="font-heading text-sm font-bold text-teal-deep">Sensory & Artisanal Curation</h4>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Direct partnerships with clay potters, brass engravers, and organic tea farmers ensure authentic, hand-cast heritage pieces in every box.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="w-8 h-8 bg-rani-pink/15 text-rani-pink rounded-lg flex items-center justify-center font-bold">
+                  🖋️
+                </div>
+                <h4 className="font-heading text-sm font-bold text-teal-deep">Full Logo & Name Personalization</h4>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Screen-printed logo boxes, engraved thermal flasks, laser-etched pens/notebooks, and handwritten-style greeting cards.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="w-8 h-8 bg-teal-deep/15 text-teal-deep rounded-lg flex items-center justify-center font-bold">
+                  🔗
+                </div>
+                <h4 className="font-heading text-sm font-bold text-teal-deep">Magical Claims Portal</h4>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  No spreadsheets or size-chasing. Recipient receives a secure link, selects their custom treats or apparel size, and confirms address.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="w-8 h-8 bg-[#8F9489]/15 text-emerald-800 rounded-lg flex items-center justify-center font-bold">
+                  🌱
+                </div>
+                <h4 className="font-heading text-sm font-bold text-teal-deep">Premium Sustainable Formats</h4>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Durable gold-foiled rigid boxes, reusable pine wood chests, leatherette boxes, and eco-friendly wellness blends.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Exploratory Subpages: Client Panel & Past Work */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white border border-slate-200 rounded-3xl p-8 text-left space-y-4 hover:shadow-md transition-shadow relative overflow-hidden group">

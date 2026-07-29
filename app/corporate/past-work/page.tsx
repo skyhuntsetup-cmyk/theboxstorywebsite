@@ -6,136 +6,14 @@ import {
   CheckCircle2, Award, ArrowRight, X, ChevronLeft, ChevronRight, Eye
 } from "lucide-react";
 
+import pastWorkConfig from "../../../data/past-work-config.json";
+
 export default function PastWorkPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [activeProjectIdx, setActiveProjectIdx] = useState<number>(0);
   const [activeImageIdx, setActiveImageIdx] = useState<number>(0);
 
-  const projects = [
-    {
-      folder: "aakhya",
-      company: "Aakhya",
-      title: "Bespoke Cultural Curation",
-      badge: "Celebration Kits",
-      context: "Designed for premium celebrations, incorporating traditional art forms and hand-picked festive treats inside gold-foiled rigid sleeves.",
-      outcome: "Delivered to VIP clients with custom handwritten notes.",
-      images: [
-        "/images/past-work/aakhya/photo_1.jpeg",
-        "/images/past-work/aakhya/photo_2.jpeg",
-        "/images/past-work/aakhya/photo_3.jpeg",
-        "/images/past-work/aakhya/photo_4.jpeg"
-      ]
-    },
-    {
-      folder: "eze",
-      company: "EZE",
-      title: "Modern Tech Welcome Kits",
-      badge: "Employee Swag",
-      context: "Minimalist corporate boxes built around high-quality utility items, sleek thermo-flasks, and custom branding.",
-      outcome: "100% positive feedback on workspace integration.",
-      images: [
-        "/images/past-work/eze/photo_1.jpeg",
-        "/images/past-work/eze/photo_2.jpeg",
-        "/images/past-work/eze/photo_3.jpeg",
-        "/images/past-work/eze/photo_4.jpeg",
-        "/images/past-work/eze/photo_5.jpeg",
-        "/images/past-work/eze/photo_6.jpeg",
-        "/images/past-work/eze/photo_7.jpeg",
-        "/images/past-work/eze/photo_8.jpeg",
-        "/images/past-work/eze/photo_9.jpeg"
-      ]
-    },
-    {
-      folder: "kontent-media",
-      company: "Kontent Media",
-      title: "Milestone Celebration Hampers",
-      badge: "Milestones",
-      context: "Custom packaging designed to mark major company milestones, combining gourmet sweets and corporate accessories.",
-      outcome: "Successfully shipped to teams across multiple office locations.",
-      images: [
-        "/images/past-work/kontent-media/photo_1.jpg",
-        "/images/past-work/kontent-media/photo_2.jpg",
-        "/images/past-work/kontent-media/photo_3.jpeg",
-        "/images/past-work/kontent-media/photo_4.jpg",
-        "/images/past-work/kontent-media/photo_5.jpg",
-        "/images/past-work/kontent-media/photo_6.jpg",
-        "/images/past-work/kontent-media/photo_7.jpg",
-        "/images/past-work/kontent-media/photo_8.jpeg",
-        "/images/past-work/kontent-media/photo_9.jpg",
-        "/images/past-work/kontent-media/photo_10.jpg"
-      ]
-    },
-    {
-      folder: "multiphase",
-      company: "Multiphase",
-      title: "Festive Diwali Hampers",
-      badge: "Diwali Bulk",
-      context: "Traditional hampers featuring hand-cast clay-brass diyas, premium organic dry fruit sweets, and gold-foiled boxes.",
-      outcome: "Seamless bulk distribution under tight festive timelines.",
-      images: [
-        "/images/past-work/multiphase/photo_1.jpeg",
-        "/images/past-work/multiphase/photo_2.jpeg",
-        "/images/past-work/multiphase/photo_3.jpeg",
-        "/images/past-work/multiphase/photo_4.jpeg",
-        "/images/past-work/multiphase/photo_5.jpeg",
-        "/images/past-work/multiphase/photo_6.jpeg",
-        "/images/past-work/multiphase/photo_7.jpeg",
-        "/images/past-work/multiphase/photo_8.jpeg",
-        "/images/past-work/multiphase/photo_9.jpeg",
-        "/images/past-work/multiphase/photo_10.jpeg",
-        "/images/past-work/multiphase/photo_11.jpeg",
-        "/images/past-work/multiphase/photo_12.jpeg"
-      ]
-    },
-    {
-      folder: "one-com",
-      company: "One.Com",
-      title: "Executive Gift Hampers",
-      badge: "Executive Client",
-      context: "High-contrast rigid slide-drawer hampers crafted with premium textured papers and gold-leaf details.",
-      outcome: "Premium brand impression for key corporate stakeholders.",
-      images: [
-        "/images/past-work/one-com/photo_1.jpeg",
-        "/images/past-work/one-com/photo_2.jpeg",
-        "/images/past-work/one-com/photo_3.jpeg",
-        "/images/past-work/one-com/photo_4.jpeg",
-        "/images/past-work/one-com/photo_5.jpeg",
-        "/images/past-work/one-com/photo_6.jpeg",
-        "/images/past-work/one-com/photo_7.jpeg"
-      ]
-    },
-    {
-      folder: "proterial-1",
-      company: "Proterial",
-      title: "Corporate Onboarding Packages",
-      badge: "Onboarding Kits",
-      context: "Professional workspace essentials packaged in custom leatherette and pine wood boxes.",
-      outcome: "Elevated first-day employee experience.",
-      images: [
-        "/images/past-work/proterial-1/photo_1.jpeg",
-        "/images/past-work/proterial-1/photo_2.jpeg",
-        "/images/past-work/proterial-1/photo_3.jpeg"
-      ]
-    },
-    {
-      folder: "vsn",
-      company: "VSN",
-      title: "Employee Recognition Rewards",
-      badge: "Staff Rewards",
-      context: "Tailored recognition rewards boxes featuring custom-etched mugs, premium chocolates, and achievement badges.",
-      outcome: "Boosted employee engagement and milestone recognition.",
-      images: [
-        "/images/past-work/vsn/photo_1.jpeg",
-        "/images/past-work/vsn/photo_2.jpeg",
-        "/images/past-work/vsn/photo_3.jpeg",
-        "/images/past-work/vsn/photo_4.png",
-        "/images/past-work/vsn/photo_5.jpeg",
-        "/images/past-work/vsn/photo_6.jpeg",
-        "/images/past-work/vsn/photo_7.jpeg",
-        "/images/past-work/vsn/photo_8.jpeg"
-      ]
-    }
-  ];
+  const projects = pastWorkConfig.projects;
 
   const handleOpenLightbox = (projectIdx: number, imgIdx: number) => {
     setActiveProjectIdx(projectIdx);
