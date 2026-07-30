@@ -1,32 +1,109 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useGift } from "../app/context/GiftContext";
-import { ShoppingBag, Sparkles, Gift, Briefcase, Heart } from "lucide-react";
+import { ShoppingBag, Sparkles, ChevronDown, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+// Grouped like a category-based mega-menu (Shop vs. Bulk Gifting), matching
+// the shopping-vs-B2B split used across confettigifts.in's nav, but only
+// linking to routes that actually exist on this site.
+const navGroups: NavGroup[] = [
+  {
+    label: "Shop",
+    items: [
+      { href: "/collections", label: "All Collections" },
+      { href: "/collections/diwali", label: "Diwali Collection" },
+      { href: "/build", label: "Build a Box" },
+    ],
+  },
+  {
+    label: "Bulk Gifting",
+    items: [
+      { href: "/corporate", label: "Corporate Gifting" },
+      { href: "/weddings", label: "Weddings" },
+      { href: "/claim-token", label: "Corporate Claim Portal" },
+    ],
+  },
+];
+
+const singleLinks: NavItem[] = [
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
+function NavDropdown({ group, pathname }: { group: NavGroup; pathname: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const isGroupActive = group.items.some((item) => item.href === pathname);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        className={`relative px-4 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-200 flex items-center space-x-1 ${
+          isGroupActive
+            ? "text-[#FAF4E8] bg-teal-deep"
+            : "text-teal-deep/80 hover:text-teal-deep hover:bg-teal-deep/5"
+        }`}
+      >
+        <span>{group.label}</span>
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-full left-0 pt-2 w-56"
+          >
+            <div className="bg-[#FAF4E8] border border-[#042F2E]/10 rounded-2xl shadow-lg overflow-hidden py-2">
+              {group.items.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`block px-4 py-2.5 text-sm transition-colors ${
+                    pathname === item.href
+                      ? "text-rani-pink font-semibold bg-teal-deep/5"
+                      : "text-teal-deep/80 hover:text-teal-deep hover:bg-teal-deep/5"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export const Navbar = () => {
   const pathname = usePathname();
   const { cartItems, setCartOpen } = useGift();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const navLinks = [
-    { href: "/", label: "Home", icon: Heart },
-    { href: "/collections", label: "Collections", icon: Gift },
-    { href: "/build", label: "Build a Box", icon: Sparkles },
-    { href: "/corporate", label: "Corporate", icon: Briefcase },
-    { href: "/weddings", label: "Weddings", icon: Heart },
-    { href: "/claim-token", label: "Claim Token", icon: Gift },
-    { href: "/about", label: "About", icon: Heart },
-    { href: "/contact", label: "Contact", icon: Heart },
-    { href: "/admin", label: "Admin", icon: Briefcase },
-  ];
-
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-6xl z-50">
+    <header className="relative mx-auto mt-3 w-[92%] max-w-6xl">
       <nav className="backdrop-blur-md bg-[#FAF4E8]/75 border border-[#042F2E]/10 px-6 py-4 rounded-full flex items-center justify-between shadow-[0_10px_30px_rgba(4,47,46,0.06)] transition-all duration-300 hover:border-[#042F2E]/20">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center space-x-2 group">
@@ -37,7 +114,10 @@ export const Navbar = () => {
 
         {/* Center Nav Links */}
         <div className="hidden md:flex items-center space-x-1">
-          {navLinks.map((link) => {
+          {navGroups.map((group) => (
+            <NavDropdown key={group.label} group={group} pathname={pathname} />
+          ))}
+          {singleLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
@@ -49,26 +129,14 @@ export const Navbar = () => {
                     : "text-teal-deep/80 hover:text-teal-deep hover:bg-teal-deep/5"
                 }`}
               >
-                {isActive && (
-                  <motion.span
-                    layoutId="activeNav"
-                    className="absolute inset-0 bg-teal-deep rounded-full -z-10"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <span className="relative flex items-center space-x-1.5">
-                  {link.href === "/gift-genie" && (
-                    <Sparkles className="w-4 h-4 text-saffron animate-pulse" />
-                  )}
-                  <span>{link.label}</span>
-                </span>
+                {link.label}
               </Link>
             );
           })}
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           <Link
             href="/gift-genie"
             className="hidden sm:flex items-center space-x-1.5 text-xs font-semibold px-4 py-2 border border-saffron/30 hover:border-saffron bg-[#FAF4E8] text-saffron rounded-full transition-all duration-300 shadow-sm hover:shadow-md"
@@ -99,8 +167,67 @@ export const Navbar = () => {
               )}
             </AnimatePresence>
           </button>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsMobileMenuOpen((v) => !v)}
+            className="md:hidden p-2.5 rounded-full hover:bg-teal-deep/5 transition-all text-teal-deep"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu Panel */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden mt-2 bg-[#FAF4E8] border border-[#042F2E]/10 rounded-3xl shadow-lg overflow-hidden"
+          >
+            {navGroups.map((group) => (
+              <div key={group.label} className="border-b border-[#042F2E]/5 last:border-0">
+                <span className="block px-5 pt-4 pb-1 text-[10px] font-black uppercase tracking-widest text-teal-deep/40">
+                  {group.label}
+                </span>
+                {group.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-5 py-2.5 text-sm ${
+                      pathname === item.href ? "text-rani-pink font-semibold" : "text-teal-deep/80"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            ))}
+            <div className="border-b border-[#042F2E]/5 last:border-0">
+              <span className="block px-5 pt-4 pb-1 text-[10px] font-black uppercase tracking-widest text-teal-deep/40">
+                More
+              </span>
+              {[...singleLinks, { href: "/gift-genie", label: "AI Gift Genie" }].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-5 py-2.5 text-sm ${
+                    pathname === link.href ? "text-rani-pink font-semibold" : "text-teal-deep/80"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

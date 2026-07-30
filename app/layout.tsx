@@ -35,9 +35,18 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-teal-deep selection:bg-rani-pink selection:text-white cultural-pattern">
         <GiftProvider>
-          <Navbar />
+          <div className="fixed top-0 inset-x-0 z-50">
+            {/* Repeating promo strip, matching the persistent delivery/offer
+                banner pattern used on confettigifts.in */}
+            <div className="bg-teal-deep text-[#FAF4E8] text-center py-2 px-4 text-[10px] sm:text-[11px] font-bold tracking-wide">
+              <span>Free Shipping Across India</span>
+              <span className="mx-3 opacity-40">•</span>
+              <span>One-Day Delivery Available in Jaipur</span>
+            </div>
+            <Navbar />
+          </div>
           <CartDrawer />
-          <main className="flex-1 pt-24">{children}</main>
+          <main className="flex-1 pt-36">{children}</main>
           {/* Footer */}
           <footer className="bg-teal-deep text-[#FAF4E8] py-12 px-6 mt-20 border-t border-teal-deep/20">
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -51,8 +60,8 @@ export default function RootLayout({
                 <h4 className="font-heading text-lg font-bold mb-4">Curations</h4>
                 <ul className="space-y-2 text-sm text-[#FAF4E8]/70">
                   <li><a href="/collections/diwali" className="hover:text-rani-pink transition-colors">Diwali Collection</a></li>
-                  <li><a href="/collections" className="hover:text-rani-pink transition-colors">Corporate Gifting</a></li>
-                  <li><a href="/collections" className="hover:text-rani-pink transition-colors">Bridal & Weddings</a></li>
+                  <li><a href="/corporate" className="hover:text-rani-pink transition-colors">Corporate Gifting</a></li>
+                  <li><a href="/weddings" className="hover:text-rani-pink transition-colors">Bridal & Weddings</a></li>
                   <li><a href="/build" className="hover:text-rani-pink transition-colors">Build Your Box</a></li>
                 </ul>
               </div>

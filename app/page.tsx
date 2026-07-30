@@ -325,27 +325,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2.5 TRUSTED BY MANY CLIENT CAROUSEL */}
-      <section className="max-w-6xl mx-auto px-6 text-center space-y-8">
-        <div className="space-y-1">
-          <span className="text-[9px] uppercase tracking-widest font-black text-saffron block">Our Corporate Partners</span>
-          <h2 className="font-heading text-2xl font-black text-teal-deep">Trusted By Industry Leaders</h2>
-        </div>
-        
-        <div className="relative py-4 overflow-hidden bg-white/40 border-y border-teal-deep/5 backdrop-blur-sm">
-          <div className="flex space-x-16 animate-marquee whitespace-nowrap">
-            {[...clientLogos, ...clientLogos].map((client, idx) => (
-              <div key={idx} className="inline-flex flex-col items-center justify-center min-w-[120px]">
-                <span className="font-heading text-lg font-black tracking-tight text-teal-deep hover:text-rani-pink transition-colors">
-                  {client.name}
-                </span>
-                <span className="text-[8px] text-teal-deep/40 uppercase tracking-widest">{client.type}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 3. CIRCULAR CATEGORY SHOWCASE */}
       <section className="max-w-6xl mx-auto px-6 space-y-10 text-center">
         <div className="space-y-4">
@@ -406,6 +385,36 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 5. GIFTS THAT STAND OUT - BESTSELLERS SECTION */}
+      <section className="max-w-6xl mx-auto px-6 space-y-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="space-y-3 text-left">
+            <span className="text-[10px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
+              Curated Masterpieces
+            </span>
+            <h2 className="font-heading text-3xl md:text-4xl font-extrabold text-teal-deep">
+              Gifts That Stand Out
+            </h2>
+            <p className="text-sm text-teal-deep/70 max-w-lg">
+              Explore our bestseller list of celebratory sets, chosen by thousands of corporate managers and families for premium presentation.
+            </p>
+          </div>
+          <Link
+            href="/collections"
+            className="flex items-center space-x-2 text-xs font-bold text-teal-deep hover:text-rani-pink transition-colors border-b-2 border-teal-deep/15 pb-1 hover:border-rani-pink/40"
+          >
+            <span>View All Bestsellers</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {bestsellers.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+
       {/* 3.5 WHAT WE OFFER SECTION */}
       <section className="max-w-6xl mx-auto px-6 space-y-12 text-center">
         <div className="space-y-3">
@@ -442,53 +451,6 @@ export default function Home() {
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 4. EDITORIAL BRAND STORY */}
-      <section className="max-w-4xl mx-auto px-6 text-center relative py-12">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-        
-        <div className="space-y-6 max-w-2xl mx-auto py-4">
-          <Heart className="w-6 h-6 text-rani-pink mx-auto animate-pulse" />
-          <h2 className="font-heading text-3xl font-extrabold text-teal-deep italic">
-            The Art of Handcrafted Gifting
-          </h2>
-          <p className="font-body text-sm sm:text-base text-teal-deep/80 leading-relaxed font-light">
-            We believe that a gift should tell a story. Not of mass production, but of local Indian artisans, handcrafted brass, stone burners, and premium organic harvests. Every box is curated individually in our Jaipur studio, hand-wrapped with high-grade silk or gold bows, and shipped directly with a personalized message card.
-          </p>
-          <div className="w-16 h-0.5 bg-saffron mx-auto rounded-full" />
-        </div>
-      </section>
-
-      {/* 5. GIFTS THAT STAND OUT - BESTSELLERS SECTION */}
-      <section className="max-w-6xl mx-auto px-6 space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-3 text-left">
-            <span className="text-[10px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
-              Curated Masterpieces
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-extrabold text-teal-deep">
-              Gifts That Stand Out
-            </h2>
-            <p className="text-sm text-teal-deep/70 max-w-lg">
-              Explore our bestseller list of celebratory sets, chosen by thousands of corporate managers and families for premium presentation.
-            </p>
-          </div>
-          <Link
-            href="/collections"
-            className="flex items-center space-x-2 text-xs font-bold text-teal-deep hover:text-rani-pink transition-colors border-b-2 border-teal-deep/15 pb-1 hover:border-rani-pink/40"
-          >
-            <span>View All Bestsellers</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {bestsellers.map((product) => (
-            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
@@ -576,6 +538,23 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* 4. BRAND MISSION STATEMENT */}
+      <section className="max-w-4xl mx-auto px-6 text-center relative py-12">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+
+        <div className="space-y-6 max-w-2xl mx-auto py-4">
+          <Heart className="w-6 h-6 text-rani-pink mx-auto animate-pulse" />
+          <h2 className="font-heading text-3xl font-extrabold text-teal-deep italic">
+            To Help You Create Wonderful Stories
+          </h2>
+          <p className="font-body text-sm sm:text-base text-teal-deep/80 leading-relaxed font-light">
+            Our vision is to revolutionize the art of gifting by creating personalized and memorable experiences that celebrate life&apos;s special moments — from birthdays and anniversaries to weddings, Diwali, and everything in between. Based in New Delhi, with one-day delivery available in Jaipur.
+          </p>
+          <div className="w-16 h-0.5 bg-saffron mx-auto rounded-full" />
+        </div>
+      </section>
+
       {/* 8. TESTIMONIALS SLIDER SECTION */}
       <section className="max-w-6xl mx-auto px-6 space-y-10 text-center">
         <div className="space-y-3">
@@ -612,6 +591,27 @@ export default function Home() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 2.5 TRUSTED BY MANY CLIENT CAROUSEL */}
+      <section className="max-w-6xl mx-auto px-6 text-center space-y-8">
+        <div className="space-y-1">
+          <span className="text-[9px] uppercase tracking-widest font-black text-saffron block">Our Corporate Partners</span>
+          <h2 className="font-heading text-2xl font-black text-teal-deep">Trusted By Industry Leaders</h2>
+        </div>
+        
+        <div className="relative py-4 overflow-hidden bg-white/40 border-y border-teal-deep/5 backdrop-blur-sm">
+          <div className="flex space-x-16 animate-marquee whitespace-nowrap">
+            {[...clientLogos, ...clientLogos].map((client, idx) => (
+              <div key={idx} className="inline-flex flex-col items-center justify-center min-w-[120px]">
+                <span className="font-heading text-lg font-black tracking-tight text-teal-deep hover:text-rani-pink transition-colors">
+                  {client.name}
+                </span>
+                <span className="text-[8px] text-teal-deep/40 uppercase tracking-widest">{client.type}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
