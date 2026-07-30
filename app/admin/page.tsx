@@ -5,13 +5,13 @@ import { supabase } from "../../lib/supabase";
 import { 
   BarChart3, ShoppingBag, MessageSquare, Package, Loader,
   CheckCircle, Mail, Phone, Calendar, Search, RefreshCw,
-  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag
+  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem } from "../../lib/types";
 import type { Product } from "../../data/products";
 
-type AdminTab = "orders" | "inquiries" | "products" | "bazaar" | "inventory";
+type AdminTab = "orders" | "inquiries" | "products" | "bazaar" | "inventory" | "portfolio" | "catalog";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
@@ -58,10 +58,110 @@ export default function AdminDashboard() {
   const [syncCategory, setSyncCategory] = useState<string>("Diwali"); // Default for products
   const [syncBazaarCategory, setSyncBazaarCategory] = useState<"Sweets" | "Decor" | "Wellness" | "Gourmet">("Sweets");
 
+  // Website Content Config states
+  const [catalogConfig, setCatalogConfig] = useState<{ totalPages: number; sections: any[] } | null>(null);
+  const [portfolioConfig, setPortfolioConfig] = useState<{ projects: any[] } | null>(null);
+  const [isSavingConfig, setIsSavingConfig] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const fetchConfigs = async () => {
+    try {
+      const catRes = await fetch("/api/admin/get-config?type=catalog");
+      const catData = await catRes.json();
+      if (catData.success) setCatalogConfig(catData.config);
+
+      const portRes = await fetch("/api/admin/get-config?type=past-work");
+      const portData = await portRes.json();
+      if (portData.success) setPortfolioConfig(portData.config);
+    } catch (err) {
+      console.error("Error loading configs:", err);
+    }
+  };
+
+  const saveConfig = async (type: "catalog" | "past-work", config: any) => {
+    setIsSavingConfig(true);
+    try {
+      const res = await fetch("/api/admin/save-config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, config }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Reload configurations to sync state
+        const catRes = await fetch("/api/admin/get-config?type=catalog");
+        const catData = await catRes.json();
+        if (catData.success) setCatalogConfig(catData.config);
+
+        const portRes = await fetch("/api/admin/get-config?type=past-work");
+        const portData = await portRes.json();
+        if (portData.success) setPortfolioConfig(portData.config);
+      } else {
+        alert("Failed to save: " + data.error);
+      }
+    } catch (err) {
+      alert("Error saving: " + err);
+    } finally {
+      setIsSavingConfig(false);
+    }
+  };
+
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "catalog" | "past-work",
+    folder?: string,
+    projectIdx?: number
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", type);
+    if (folder) formData.append("folder", folder);
+
+    try {
+      const res = await fetch("/api/admin/upload-photo", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        if (type === "past-work" && projectIdx !== undefined && portfolioConfig) {
+          const updatedProjects = [...portfolioConfig.projects];
+          updatedProjects[projectIdx].images.push(data.url);
+          const newConfig = { ...portfolioConfig, projects: updatedProjects };
+          setPortfolioConfig(newConfig);
+          await saveConfig("past-work", newConfig);
+        } else if (type === "catalog" && catalogConfig) {
+          // If uploading page_XX.png, update totalPages
+          const match = file.name.match(/page_(\d+)/i);
+          if (match) {
+            const pageNum = parseInt(match[1]);
+            if (pageNum > catalogConfig.totalPages) {
+              const newConfig = { ...catalogConfig, totalPages: pageNum };
+              setCatalogConfig(newConfig);
+              await saveConfig("catalog", newConfig);
+            }
+          }
+        }
+        alert("Image uploaded and linked successfully!");
+      } else {
+        alert("Upload failed: " + data.error);
+      }
+    } catch (err) {
+      alert("Upload error: " + err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
+        await fetchConfigs();
         // 1. Fetch Orders
         const { data: oData } = await supabase
           .from("orders")
@@ -482,7 +582,7 @@ export default function AdminDashboard() {
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "bazaar", "inventory"].map((tab) => (
+          {["orders", "inquiries", "products", "bazaar", "inventory", "portfolio", "catalog"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -495,7 +595,15 @@ export default function AdminDashboard() {
                   : "text-teal-deep/60 hover:text-teal-deep hover:bg-teal-deep/5"
               }`}
             >
-              {tab === "bazaar" ? "Bazaar & Packaging" : tab === "inventory" ? "Offline Inventory" : tab}
+              {tab === "bazaar" 
+                ? "Bazaar & Packaging" 
+                : tab === "inventory" 
+                  ? "Offline Inventory" 
+                  : tab === "portfolio" 
+                    ? "Past Projects" 
+                    : tab === "catalog" 
+                      ? "Catalog Sections" 
+                      : tab}
             </button>
           ))}
         </div>
@@ -1279,6 +1387,417 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: PAST PROJECTS EDITOR */}
+          {activeTab === "portfolio" && portfolioConfig && (
+            <div className="p-6 space-y-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
+                <div>
+                  <h3 className="font-heading text-lg font-bold text-teal-deep">Past Gifting Projects Portfolio</h3>
+                  <p className="text-[10px] text-teal-deep/50">Edit the B2B case studies, upload client product photos, and reorder card placements.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newProject = {
+                      folder: `project_${Date.now()}`,
+                      company: "New Partner",
+                      title: "Campaign Showcase",
+                      badge: "Custom",
+                      context: "Client context or volume details.",
+                      outcome: "100% on-time dispatch and premium satisfaction.",
+                      images: []
+                    };
+                    const updated = { ...portfolioConfig, projects: [newProject, ...portfolioConfig.projects] };
+                    setPortfolioConfig(updated);
+                    saveConfig("past-work", updated);
+                  }}
+                  className="mt-4 sm:mt-0 px-4 py-2 bg-teal-deep text-[#FAF4E8] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center space-x-1.5 hover:bg-teal-deep/90 shadow transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Gifting Campaign</span>
+                </button>
+              </div>
+
+              {/* Projects List */}
+              <div className="space-y-12">
+                {portfolioConfig.projects.map((project, idx) => (
+                  <div key={idx} className="bg-slate-50/50 border border-teal-deep/5 rounded-3xl p-6 md:p-8 space-y-6 relative group">
+                    {/* Controls Row */}
+                    <div className="absolute top-6 right-6 flex items-center space-x-2">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={() => {
+                          const list = [...portfolioConfig.projects];
+                          [list[idx], list[idx - 1]] = [list[idx - 1], list[idx]];
+                          const updated = { ...portfolioConfig, projects: list };
+                          setPortfolioConfig(updated);
+                          saveConfig("past-work", updated);
+                        }}
+                        className="p-1.5 bg-white border border-teal-deep/5 rounded-lg text-teal-deep hover:bg-teal-deep/5 disabled:opacity-30 disabled:hover:bg-white"
+                        title="Move Up"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === portfolioConfig.projects.length - 1}
+                        onClick={() => {
+                          const list = [...portfolioConfig.projects];
+                          [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
+                          const updated = { ...portfolioConfig, projects: list };
+                          setPortfolioConfig(updated);
+                          saveConfig("past-work", updated);
+                        }}
+                        className="p-1.5 bg-white border border-teal-deep/5 rounded-lg text-teal-deep hover:bg-teal-deep/5 disabled:opacity-30 disabled:hover:bg-white"
+                        title="Move Down"
+                      >
+                        ▼
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete ${project.company}?`)) {
+                            const list = portfolioConfig.projects.filter((_: any, i: number) => i !== idx);
+                            const updated = { ...portfolioConfig, projects: list };
+                            setPortfolioConfig(updated);
+                            saveConfig("past-work", updated);
+                          }
+                        }}
+                        className="p-1.5 bg-red-50 border border-red-100 rounded-lg text-red-650 hover:bg-red-100"
+                        title="Delete Gifting Campaign"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Left: Text parameters */}
+                      <div className="space-y-4 text-left">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Client Name</label>
+                            <input
+                              type="text"
+                              value={project.company}
+                              onChange={(e) => {
+                                const list = [...portfolioConfig.projects];
+                                list[idx].company = e.target.value;
+                                setPortfolioConfig({ ...portfolioConfig, projects: list });
+                              }}
+                              className="w-full bg-white border border-teal-deep/15 rounded-xl px-3 py-2 text-xs text-teal-deep focus:outline-none"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Category Badge</label>
+                            <input
+                              type="text"
+                              value={project.badge}
+                              onChange={(e) => {
+                                const list = [...portfolioConfig.projects];
+                                list[idx].badge = e.target.value;
+                                setPortfolioConfig({ ...portfolioConfig, projects: list });
+                              }}
+                              className="w-full bg-white border border-teal-deep/15 rounded-xl px-3 py-2 text-xs text-teal-deep focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Showcase Title</label>
+                          <input
+                            type="text"
+                            value={project.title}
+                            onChange={(e) => {
+                              const list = [...portfolioConfig.projects];
+                              list[idx].title = e.target.value;
+                              setPortfolioConfig({ ...portfolioConfig, projects: list });
+                            }}
+                            className="w-full bg-white border border-teal-deep/15 rounded-xl px-3 py-2 text-xs text-teal-deep focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Context Description</label>
+                          <textarea
+                            rows={2}
+                            value={project.context}
+                            onChange={(e) => {
+                              const list = [...portfolioConfig.projects];
+                              list[idx].context = e.target.value;
+                              setPortfolioConfig({ ...portfolioConfig, projects: list });
+                            }}
+                            className="w-full bg-white border border-teal-deep/15 rounded-xl px-3 py-2 text-xs text-teal-deep focus:outline-none resize-none"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Project Outcome</label>
+                          <input
+                            type="text"
+                            value={project.outcome}
+                            onChange={(e) => {
+                              const list = [...portfolioConfig.projects];
+                              list[idx].outcome = e.target.value;
+                              setPortfolioConfig({ ...portfolioConfig, projects: list });
+                            }}
+                            className="w-full bg-white border border-teal-deep/15 rounded-xl px-3 py-2 text-xs text-teal-deep focus:outline-none"
+                          />
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => saveConfig("past-work", portfolioConfig)}
+                          className="px-4 py-2 bg-saffron hover:bg-saffron/90 text-white rounded-lg font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
+                        >
+                          Save Text Details
+                        </button>
+                      </div>
+
+                      {/* Right: Images List & Uploader */}
+                      <div className="space-y-4 text-left">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Gallery Photos</label>
+                          
+                          {/* File Upload Button */}
+                          <label className="cursor-pointer px-3 py-1.5 bg-teal-deep/5 hover:bg-teal-deep/10 border border-teal-deep/10 text-teal-deep rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center space-x-1 transition-all">
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Upload Photo</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleFileUpload(e, "past-work", project.folder, idx)}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+
+                        {project.images.length === 0 ? (
+                          <div className="border border-dashed border-teal-deep/15 rounded-2xl p-6 text-center text-teal-deep/40 text-xs">
+                            No photos uploaded yet for this project.
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-48 overflow-y-auto border border-teal-deep/5 p-3 rounded-2xl bg-white">
+                            {project.images.map((imgUrl: string, imgIdx: number) => (
+                              <div key={imgIdx} className="relative aspect-square rounded-xl overflow-hidden group/img bg-slate-100 border border-teal-deep/5 shadow-[inset_0_0_8px_rgba(0,0,0,0.02)]">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={imgUrl}
+                                  alt="Thumbnail"
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    if (confirm("Remove this image?")) {
+                                      const updatedImages = project.images.filter((_: any, i: number) => i !== imgIdx);
+                                      const list = [...portfolioConfig.projects];
+                                      list[idx].images = updatedImages;
+                                      const newConfig = { ...portfolioConfig, projects: list };
+                                      setPortfolioConfig(newConfig);
+                                      await saveConfig("past-work", newConfig);
+                                    }
+                                  }}
+                                  className="absolute top-1 right-1 p-1 bg-red-650 hover:bg-red-700 text-white rounded-full shadow opacity-0 group-hover/img:opacity-100 transition-opacity"
+                                  title="Delete Photo"
+                                >
+                                  <X className="w-2.5 h-2.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: CATALOG SECTIONS EDITOR */}
+          {activeTab === "catalog" && catalogConfig && (
+            <div className="p-6 space-y-8 text-left">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
+                <div>
+                  <h3 className="font-heading text-lg font-bold text-teal-deep">Diwali Catalog Sections Index</h3>
+                  <p className="text-[10px] text-teal-deep/50">Edit page counts, section page ranges, and visual description tags.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newSection = {
+                      title: "New Category",
+                      startPage: catalogConfig.totalPages,
+                      endPage: catalogConfig.totalPages,
+                      description: "Enter category details."
+                    };
+                    const updated = { ...catalogConfig, sections: [...catalogConfig.sections, newSection] };
+                    setCatalogConfig(updated);
+                    saveConfig("catalog", updated);
+                  }}
+                  className="mt-4 sm:mt-0 px-4 py-2 bg-teal-deep text-[#FAF4E8] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center space-x-1.5 hover:bg-teal-deep/90 shadow transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Catalog Section</span>
+                </button>
+              </div>
+
+              {/* Total Pages Config */}
+              <div className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 max-w-xl">
+                <div className="space-y-1">
+                  <h4 className="font-heading text-sm font-bold text-teal-deep">Total Catalog Pages</h4>
+                  <p className="text-[10px] text-teal-deep/50">Adjusting this updates the number of page PNGs rendered in the catalog scroll view.</p>
+                </div>
+                <div className="flex items-center space-x-3 shrink-0">
+                  <input
+                    type="number"
+                    value={catalogConfig.totalPages}
+                    onChange={(e) => {
+                      const updated = { ...catalogConfig, totalPages: parseInt(e.target.value) || 1 };
+                      setCatalogConfig(updated);
+                    }}
+                    className="w-24 bg-white border border-teal-deep/15 rounded-xl px-3 py-2 text-center text-xs font-bold text-teal-deep focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => saveConfig("catalog", catalogConfig)}
+                    className="px-4 py-2 bg-saffron hover:bg-saffron/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
+                  >
+                    Save Pages count
+                  </button>
+                </div>
+              </div>
+
+              {/* Sections Table List */}
+              <div className="border border-teal-deep/5 rounded-3xl overflow-hidden bg-white shadow-sm">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-background border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
+                    <tr>
+                      <th className="p-4 w-12">No.</th>
+                      <th className="p-4">Section Title</th>
+                      <th className="p-4 w-28">Start Page</th>
+                      <th className="p-4 w-28">End Page</th>
+                      <th className="p-4">Short Description</th>
+                      <th className="p-4 w-32 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {catalogConfig.sections.map((section, idx) => (
+                      <tr key={idx} className="border-b border-teal-deep/5 hover:bg-teal-deep/[0.01] transition-colors">
+                        <td className="p-4 font-mono font-bold text-teal-deep/50">{idx + 1}</td>
+                        <td className="p-4">
+                          <input
+                            type="text"
+                            value={section.title}
+                            onChange={(e) => {
+                              const list = [...catalogConfig.sections];
+                              list[idx].title = e.target.value;
+                              setCatalogConfig({ ...catalogConfig, sections: list });
+                            }}
+                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-xs font-bold text-teal-deep focus:outline-none focus:border-teal-deep/20"
+                          />
+                        </td>
+                        <td className="p-4">
+                          <input
+                            type="number"
+                            value={section.startPage}
+                            onChange={(e) => {
+                              const list = [...catalogConfig.sections];
+                              list[idx].startPage = parseInt(e.target.value) || 1;
+                              setCatalogConfig({ ...catalogConfig, sections: list });
+                            }}
+                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-center text-xs font-bold text-teal-deep focus:outline-none focus:border-teal-deep/20"
+                          />
+                        </td>
+                        <td className="p-4">
+                          <input
+                            type="number"
+                            value={section.endPage}
+                            onChange={(e) => {
+                              const list = [...catalogConfig.sections];
+                              list[idx].endPage = parseInt(e.target.value) || 1;
+                              setCatalogConfig({ ...catalogConfig, sections: list });
+                            }}
+                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-center text-xs font-bold text-teal-deep focus:outline-none focus:border-teal-deep/20"
+                          />
+                        </td>
+                        <td className="p-4">
+                          <input
+                            type="text"
+                            value={section.description}
+                            onChange={(e) => {
+                              const list = [...catalogConfig.sections];
+                              list[idx].description = e.target.value;
+                              setCatalogConfig({ ...catalogConfig, sections: list });
+                            }}
+                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-xs text-teal-deep focus:outline-none focus:border-teal-deep/20"
+                          />
+                        </td>
+                        <td className="p-4 text-right">
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => {
+                                const list = [...catalogConfig.sections];
+                                [list[idx], list[idx - 1]] = [list[idx - 1], list[idx]];
+                                const updated = { ...catalogConfig, sections: list };
+                                setCatalogConfig(updated);
+                                saveConfig("catalog", updated);
+                              }}
+                              className="p-1 bg-white border border-teal-deep/5 rounded hover:bg-teal-deep/5 text-teal-deep disabled:opacity-30"
+                            >
+                              ▲
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === catalogConfig.sections.length - 1}
+                              onClick={() => {
+                                const list = [...catalogConfig.sections];
+                                [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
+                                const updated = { ...catalogConfig, sections: list };
+                                setCatalogConfig(updated);
+                                saveConfig("catalog", updated);
+                              }}
+                              className="p-1 bg-white border border-teal-deep/5 rounded hover:bg-teal-deep/5 text-teal-deep disabled:opacity-30"
+                            >
+                              ▼
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (confirm(`Delete section "${section.title}"?`)) {
+                                  const list = catalogConfig.sections.filter((_: any, i: number) => i !== idx);
+                                  const updated = { ...catalogConfig, sections: list };
+                                  setCatalogConfig(updated);
+                                  saveConfig("catalog", updated);
+                                }
+                              }}
+                              className="p-1 bg-red-50 hover:bg-red-100 text-red-650 rounded border border-red-100"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={() => saveConfig("catalog", catalogConfig)}
+                  className="px-6 py-3 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
+                >
+                  Save Section Indexes Config
+                </button>
               </div>
             </div>
           )}
