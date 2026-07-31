@@ -470,7 +470,82 @@ export default function CorporateGifting() {
               </div>
             </div>
 
-            {/* 7. Premium Apparel & Polos */}
+            {/* 7. Portronics Tech Accessories */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-indigo-100 text-indigo-800 rounded-xl flex items-center justify-center font-bold text-lg">
+                  🔋
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Portronics Tech Accessories
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Wireless power banks, multi-port chargers, smart tables, and portable bluetooth speakers.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/1.Portronics_PPT_July.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Portronics PPT</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 8. Wacaco Premium Espresso Gear */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-amber-100 text-amber-800 rounded-xl flex items-center justify-center font-bold text-lg">
+                  ☕
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Wacaco Portable Coffee Gear
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Luxury portable espresso makers, Minipresso travel sets, and premium coffee capsules.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/13.Wacaco Presentation 2023.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Wacaco Presentation</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 9. Aquaminder Smart Hydration */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-sky-100 text-sky-800 rounded-xl flex items-center justify-center font-bold text-lg">
+                  🥤
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Aquaminder Smart Hydration
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Tracked premium hydration flasks, smart bottles, and temperature-controlled drinkware.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/7.Aquaminder July 2026.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Aquaminder Brochure</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 10. Premium Apparel & Polos */}
             <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between sm:col-span-2 lg:col-span-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-3">
