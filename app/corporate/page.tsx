@@ -299,6 +299,231 @@ export default function CorporateGifting() {
           </div>
         </section>
 
+        {/* Products We Deal In / Catalogues Download */}
+        <section className="space-y-12 animate-fade-in">
+          <div className="space-y-3 text-center">
+            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+              Corporate Catalogues
+            </span>
+            <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">Products We Deal In</h2>
+            <p className="text-xs text-slate-555 max-w-md mx-auto">
+              Download our signature brochures and curated catalogs for detailed specifications, bulk pricing levels, and branding guidelines.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* 1. Bags & Backpacks */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-saffron/10 text-saffron rounded-xl flex items-center justify-center font-bold text-lg">
+                  💼
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Bags & Executive Backpacks
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Premium laptop sleeves, leather bags, smart business packs, and luggage sets.
+                </p>
+              </div>
+              <div className="flex flex-col space-y-2 pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/BAG CATALOGUE 2025-26.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Standard Bag Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/catalogues/EXECUTIVE BAG CATALOGUE 2025-26.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Executive Bag Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 2. Executive Notebooks & Diaries */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-rani-pink/10 text-rani-pink rounded-xl flex items-center justify-center font-bold text-lg">
+                  📓
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Notebooks & Organizers
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Genuine leather diaries, pocket memo pads, custom planners, and gold-trimmed conference notebooks.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/NOTEBOOK CATALOGUE 2025-26.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Notebook Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 3. Luxury Pens & Keychains */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-teal-deep/10 text-teal-deep rounded-xl flex items-center justify-center font-bold text-lg">
+                  🖋️
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Writing Instruments & Keys
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Engraved metal rollerballs, premium pen sets, custom leather keychains, and laser-marked steel key rings.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/PEN & KEYCHAIN CATALOGUE 2025-26.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Pens & Keychains Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 4. Leather Wallets & Cardholders */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-emerald-700/10 text-emerald-800 rounded-xl flex items-center justify-center font-bold text-lg">
+                  👛
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Wallets & Leather Accessories
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  RFID-protected bifold wallets, card sleeves, travel passport folders, and premium utility cases.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/WALLET CATALOGUE 2025-26.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Wallets Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 5. Meyvin Collection & Drinkware */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-amber-700/10 text-amber-800 rounded-xl flex items-center justify-center font-bold text-lg">
+                  ☕
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Meyvin Premium Flasks & Drinkware
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Vacuum-insulated thermal bottles, travel mugs, matching coasters, and gift boxes.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/MEYVIN CATALOGUE 2025-26.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Meyvin Flasks Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 6. Smart Lifestyle & Electronics */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-[#8F9489]/10 text-emerald-950 rounded-xl flex items-center justify-center font-bold text-lg">
+                  🔌
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Smart Lifestyle Products
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Smart mugs, tech accessories, ambient desk humidifiers, and organizers from our lifestyle selection.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/LIFESTYLE PRODUCT CATALOGUE 2025-26.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Lifestyle Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 7. Premium Apparel & Polos */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between sm:col-span-2 lg:col-span-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 bg-[#5A6E85]/10 text-[#2B3A4A] rounded-xl flex items-center justify-center font-bold text-lg">
+                    👕
+                  </div>
+                  <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                    Premium Apparel & Polo T-shirts
+                  </h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Custom logo polo shirts, Flynn tee series, cotton workspace hoodies, and activewear for corporate events.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3 pt-2 md:pt-0 pl-0 md:pl-6 border-l border-slate-100">
+                  <a
+                    href="/catalogues/Flynn Premium Tee Catalogue-1.pdf"
+                    target="_blank"
+                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                  >
+                    <span>Flynn Tees</span>
+                    <ArrowRight className="w-2.5 h-2.5" />
+                  </a>
+                  <a
+                    href="/catalogues/golfer premium polo.pdf"
+                    target="_blank"
+                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                  >
+                    <span>Golfer Polos</span>
+                    <ArrowRight className="w-2.5 h-2.5" />
+                  </a>
+                  <a
+                    href="/catalogues/solid polo.pdf"
+                    target="_blank"
+                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                  >
+                    <span>Solid Polos</span>
+                    <ArrowRight className="w-2.5 h-2.5" />
+                  </a>
+                  <a
+                    href="/catalogues/green polo.pdf"
+                    target="_blank"
+                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                  >
+                    <span>Green Polos</span>
+                    <ArrowRight className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
         {/* Inquiries Form Section */}
         <section id="brief-form" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm text-left">
           <div className="lg:col-span-5 space-y-6">
