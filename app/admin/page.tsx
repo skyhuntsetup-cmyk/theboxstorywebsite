@@ -5,13 +5,14 @@ import { supabase } from "../../lib/supabase";
 import { 
   BarChart3, ShoppingBag, MessageSquare, Package, Loader,
   CheckCircle, Mail, Phone, Calendar, Search, RefreshCw,
-  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X
+  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X, LogOut
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem } from "../../lib/types";
 import type { Product } from "../../data/products";
+import type { SiteContentField } from "../../lib/siteContent";
 
-type AdminTab = "orders" | "inquiries" | "products" | "bazaar" | "inventory" | "portfolio" | "catalog";
+type AdminTab = "orders" | "inquiries" | "products" | "bazaar" | "inventory" | "portfolio" | "catalog" | "content";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
@@ -61,6 +62,7 @@ export default function AdminDashboard() {
   // Website Content Config states
   const [catalogConfig, setCatalogConfig] = useState<{ totalPages: number; sections: any[] } | null>(null);
   const [portfolioConfig, setPortfolioConfig] = useState<{ projects: any[] } | null>(null);
+  const [siteContentConfig, setSiteContentConfig] = useState<{ fields: SiteContentField[] } | null>(null);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -73,12 +75,16 @@ export default function AdminDashboard() {
       const portRes = await fetch("/api/admin/get-config?type=past-work");
       const portData = await portRes.json();
       if (portData.success) setPortfolioConfig(portData.config);
+
+      const contentRes = await fetch("/api/admin/get-config?type=site-content");
+      const contentData = await contentRes.json();
+      if (contentData.success) setSiteContentConfig(contentData.config);
     } catch (err) {
       console.error("Error loading configs:", err);
     }
   };
 
-  const saveConfig = async (type: "catalog" | "past-work", config: any) => {
+  const saveConfig = async (type: "catalog" | "past-work" | "site-content", config: any) => {
     setIsSavingConfig(true);
     try {
       const res = await fetch("/api/admin/save-config", {
@@ -96,6 +102,10 @@ export default function AdminDashboard() {
         const portRes = await fetch("/api/admin/get-config?type=past-work");
         const portData = await portRes.json();
         if (portData.success) setPortfolioConfig(portData.config);
+
+        const contentRes = await fetch("/api/admin/get-config?type=site-content");
+        const contentData = await contentRes.json();
+        if (contentData.success) setSiteContentConfig(contentData.config);
       } else {
         alert("Failed to save: " + data.error);
       }
@@ -147,6 +157,46 @@ export default function AdminDashboard() {
           }
         }
         alert("Image uploaded and linked successfully!");
+      } else {
+        alert("Upload failed: " + data.error);
+      }
+    } catch (err) {
+      alert("Upload error: " + err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const updateContentField = (key: string, value: string) => {
+    if (!siteContentConfig) return;
+    const updated = {
+      ...siteContentConfig,
+      fields: siteContentConfig.fields.map((f) => (f.key === key ? { ...f, value } : f)),
+    };
+    setSiteContentConfig(updated);
+  };
+
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldKey: string) => {
+    const file = e.target.files?.[0];
+    if (!file || !siteContentConfig) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", "site-content");
+    formData.append("fieldKey", fieldKey);
+
+    try {
+      const res = await fetch("/api/admin/upload-photo", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.success && data.url) {
+        const updated = {
+          ...siteContentConfig,
+          fields: siteContentConfig.fields.map((f) => (f.key === fieldKey ? { ...f, value: data.url } : f)),
+        };
+        setSiteContentConfig(updated);
+        await saveConfig("site-content", updated);
+        alert("Image uploaded and saved!");
       } else {
         alert("Upload failed: " + data.error);
       }
@@ -513,13 +563,25 @@ export default function AdminDashboard() {
           <h1 className="font-heading text-3xl font-black text-teal-deep">Admin Studio</h1>
           <p className="text-xs text-teal-deep/60">Configure checkout stats, orders, B2B briefs, and Hamper Studio items.</p>
         </div>
-        <button
-          onClick={() => setRefreshTrigger(prev => prev + 1)}
-          className="flex items-center space-x-1.5 text-xs font-semibold px-4 py-2 border border-teal-deep/15 hover:bg-teal-deep/5 rounded-full text-teal-deep transition-all"
-        >
-          <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" />
-          <span>Refresh Console</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setRefreshTrigger(prev => prev + 1)}
+            className="flex items-center space-x-1.5 text-xs font-semibold px-4 py-2 border border-teal-deep/15 hover:bg-teal-deep/5 rounded-full text-teal-deep transition-all"
+          >
+            <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" />
+            <span>Refresh Console</span>
+          </button>
+          <button
+            onClick={async () => {
+              await fetch("/api/admin/logout", { method: "POST" });
+              window.location.href = "/admin/login";
+            }}
+            className="flex items-center space-x-1.5 text-xs font-semibold px-4 py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-full transition-all"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Log Out</span>
+          </button>
+        </div>
       </div>
 
       {/* Stats Board */}
@@ -582,7 +644,7 @@ export default function AdminDashboard() {
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "bazaar", "inventory", "portfolio", "catalog"].map((tab) => (
+          {["orders", "inquiries", "products", "bazaar", "inventory", "portfolio", "catalog", "content"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -601,9 +663,11 @@ export default function AdminDashboard() {
                   ? "Offline Inventory" 
                   : tab === "portfolio" 
                     ? "Past Projects" 
-                    : tab === "catalog" 
-                      ? "Catalog Sections" 
-                      : tab}
+                    : tab === "catalog"
+                      ? "Catalog Sections"
+                      : tab === "content"
+                        ? "Site Content"
+                        : tab}
             </button>
           ))}
         </div>
@@ -1797,6 +1861,82 @@ export default function AdminDashboard() {
                   className="px-6 py-3 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
                 >
                   Save Section Indexes Config
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "content" && siteContentConfig && (
+            <div className="p-6 space-y-6 text-left">
+              <div className="border-b border-teal-deep/5 pb-4">
+                <h3 className="font-heading text-lg font-bold text-teal-deep">Site Text & Images</h3>
+                <p className="text-[10px] text-teal-deep/50">
+                  Edit copy and swap images used across the homepage, About page, and sitewide contact info.
+                  Changes save to the site&apos;s content file — in local dev they show up immediately; once
+                  deployed, they take effect on the next deploy (this writes to disk, not a live database).
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {siteContentConfig.fields.map((field) => (
+                  <div key={field.key} className="bg-slate-50/50 p-5 rounded-2xl border border-teal-deep/5 space-y-2">
+                    <label className="text-[10px] font-bold text-teal-deep/60 uppercase tracking-wider block">
+                      {field.label}
+                    </label>
+
+                    {field.type === "text" && (
+                      <input
+                        type="text"
+                        value={field.value}
+                        onChange={(e) => updateContentField(field.key, e.target.value)}
+                        className="w-full bg-white border border-teal-deep/15 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-deep/40"
+                      />
+                    )}
+
+                    {field.type === "textarea" && (
+                      <textarea
+                        rows={3}
+                        value={field.value}
+                        onChange={(e) => updateContentField(field.key, e.target.value)}
+                        className="w-full bg-white border border-teal-deep/15 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-deep/40 resize-none"
+                      />
+                    )}
+
+                    {field.type === "image" && (
+                      <div className="space-y-2">
+                        {field.value && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={field.value}
+                            alt={field.label}
+                            className="w-full h-32 object-cover rounded-xl border border-teal-deep/10"
+                          />
+                        )}
+                        <label className="flex items-center justify-center space-x-1.5 text-[10px] font-bold px-3 py-2 border border-teal-deep/15 rounded-lg text-teal-deep hover:bg-teal-deep/5 cursor-pointer transition-all">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span>{isUploading ? "Uploading..." : "Replace Image"}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={isUploading}
+                            onChange={(e) => handleContentImageUpload(e, field.key)}
+                          />
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <button
+                  type="button"
+                  disabled={isSavingConfig}
+                  onClick={() => saveConfig("site-content", siteContentConfig)}
+                  className="px-6 py-3 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-60"
+                >
+                  {isSavingConfig ? "Saving..." : "Save Text Changes"}
                 </button>
               </div>
             </div>

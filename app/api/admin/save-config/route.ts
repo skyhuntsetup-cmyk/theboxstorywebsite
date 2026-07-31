@@ -11,6 +11,8 @@ export async function POST(req: NextRequest) {
       filePath = path.join(process.cwd(), "data", "catalog-config.json");
     } else if (type === "past-work") {
       filePath = path.join(process.cwd(), "data", "past-work-config.json");
+    } else if (type === "site-content") {
+      filePath = path.join(process.cwd(), "data", "site-content.json");
     } else {
       return NextResponse.json({ success: false, error: "Invalid configuration type" }, { status: 400 });
     }

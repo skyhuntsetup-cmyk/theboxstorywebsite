@@ -1,0 +1,64 @@
+{
+  "fields": [
+    {
+      "key": "home.hero.badge",
+      "label": "Homepage — Hero badge text",
+      "type": "text",
+      "value": "Premium Diwali Gifting 2026"
+    },
+    {
+      "key": "home.hero.subtext",
+      "label": "Homepage — Hero subtext",
+      "type": "textarea",
+      "value": "Craft bespoke celebration hampers, select artisanal sweets, clay-brass diyas, and premium relics wrapped in gold foiled rigid boxes."
+    },
+    {
+      "key": "home.mission.headline",
+      "label": "Homepage — Mission section headline",
+      "type": "text",
+      "value": "To Help You Create Wonderful Stories"
+    },
+    {
+      "key": "home.mission.body",
+      "label": "Homepage — Mission section body",
+      "type": "textarea",
+      "value": "Our vision is to revolutionize the art of gifting by creating personalized and memorable experiences that celebrate life's special moments — from birthdays and anniversaries to weddings, Diwali, and everything in between. Based in New Delhi, with one-day delivery available in Jaipur."
+    },
+    {
+      "key": "about.hero.badge",
+      "label": "About — Hero badge text",
+      "type": "text",
+      "value": "OUR MISSION & VALUES"
+    },
+    {
+      "key": "about.hero.body",
+      "label": "About — Hero intro paragraph",
+      "type": "textarea",
+      "value": "The Box Story was founded to transform gifting from a simple transaction into a meaningful, curated experience. Every hamper we create is built to tell a story, celebrate relationships, and spark joy."
+    },
+    {
+      "key": "about.story.image",
+      "label": "About — Story section image",
+      "type": "image",
+      "value": "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "key": "contact.email",
+      "label": "Sitewide — Support email",
+      "type": "text",
+      "value": "sayhi@theboxstory.co.in"
+    },
+    {
+      "key": "contact.phone",
+      "label": "Sitewide — Phone / WhatsApp",
+      "type": "text",
+      "value": "+91 78387 83488"
+    },
+    {
+      "key": "contact.location",
+      "label": "Sitewide — Location line",
+      "type": "text",
+      "value": "New Delhi, India"
+    }
+  ]
+}

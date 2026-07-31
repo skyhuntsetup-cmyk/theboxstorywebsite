@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import { getContent } from "../lib/siteContent";
 
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -29,6 +30,16 @@ const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function Home() {
+  const heroBadge = getContent("home.hero.badge", "Premium Diwali Gifting 2026");
+  const heroSubtext = getContent(
+    "home.hero.subtext",
+    "Craft bespoke celebration hampers, select artisanal sweets, clay-brass diyas, and premium relics wrapped in gold foiled rigid boxes."
+  );
+  const missionHeadline = getContent("home.mission.headline", "To Help You Create Wonderful Stories");
+  const missionBody = getContent(
+    "home.mission.body",
+    "Our vision is to revolutionize the art of gifting by creating personalized and memorable experiences that celebrate life's special moments."
+  );
   const bestsellers = curatedProducts.slice(0, 4); // Gifts that stand out
   const [activeTab, setActiveTab] = useState<"occasion" | "recipient">("occasion");
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -233,14 +244,14 @@ export default function Home() {
           >
             <div className="inline-flex items-center space-x-2 bg-saffron/10 border border-saffron/25 px-4 py-2 rounded-full text-xs font-bold text-saffron uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
-              <span>Premium Diwali Gifting 2026</span>
+              <span>{heroBadge}</span>
             </div>
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-7xl font-black text-teal-deep leading-[1.05] tracking-tight">
               Gifts That <br />
               Tell a <span className="text-rani-pink italic font-normal font-serif">Story</span>
             </h1>
             <p className="text-sm sm:text-base text-teal-deep/80 leading-relaxed max-w-lg font-light">
-              Craft bespoke celebration hampers, select artisanal sweets, clay-brass diyas, and premium relics wrapped in gold foiled rigid boxes.
+              {heroSubtext}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Link
@@ -547,10 +558,10 @@ export default function Home() {
         <div className="space-y-6 max-w-2xl mx-auto py-4">
           <Heart className="w-6 h-6 text-rani-pink mx-auto animate-pulse" />
           <h2 className="font-heading text-3xl font-extrabold text-teal-deep italic">
-            To Help You Create Wonderful Stories
+            {missionHeadline}
           </h2>
           <p className="font-body text-sm sm:text-base text-teal-deep/80 leading-relaxed font-light">
-            Our vision is to revolutionize the art of gifting by creating personalized and memorable experiences that celebrate life&apos;s special moments — from birthdays and anniversaries to weddings, Diwali, and everything in between. Based in New Delhi, with one-day delivery available in Jaipur.
+            {missionBody}
           </p>
           <div className="w-16 h-0.5 bg-saffron mx-auto rounded-full" />
         </div>

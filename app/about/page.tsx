@@ -1,106 +1,222 @@
 "use client";
 
 import React from "react";
-import { Gift, Sparkles, Users, Building2, Heart } from "lucide-react";
+import Link from "next/link";
+import { 
+  Gift, Sparkles, Building2, Heart, Award, ShieldCheck, Leaf, Compass, ArrowRight 
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { getContent } from "../../lib/siteContent";
 
 export default function About() {
+  const heroBadge = getContent("about.hero.badge", "OUR MISSION & VALUES");
+  const heroBody = getContent(
+    "about.hero.body",
+    "The Box Story was founded to transform gifting from a simple transaction into a meaningful, curated experience."
+  );
+  const storyImage = getContent(
+    "about.story.image",
+    "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=600&auto=format&fit=crop&q=80"
+  );
   const services = [
     {
       icon: Gift,
-      title: "Personalized Gift Hampers",
-      desc: "Hampers built around the person you're gifting to, for birthdays, anniversaries, Valentine's Day, Rakhi, weddings, and new moms.",
+      title: "Build-a-Box Studio",
+      desc: "Our interactive builder lets you select rigid boxes, premium treats, and personalized calligraphy cards to design a completely custom gift.",
+      link: "/build"
     },
     {
       icon: Sparkles,
-      title: "Pre-Curated Gift Hampers",
-      desc: "Ready-to-send collections for when you want something thoughtful without starting from scratch.",
+      title: "Pre-Curated Collections",
+      desc: "Ready-to-ship themed gift boxes meticulously curated by our designers for Diwali, Weddings, Anniversaries, and Birthdays.",
+      link: "/collections"
     },
     {
       icon: Building2,
-      title: "Corporate Gifting Hampers",
-      desc: "Bulk and branded gifting for teams, clients, and employee milestones.",
+      title: "Corporate Swag & Gifting",
+      desc: "Custom branded swag kits, employee welcome boxes, and high-end client appreciation hampers personalized with your corporate logo.",
+      link: "/corporate"
     },
     {
       icon: Heart,
-      title: "Wedding Invitation Hampers",
-      desc: "Hampers designed to accompany wedding invitations and make the first impression count.",
+      title: "Luxury Wedding Invitations",
+      desc: "Exquisite wedding invite boxes containing traditional sweets, custom dry fruit jars, and hand-painted keepsakes that leave a lasting first impression.",
+      link: "/weddings"
+    }
+  ];
+
+  const pillars = [
+    {
+      icon: Compass,
+      title: "Deep Personalization",
+      desc: "We believe in deep customization over generic solutions. From custom-engraved wooden box lids and monogrammed leather accessories to hand-written calligraphed cards, every detail is tailored."
     },
+    {
+      icon: Award,
+      title: "Artisanal Craftsmanship",
+      desc: "By partnering with local Rajasthan artists, woodcarvers, potters, and candle makers, we ensure each hamper contains unique items made with a human touch."
+    },
+    {
+      icon: Leaf,
+      title: "Eco-Conscious Luxury",
+      desc: "Luxury doesn't have to cost the planet. We use reusable pinewood slider boxes, biodegradable papers, organic ingredients, and zero-plastic packaging options."
+    },
+    {
+      icon: ShieldCheck,
+      title: "Curation Quality",
+      desc: "No fillers. We taste-test every confectionery, test the burn-time of every candle, and select premium items so that your gift represents the highest standard of craftsmanship."
+    }
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-24 text-left">
-      {/* Hero Header: Seamless Warm Light Gradient */}
-      <section className="relative rounded-[40px] overflow-hidden bg-gradient-to-br from-amber-50 via-background to-rose-50 text-slate-800 p-8 md:p-20 shadow-sm border border-amber-200">
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-saffron/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-rani-pink/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-background text-slate-800 py-12 px-6">
+      <div className="max-w-5xl mx-auto space-y-24">
+        
+        {/* Editorial Hero Header */}
+        <section className="relative rounded-[40px] overflow-hidden bg-white border border-slate-200 p-8 md:p-20 shadow-sm text-left">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100/50 rounded-full blur-3xl -z-10 animate-pulse" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#FAF4E8]/60 rounded-full blur-3xl -z-10" />
 
-        <div className="max-w-2xl space-y-6 relative z-10">
-          <div className="inline-flex items-center space-x-1.5 bg-background border border-amber-200 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-widest text-saffron uppercase">
-            <Users className="w-3.5 h-3.5" />
-            <span>Our Story</span>
+          <div className="max-w-2xl space-y-6 relative z-10">
+            <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 border border-saffron/15 px-3 py-1.5 rounded-full inline-block">
+              {heroBadge}
+            </span>
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-light text-slate-900 leading-tight">
+              Gifts are not remembered for <br />
+              Their price, but for the way they <br />
+              <span className="font-black italic text-slate-700">make someone feel</span>.
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-650 leading-relaxed max-w-lg">
+              {heroBody}
+            </p>
           </div>
-          <h1 className="font-heading text-4xl sm:text-5xl font-black text-teal-deep leading-tight">
-            To Help You Create <br />
-            Wonderful Stories
-          </h1>
-          <p className="text-sm md:text-base text-slate-600 leading-relaxed">
-            Looking for the perfect gift for a loved one, family member, or colleague? Explore our collections to discover hampers that are sure to bring a smile to their face. If you can&apos;t find exactly what you need, reach out and we&apos;ll help you craft the ideal gift.
-          </p>
-        </div>
-      </section>
+        </section>
 
-      {/* Philosophy Section */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div className="space-y-6">
-          <h2 className="font-heading text-3xl font-black text-teal-deep leading-tight">
-            Something for <br />
-            Every Occasion
-          </h2>
-          <p className="text-sm text-slate-650 leading-relaxed">
-            From birthdays and anniversaries to Valentine&apos;s Day, Rakhi, weddings, new moms, and housewarmings — we build personalized hampers around the occasion and the person, not the other way around.
-          </p>
-          <p className="text-sm text-slate-650 leading-relaxed">
-            We&apos;re based in New Delhi, with one-day delivery available in Jaipur, and we ship gifts across India for the moments that matter.
-          </p>
-        </div>
-        <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-teal-deep/5 border border-slate-200 shadow-sm">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&auto=format&fit=crop&q=80"
-            alt="Curated gift hamper"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </section>
+        {/* What We Are / Our Story */}
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+          <div className="md:col-span-7 space-y-6 text-left">
+            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block border border-rani-pink/10">
+              The Box Story Genesis
+            </span>
+            <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
+              Rooted in Heritage, <br />
+              Designed for Celebrations
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Based in the cultural hub of **New Delhi** and Jaipur, **The Box Story** emerged from a desire to blend traditional Indian craftsmanship with clean, modern aesthetics. We watched people struggle to find high-end gifts that didn&apos;t feel generic, mass-produced, or cheap.
+            </p>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              We set out to partner with Rajasthan&apos;s finest woodcarvers, potters, organic farmers, and artisanal candle makers. Today, we deliver custom hand-crafted hampers across India, providing one-day express delivery in Jaipur for moments that can&apos;t wait.
+            </p>
+          </div>
+          <div className="md:col-span-5 relative aspect-square rounded-[36px] overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={storyImage}
+              alt="Curated gift packaging details"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </section>
 
-      {/* Vision */}
-      <section className="rounded-[32px] bg-teal-deep text-[#FAF4E8] p-8 md:p-14 text-center space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-saffron">Our Vision</p>
-        <p className="font-heading text-xl md:text-2xl font-bold leading-snug max-w-3xl mx-auto">
-          To revolutionize the art of gifting by creating personalized and memorable experiences that celebrate life&apos;s special moments.
-        </p>
-      </section>
+        {/* Core Pillars / What We Believe In */}
+        <section className="space-y-12">
+          <div className="text-center space-y-3">
+            <span className="text-[10px] font-bold text-teal-deep uppercase tracking-widest bg-teal-deep/5 px-2.5 py-1 rounded-full inline-block">
+              OUR PILLARS
+            </span>
+            <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">How We Do Gifting Differently</h2>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              Our philosophy is anchored in four core values that ensure every box leaves a lasting impression.
+            </p>
+          </div>
 
-      {/* Services */}
-      <section className="space-y-12">
-        <h2 className="font-heading text-3xl font-black text-teal-deep text-center">
-          What We Offer
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((val, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-3xl border border-slate-200 p-8 space-y-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
-            >
-              <div className="w-12 h-12 bg-teal-deep/5 rounded-2xl flex items-center justify-center text-teal-deep group-hover:bg-rani-pink group-hover:text-[#FAF4E8] transition-colors">
-                <val.icon className="w-6 h-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+            {pillars.map((pillar, idx) => (
+              <div
+                key={idx}
+                className="bg-white border border-slate-200 rounded-[32px] p-8 space-y-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+              >
+                <div className="w-12 h-12 bg-slate-50 text-slate-700 border border-slate-200/60 rounded-2xl flex items-center justify-center group-hover:bg-teal-deep group-hover:text-white group-hover:border-teal-deep transition-all">
+                  <pillar.icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-heading text-lg font-bold text-slate-900">{pillar.title}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{pillar.desc}</p>
               </div>
-              <h3 className="font-heading text-lg font-bold text-teal-deep">{val.title}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{val.desc}</p>
+            ))}
+          </div>
+        </section>
+
+        {/* Our Services / What We Offer */}
+        <section className="space-y-12 bg-white border border-slate-250/50 rounded-[40px] p-8 md:p-14 shadow-sm">
+          <div className="text-center space-y-3">
+            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block">
+              SERVICES
+            </span>
+            <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">Our Curated Services</h2>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              Whether you are planning a corporate campaign, a wedding invite, or a personal birthday gesture, we have you covered.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+            {services.map((service, idx) => (
+              <div
+                key={idx}
+                className="border-b border-slate-100 last:border-b-0 md:border-b-0 pb-6 md:pb-0 space-y-4 flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="w-10 h-10 bg-slate-50 border border-slate-150 rounded-xl flex items-center justify-center text-slate-700">
+                    <service.icon className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-heading text-base font-bold text-slate-900">{service.title}</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">{service.desc}</p>
+                </div>
+                <div className="pt-2">
+                  <Link
+                    href={service.link}
+                    className="inline-flex items-center text-xs font-bold text-teal-deep hover:text-saffron transition-colors group"
+                  >
+                    <span>Explore service</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-1 transform group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* High-end CTA Section */}
+        <section className="rounded-[40px] bg-teal-deep text-white p-8 md:p-16 text-center space-y-6 relative overflow-hidden shadow-lg">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-saffron/10 rounded-full blur-3xl -z-10" />
+          <div className="max-w-2xl mx-auto space-y-6">
+            <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 px-3.5 py-1.5 rounded-full inline-block border border-saffron/20">
+              CREATE A MEMORY
+            </span>
+            <h2 className="font-heading text-3xl sm:text-4xl font-light leading-tight">
+              Ready to send a gift that <br />
+              <span className="font-black italic text-saffron">tells your story?</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-md mx-auto">
+              Choose from our pre-curated sets or enter our custom studio to pick custom wood trays, greeting tags, and gourmet dry fruits.
+            </p>
+            <div className="pt-4 flex flex-wrap justify-center gap-4">
+              <Link
+                href="/build"
+                className="bg-saffron hover:bg-saffron/95 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow"
+              >
+                Build custom box
+              </Link>
+              <Link
+                href="/collections"
+                className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider border border-white/20"
+              >
+                Browse catalog
+              </Link>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
