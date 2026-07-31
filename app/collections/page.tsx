@@ -12,6 +12,15 @@ export default function Collections() {
 
   const categories = ["All", "Diwali", "Weddings", "Anniversary", "Corporate", "Housewarming"];
 
+  const visualCategories = [
+    { name: "All", label: "All Gifts", icon: "/images/icons/icon_couple.png" },
+    { name: "Diwali", label: "Diwali", icon: "/images/icons/icon_diwali.png" },
+    { name: "Weddings", label: "Weddings", icon: "/images/icons/icon_wedding.png" },
+    { name: "Anniversary", label: "Anniversary", icon: "/images/icons/icon_anniversary.png" },
+    { name: "Corporate", label: "Corporate", icon: "/images/icons/icon_corporate.png" },
+    { name: "Housewarming", label: "Housewarming", icon: "/images/icons/icon_housewarming.png" }
+  ];
+
   const priceRanges = [
     { label: "All Prices", value: "All" },
     { label: "Under ₹2,000", value: "under2000" },
@@ -55,6 +64,45 @@ export default function Collections() {
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm">
               Discover gift box curations styled for Diwali, luxury marriages, B2B milestones, and corporate celebrations.
             </p>
+          </div>
+        </section>
+
+        {/* Visual Category Filters */}
+        <section className="bg-white border border-slate-200/60 rounded-[32px] p-6 shadow-sm">
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
+            {visualCategories.map((cat) => (
+              <button
+                key={cat.name}
+                onClick={() => setSelectedCategory(cat.name)}
+                className="group flex flex-col items-center space-y-2 focus:outline-none transition-all w-16 sm:w-20"
+              >
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border p-0.5 transition-all duration-300 relative bg-white flex items-center justify-center ${
+                  selectedCategory === cat.name
+                    ? "border-rani-pink shadow-md scale-105"
+                    : "border-slate-200/65 shadow-sm group-hover:border-slate-350 hover:shadow"
+                }`}>
+                  <img
+                    src={cat.icon}
+                    alt={cat.label}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                  {selectedCategory === cat.name && (
+                    <div className="absolute inset-0 bg-rani-pink/5 rounded-full flex items-center justify-center">
+                      <div className="absolute bottom-1 bg-rani-pink text-white text-[7px] font-black uppercase px-1.5 py-0.5 rounded shadow-sm">
+                        Active
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <span className={`text-[10px] sm:text-xs font-bold transition-colors text-center ${
+                  selectedCategory === cat.name
+                    ? "text-rani-pink font-extrabold"
+                    : "text-slate-500 group-hover:text-slate-900"
+                }`}>
+                  {cat.label}
+                </span>
+              </button>
+            ))}
           </div>
         </section>
 

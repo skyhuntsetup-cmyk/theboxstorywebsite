@@ -104,18 +104,19 @@ export default function Home() {
 
   const circularCategories = {
     occasion: [
-      { name: "Diwali", image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300&auto=format&fit=crop&q=80" },
-      { name: "Weddings", image: "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=300&auto=format&fit=crop&q=80" },
-      { name: "Anniversary", image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80" },
-      { name: "Corporate", image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300&auto=format&fit=crop&q=80" },
-      { name: "Housewarming", image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80" },
+      { name: "Diwali", image: "/images/icons/icon_diwali.png" },
+      { name: "Weddings", image: "/images/icons/icon_wedding.png" },
+      { name: "Anniversary", image: "/images/icons/icon_anniversary.png" },
+      { name: "Corporate", image: "/images/icons/icon_corporate.png" },
+      { name: "Housewarming", image: "/images/icons/icon_housewarming.png" },
+      { name: "Rakhi Gifts", image: "/images/icons/icon_rakhi.png" },
     ],
     recipient: [
-      { name: "For Him", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&auto=format&fit=crop&q=80" },
-      { name: "For Her", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" },
-      { name: "For Couples", image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&auto=format&fit=crop&q=80" },
-      { name: "For Co-workers", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300&auto=format&fit=crop&q=80" },
-      { name: "For Parents", image: "https://images.unsplash.com/photo-1531844703905-3c128f81c737?w=300&auto=format&fit=crop&q=80" },
+      { name: "For Him", image: "/images/icons/icon_him.png" },
+      { name: "For Her", image: "/images/icons/icon_her.png" },
+      { name: "For Boyfriend", image: "/images/icons/icon_boyfriend.png" },
+      { name: "For Wife", image: "/images/icons/icon_wife.png" },
+      { name: "For Couples", image: "/images/icons/icon_couple.png" },
     ],
   };
 
@@ -356,14 +357,14 @@ export default function Home() {
         </div>
 
         {/* Categories slider row */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-6 justify-center">
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
           {circularCategories[activeTab].map((cat, idx) => (
             <Link
               key={idx}
               href="/collections"
-              className="group flex flex-col items-center space-y-3 focus:outline-none"
+              className="group flex flex-col items-center space-y-3 focus:outline-none w-24 sm:w-28"
             >
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-teal-deep/5 shadow-sm group-hover:shadow-md group-hover:border-rani-pink/20 transition-all duration-300 relative">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-teal-deep/5 shadow-sm group-hover:shadow-md group-hover:border-rani-pink/20 transition-all duration-300 relative bg-white">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={cat.image}
