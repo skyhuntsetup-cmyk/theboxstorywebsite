@@ -545,7 +545,82 @@ export default function CorporateGifting() {
               </div>
             </div>
 
-            {/* 10. Premium Apparel & Polos */}
+            {/* 10. Corporate Gift Proposals */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-amber-100 text-amber-800 rounded-xl flex items-center justify-center font-bold text-lg">
+                  🎁
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Corporate Gift Proposals
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Curated gift sets, executive onboarding boxes, and custom appreciation packages.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/CORPORATE GIFTS.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Corporate Gifts Proposal</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 11. Noise Smart Electronics */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-cyan-100 text-cyan-850 rounded-xl flex items-center justify-center font-bold text-lg">
+                  🎧
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Noise Smart Electronics
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Smartwatches, Bluetooth earbuds, smart accessories, and fitness trackers.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/NOISE ELECTRONICS.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Noise Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 12. Premium Drinkware & Tumblers */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-10 h-10 bg-rose-100 text-rose-800 rounded-xl flex items-center justify-center font-bold text-lg">
+                  🥤
+                </div>
+                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
+                  Premium Drinkware & Tumblers
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Double-walled vacuum flasks, thermal sports bottles, coffee tumblers, and steel mugs.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href="/catalogues/DRINKWARE.pdf"
+                  target="_blank"
+                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>Download Drinkware Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* 13. Premium Apparel & Polos */}
             <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between sm:col-span-2 lg:col-span-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-3">
