@@ -8,17 +8,18 @@ import {
   Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X, LogOut
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem } from "../../lib/types";
-import type { Product } from "../../data/products";
+import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem, CategoryRow, ProductWithCategories, BlogPostRow } from "../../lib/types";
 import type { SiteContentField } from "../../lib/siteContent";
 
-type AdminTab = "orders" | "inquiries" | "products" | "bazaar" | "inventory" | "portfolio" | "catalog" | "content";
+type AdminTab = "orders" | "inquiries" | "products" | "categories" | "blog" | "bazaar" | "inventory" | "portfolio" | "catalog" | "content";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
   const [orders, setOrders] = useState<Order[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithCategories[]>([]);
+  const [categories, setCategories] = useState<CategoryRow[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPostRow[]>([]);
   const [bazaarItems, setBazaarItems] = useState<BazaarItemRow[]>([]);
   const [boxStyles, setBoxStyles] = useState<BoxStyleRow[]>([]);
   const [offlineInventory, setOfflineInventory] = useState<OfflineInventoryItem[]>([]);
@@ -53,6 +54,28 @@ export default function AdminDashboard() {
   // Editing state for inventory
   const [editingInventoryCode, setEditingInventoryCode] = useState<string | null>(null);
   const [editingInventory, setEditingInventory] = useState<OfflineInventoryItem | null>(null);
+
+  // Categories tab state
+  const [newCategory, setNewCategory] = useState({ name: "", description: "", image: "" });
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [editingCategory, setEditingCategory] = useState<CategoryRow | null>(null);
+  const [isSavingCategory, setIsSavingCategory] = useState(false);
+
+  // Products tab state (full CRUD, multi-category tagging)
+  const emptyProductForm = { id: "", name: "", price: "", image: "", description: "", badge: "", categoryIds: [] as string[] };
+  const [newProduct, setNewProduct] = useState(emptyProductForm);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<(ProductWithCategories & { priceInput?: string }) | null>(null);
+  const [isSavingProduct, setIsSavingProduct] = useState(false);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+
+  // Blog tab state
+  const emptyBlogForm = { title: "", excerpt: "", content: "", category: "", image: "", tags: "", is_published: true };
+  const [newBlogPost, setNewBlogPost] = useState(emptyBlogForm);
+  const [editingBlogId, setEditingBlogId] = useState<string | null>(null);
+  const [editingBlogPost, setEditingBlogPost] = useState<(BlogPostRow & { tagsInput?: string }) | null>(null);
+  const [isSavingBlog, setIsSavingBlog] = useState(false);
+  const [showAddBlog, setShowAddBlog] = useState(false);
 
   // Sync to website modal state
   const [syncingItem, setSyncingItem] = useState<OfflineInventoryItem | null>(null);
@@ -224,11 +247,20 @@ export default function AdminDashboard() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        // 3. Fetch Products
-        const { data: pData } = await supabase
-          .from("products")
-          .select("*")
-          .order("category");
+        // 3. Fetch Products (with tagged categories), Categories, and Blog Posts
+        // via the service-role admin API — the direct client-side Supabase
+        // calls below only satisfy read-only RLS policies (`USING (true)`),
+        // but products/categories/blog also need admin writes, which the
+        // anon-key client can't do against `auth.role() = 'authenticated'`
+        // policies without a real Supabase Auth session.
+        const [prodRes, catRes, blogRes] = await Promise.all([
+          fetch("/api/admin/products").then(r => r.json()).catch(() => null),
+          fetch("/api/admin/categories").then(r => r.json()).catch(() => null),
+          fetch("/api/admin/blog").then(r => r.json()).catch(() => null),
+        ]);
+        if (prodRes?.success) setProducts(prodRes.products);
+        if (catRes?.success) setCategories(catRes.categories);
+        if (blogRes?.success) setBlogPosts(blogRes.posts);
 
         // 4. Fetch Bazaar Items
         const { data: bData } = await supabase
@@ -271,7 +303,6 @@ export default function AdminDashboard() {
         }
         
         if (iData) setInquiries(iData);
-        if (pData) setProducts(pData);
         if (bData) setBazaarItems(bData);
         if (bsData) setBoxStyles(bsData);
         if (invData) setOfflineInventory(invData);
@@ -476,6 +507,244 @@ export default function AdminDashboard() {
     }
   };
 
+  // ─── Categories CRUD ───────────────────────────────────────────────────────
+
+  const addCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategory.name.trim()) { alert("Category name is required."); return; }
+    setIsSavingCategory(true);
+    try {
+      const res = await fetch("/api/admin/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...newCategory, display_order: categories.length }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewCategory({ name: "", description: "", image: "" });
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to add category: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSavingCategory(false);
+    }
+  };
+
+  const updateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCategory) return;
+    setIsSavingCategory(true);
+    try {
+      const res = await fetch(`/api/admin/categories/${editingCategory.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editingCategory.name,
+          description: editingCategory.description,
+          image: editingCategory.image,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditingCategoryId(null);
+        setEditingCategory(null);
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to update category: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSavingCategory(false);
+    }
+  };
+
+  const toggleCategoryActive = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch(`/api/admin/categories/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !currentStatus }),
+      });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to toggle status: " + data.error);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    }
+  };
+
+  const deleteCategory = async (id: string, name: string) => {
+    if (!confirm(`Delete category "${name}"? Products tagged into it will lose that tag (they stay tagged into any other categories).`)) return;
+    try {
+      const res = await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to delete: " + data.error);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    }
+  };
+
+  // ─── Products CRUD ─────────────────────────────────────────────────────────
+
+  const addProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProduct.id.trim() || !newProduct.name.trim() || !newProduct.price) {
+      alert("Product ID, name, and price are required."); return;
+    }
+    if (newProduct.categoryIds.length === 0) {
+      alert("Select at least one category."); return;
+    }
+    setIsSavingProduct(true);
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProduct),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewProduct(emptyProductForm);
+        setShowAddProduct(false);
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to add product: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSavingProduct(false);
+    }
+  };
+
+  const updateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    if (editingProduct.categoryIds.length === 0) {
+      alert("Select at least one category."); return;
+    }
+    setIsSavingProduct(true);
+    try {
+      const res = await fetch(`/api/admin/products/${editingProduct.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editingProduct.name,
+          price: editingProduct.price,
+          image: editingProduct.image,
+          description: editingProduct.description,
+          badge: editingProduct.badge,
+          categoryIds: editingProduct.categoryIds,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditingProductId(null);
+        setEditingProduct(null);
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to update product: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSavingProduct(false);
+    }
+  };
+
+  const deleteProduct = async (id: string, name: string) => {
+    if (!confirm(`Delete "${name}"? This removes it from the shop and every category page immediately.`)) return;
+    try {
+      const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to delete: " + data.error);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    }
+  };
+
+  // ─── Blog CRUD ──────────────────────────────────────────────────────────────
+
+  const addBlogPost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBlogPost.title.trim() || !newBlogPost.content.trim()) {
+      alert("Title and content are required."); return;
+    }
+    setIsSavingBlog(true);
+    try {
+      const res = await fetch("/api/admin/blog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...newBlogPost,
+          tags: newBlogPost.tags.split(",").map(t => t.trim()).filter(Boolean),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewBlogPost(emptyBlogForm);
+        setShowAddBlog(false);
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to add post: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSavingBlog(false);
+    }
+  };
+
+  const updateBlogPost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBlogPost) return;
+    setIsSavingBlog(true);
+    try {
+      const res = await fetch(`/api/admin/blog/${editingBlogPost.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: editingBlogPost.title,
+          excerpt: editingBlogPost.excerpt,
+          content: editingBlogPost.content,
+          category: editingBlogPost.category,
+          image: editingBlogPost.image,
+          tags: (editingBlogPost.tagsInput ?? editingBlogPost.tags.join(", ")).split(",").map(t => t.trim()).filter(Boolean),
+          is_published: editingBlogPost.is_published,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditingBlogId(null);
+        setEditingBlogPost(null);
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to update post: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSavingBlog(false);
+    }
+  };
+
+  const deleteBlogPost = async (id: string, title: string) => {
+    if (!confirm(`Delete blog post "${title}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/blog/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to delete: " + data.error);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    }
+  };
+
   const executeWebsiteSync = async (type: "curated" | "bazaar") => {
     if (!syncingItem) return;
     try {
@@ -644,7 +913,7 @@ export default function AdminDashboard() {
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "bazaar", "inventory", "portfolio", "catalog", "content"].map((tab) => (
+          {["orders", "inquiries", "products", "categories", "blog", "bazaar", "inventory", "portfolio", "catalog", "content"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -672,7 +941,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {activeTab !== "bazaar" && (
+        {activeTab !== "bazaar" && activeTab !== "categories" && activeTab !== "blog" && (
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="w-4 h-4 text-teal-deep/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -846,51 +1115,425 @@ export default function AdminDashboard() {
 
           {/* TAB 3: PRODUCTS */}
           {activeTab === "products" && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left">
-                <thead className="bg-background border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
-                  <tr>
-                    <th className="p-4">Product ID / Name</th>
-                    <th className="p-4">Category</th>
-                    <th className="p-4">Badge</th>
-                    <th className="p-4 text-right">Price</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-teal-deep/5">
-                  {products.map((prod) => (
-                    <tr key={prod.id} className="hover:bg-teal-deep/5 transition-colors">
-                      <td className="p-4 flex items-center space-x-3">
-                        <div className="w-8 h-8 rounded-lg overflow-hidden bg-teal-deep/5 border border-teal-deep/10 flex items-center justify-center flex-shrink-0">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={prod.image}
-                            alt={prod.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&auto=format&fit=crop&q=80";
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <span className="font-semibold block">{prod.name}</span>
-                          <span className="text-[10px] text-teal-deep/45 font-mono">{prod.id}</span>
-                        </div>
-                      </td>
-                      <td className="p-4 font-semibold text-teal-deep/80">{prod.category}</td>
-                      <td className="p-4">
-                        {prod.badge ? (
-                          <span className="bg-saffron/10 border border-saffron/20 text-saffron font-bold px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide">
-                            {prod.badge}
-                          </span>
-                        ) : (
-                          <span className="text-teal-deep/30">-</span>
-                        )}
-                      </td>
-                      <td className="p-4 text-right font-bold text-teal-deep text-sm">₹{prod.price}</td>
+            <div className="p-6 space-y-6">
+              <div className="flex justify-between items-center">
+                <p className="text-xs text-teal-deep/50">{products.length} products in the shop.</p>
+                <button
+                  onClick={() => setShowAddProduct(v => !v)}
+                  className="px-4 py-2 bg-teal-deep text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center space-x-1.5 hover:bg-teal-deep/90 shadow transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>{showAddProduct ? "Cancel" : "Add Product"}</span>
+                </button>
+              </div>
+
+              {showAddProduct && (
+                <form onSubmit={addProduct} className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-teal-deep/60">Product ID (unique, e.g. &quot;cur-11&quot;)</label>
+                      <input type="text" required value={newProduct.id} onChange={(e) => setNewProduct({ ...newProduct, id: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-teal-deep/60">Name</label>
+                      <input type="text" required value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-teal-deep/60">Price (INR)</label>
+                      <input type="number" required value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-teal-deep/60">Badge (optional)</label>
+                      <input type="text" placeholder="Best Seller" value={newProduct.badge} onChange={(e) => setNewProduct({ ...newProduct, badge: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
+                    <input type="text" placeholder="https://..." value={newProduct.image} onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-teal-deep/60">Description</label>
+                    <textarea rows={2} value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none resize-none" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-teal-deep/60">Categories — tag into any number; it&apos;ll show on every one automatically</label>
+                    <div className="flex flex-wrap gap-2">
+                      {categories.map((cat) => {
+                        const checked = newProduct.categoryIds.includes(cat.id);
+                        return (
+                          <button
+                            type="button"
+                            key={cat.id}
+                            onClick={() => setNewProduct({
+                              ...newProduct,
+                              categoryIds: checked ? newProduct.categoryIds.filter(id => id !== cat.id) : [...newProduct.categoryIds, cat.id],
+                            })}
+                            className={`text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all ${
+                              checked ? "bg-teal-deep text-white border-teal-deep" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
+                            }`}
+                          >
+                            {cat.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <button type="submit" disabled={isSavingProduct}
+                    className="px-6 py-2.5 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-60">
+                    {isSavingProduct ? "Saving..." : "Create Product"}
+                  </button>
+                </form>
+              )}
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-background border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
+                    <tr>
+                      <th className="p-4">Product ID / Name</th>
+                      <th className="p-4">Categories</th>
+                      <th className="p-4">Badge</th>
+                      <th className="p-4 text-right">Price</th>
+                      <th className="p-4 text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-teal-deep/5">
+                    {products.map((prod) => (
+                      <React.Fragment key={prod.id}>
+                        <tr className="hover:bg-teal-deep/5 transition-colors">
+                          <td className="p-4 flex items-center space-x-3">
+                            <div className="w-8 h-8 rounded-lg overflow-hidden bg-teal-deep/5 border border-teal-deep/10 flex items-center justify-center flex-shrink-0">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={prod.image || ""}
+                                alt={prod.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&auto=format&fit=crop&q=80";
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <span className="font-semibold block">{prod.name}</span>
+                              <span className="text-[10px] text-teal-deep/45 font-mono">{prod.id}</span>
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex flex-wrap gap-1 max-w-xs">
+                              {prod.categoryIds.map(cid => {
+                                const cat = categories.find(c => c.id === cid);
+                                return cat ? (
+                                  <span key={cid} className="text-[9px] font-bold bg-teal-deep/5 text-teal-deep/70 px-2 py-0.5 rounded-full">{cat.name}</span>
+                                ) : null;
+                              })}
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            {prod.badge ? (
+                              <span className="bg-saffron/10 border border-saffron/20 text-saffron font-bold px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide">
+                                {prod.badge}
+                              </span>
+                            ) : (
+                              <span className="text-teal-deep/30">-</span>
+                            )}
+                          </td>
+                          <td className="p-4 text-right font-bold text-teal-deep text-sm">₹{prod.price}</td>
+                          <td className="p-4 text-right">
+                            <div className="flex items-center justify-end space-x-2">
+                              <button
+                                onClick={() => {
+                                  setEditingProductId(editingProductId === prod.id ? null : prod.id);
+                                  setEditingProduct({ ...prod });
+                                }}
+                                className="p-1.5 rounded-lg hover:bg-teal-deep/10 text-teal-deep/60 hover:text-teal-deep transition-colors"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => deleteProduct(prod.id, prod.name)}
+                                className="p-1.5 rounded-lg hover:bg-red-50 text-teal-deep/60 hover:text-red-600 transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        {editingProductId === prod.id && editingProduct && (
+                          <tr>
+                            <td colSpan={5} className="p-4 bg-slate-50/50">
+                              <form onSubmit={updateProduct} className="space-y-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-teal-deep/60">Name</label>
+                                    <input type="text" value={editingProduct.name} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-teal-deep/60">Price</label>
+                                    <input type="number" value={editingProduct.price} onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
+                                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-teal-deep/60">Badge</label>
+                                    <input type="text" value={editingProduct.badge || ""} onChange={(e) => setEditingProduct({ ...editingProduct, badge: e.target.value })}
+                                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                  </div>
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
+                                  <input type="text" value={editingProduct.image || ""} onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
+                                    className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold text-teal-deep/60">Description</label>
+                                  <textarea rows={2} value={editingProduct.description || ""} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                                    className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none resize-none" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-bold text-teal-deep/60">Categories</label>
+                                  <div className="flex flex-wrap gap-2">
+                                    {categories.map((cat) => {
+                                      const checked = editingProduct.categoryIds.includes(cat.id);
+                                      return (
+                                        <button
+                                          type="button"
+                                          key={cat.id}
+                                          onClick={() => setEditingProduct({
+                                            ...editingProduct,
+                                            categoryIds: checked ? editingProduct.categoryIds.filter(id => id !== cat.id) : [...editingProduct.categoryIds, cat.id],
+                                          })}
+                                          className={`text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all ${
+                                            checked ? "bg-teal-deep text-white border-teal-deep" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
+                                          }`}
+                                        >
+                                          {cat.name}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <button type="submit" disabled={isSavingProduct}
+                                    className="px-5 py-2 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-60">
+                                    {isSavingProduct ? "Saving..." : "Save Changes"}
+                                  </button>
+                                  <button type="button" onClick={() => { setEditingProductId(null); setEditingProduct(null); }}
+                                    className="px-5 py-2 border border-teal-deep/15 text-teal-deep rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-deep/5 transition-all">
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "categories" && (
+            <div className="p-6 space-y-6">
+              <form onSubmit={addCategory} className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                <div className="space-y-1 sm:col-span-1">
+                  <label className="text-[10px] font-bold text-teal-deep/60">New Category Name</label>
+                  <input type="text" required placeholder="e.g. Housewarming" value={newCategory.name}
+                    onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                    className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                </div>
+                <div className="space-y-1 sm:col-span-2">
+                  <label className="text-[10px] font-bold text-teal-deep/60">Description (optional)</label>
+                  <input type="text" value={newCategory.description}
+                    onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                    className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                </div>
+                <button type="submit" disabled={isSavingCategory}
+                  className="px-4 py-2 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-60 flex items-center justify-center space-x-1.5">
+                  <Plus className="w-4 h-4" />
+                  <span>{isSavingCategory ? "Adding..." : "Add"}</span>
+                </button>
+              </form>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {categories.map((cat) => {
+                  const count = products.filter(p => p.categoryIds.includes(cat.id)).length;
+                  const isEditing = editingCategoryId === cat.id;
+                  return (
+                    <div key={cat.id} className="bg-white border border-teal-deep/10 rounded-2xl p-5 space-y-3">
+                      {isEditing && editingCategory ? (
+                        <form onSubmit={updateCategory} className="space-y-3">
+                          <input type="text" value={editingCategory.name} onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                          <input type="text" placeholder="Description" value={editingCategory.description || ""} onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                          <div className="flex space-x-2">
+                            <button type="submit" disabled={isSavingCategory} className="px-3 py-1.5 bg-teal-deep text-white rounded-lg font-bold text-[10px] uppercase disabled:opacity-60">Save</button>
+                            <button type="button" onClick={() => { setEditingCategoryId(null); setEditingCategory(null); }} className="px-3 py-1.5 border border-teal-deep/15 text-teal-deep rounded-lg font-bold text-[10px] uppercase">Cancel</button>
+                          </div>
+                        </form>
+                      ) : (
+                        <>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-heading text-sm font-bold text-teal-deep">{cat.name}</h4>
+                              <span className="text-[10px] text-teal-deep/50">/{cat.slug} · {count} product{count === 1 ? "" : "s"}</span>
+                            </div>
+                            {!cat.is_active && (
+                              <span className="text-[9px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded-full uppercase">Hidden</span>
+                            )}
+                          </div>
+                          {cat.description && <p className="text-xs text-teal-deep/60">{cat.description}</p>}
+                          <div className="flex items-center space-x-2 pt-1">
+                            <button onClick={() => { setEditingCategoryId(cat.id); setEditingCategory(cat); }}
+                              className="p-1.5 rounded-lg hover:bg-teal-deep/10 text-teal-deep/60 hover:text-teal-deep transition-colors">
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button onClick={() => toggleCategoryActive(cat.id, cat.is_active)}
+                              className="p-1.5 rounded-lg hover:bg-teal-deep/10 text-teal-deep/60 hover:text-teal-deep transition-colors">
+                              {cat.is_active ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                            </button>
+                            <button onClick={() => deleteCategory(cat.id, cat.name)}
+                              className="p-1.5 rounded-lg hover:bg-red-50 text-teal-deep/60 hover:text-red-600 transition-colors">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "blog" && (
+            <div className="p-6 space-y-6">
+              <div className="flex justify-between items-center">
+                <p className="text-xs text-teal-deep/50">{blogPosts.length} posts.</p>
+                <button
+                  onClick={() => setShowAddBlog(v => !v)}
+                  className="px-4 py-2 bg-teal-deep text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center space-x-1.5 hover:bg-teal-deep/90 shadow transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>{showAddBlog ? "Cancel" : "Add Post"}</span>
+                </button>
+              </div>
+
+              {showAddBlog && (
+                <form onSubmit={addBlogPost} className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-teal-deep/60">Title</label>
+                    <input type="text" required value={newBlogPost.title} onChange={(e) => setNewBlogPost({ ...newBlogPost, title: e.target.value })}
+                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-teal-deep/60">Excerpt</label>
+                    <input type="text" value={newBlogPost.excerpt} onChange={(e) => setNewBlogPost({ ...newBlogPost, excerpt: e.target.value })}
+                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-teal-deep/60">Content — use # / ## for headings, * or - for bullets, **bold**, {'>'} for a quote block, one blank line between paragraphs</label>
+                    <textarea rows={8} required value={newBlogPost.content} onChange={(e) => setNewBlogPost({ ...newBlogPost, content: e.target.value })}
+                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none resize-y font-mono" />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-teal-deep/60">Category</label>
+                      <input type="text" placeholder="Diwali" value={newBlogPost.category} onChange={(e) => setNewBlogPost({ ...newBlogPost, category: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
+                      <input type="text" value={newBlogPost.image} onChange={(e) => setNewBlogPost({ ...newBlogPost, image: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-teal-deep/60">Tags (comma separated)</label>
+                      <input type="text" placeholder="gifting, diwali" value={newBlogPost.tags} onChange={(e) => setNewBlogPost({ ...newBlogPost, tags: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                  </div>
+                  <label className="flex items-center space-x-2 text-xs text-teal-deep/70">
+                    <input type="checkbox" checked={newBlogPost.is_published} onChange={(e) => setNewBlogPost({ ...newBlogPost, is_published: e.target.checked })} />
+                    <span>Publish immediately</span>
+                  </label>
+                  <button type="submit" disabled={isSavingBlog}
+                    className="px-6 py-2.5 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-60">
+                    {isSavingBlog ? "Saving..." : "Create Post"}
+                  </button>
+                </form>
+              )}
+
+              <div className="space-y-3">
+                {blogPosts.map((post) => {
+                  const isEditing = editingBlogId === post.id;
+                  return (
+                    <div key={post.id} className="bg-white border border-teal-deep/10 rounded-2xl p-5">
+                      {isEditing && editingBlogPost ? (
+                        <form onSubmit={updateBlogPost} className="space-y-4">
+                          <input type="text" value={editingBlogPost.title} onChange={(e) => setEditingBlogPost({ ...editingBlogPost, title: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                          <input type="text" placeholder="Excerpt" value={editingBlogPost.excerpt || ""} onChange={(e) => setEditingBlogPost({ ...editingBlogPost, excerpt: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                          <textarea rows={8} value={editingBlogPost.content} onChange={(e) => setEditingBlogPost({ ...editingBlogPost, content: e.target.value })}
+                            className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono resize-y" />
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <input type="text" placeholder="Category" value={editingBlogPost.category || ""} onChange={(e) => setEditingBlogPost({ ...editingBlogPost, category: e.target.value })}
+                              className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                            <input type="text" placeholder="Image URL" value={editingBlogPost.image || ""} onChange={(e) => setEditingBlogPost({ ...editingBlogPost, image: e.target.value })}
+                              className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                            <input type="text" placeholder="Tags, comma separated" value={editingBlogPost.tagsInput ?? editingBlogPost.tags.join(", ")}
+                              onChange={(e) => setEditingBlogPost({ ...editingBlogPost, tagsInput: e.target.value })}
+                              className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                          </div>
+                          <label className="flex items-center space-x-2 text-xs text-teal-deep/70">
+                            <input type="checkbox" checked={editingBlogPost.is_published} onChange={(e) => setEditingBlogPost({ ...editingBlogPost, is_published: e.target.checked })} />
+                            <span>Published</span>
+                          </label>
+                          <div className="flex space-x-2">
+                            <button type="submit" disabled={isSavingBlog} className="px-5 py-2 bg-teal-deep text-white rounded-xl font-bold text-xs uppercase disabled:opacity-60">
+                              {isSavingBlog ? "Saving..." : "Save Changes"}
+                            </button>
+                            <button type="button" onClick={() => { setEditingBlogId(null); setEditingBlogPost(null); }} className="px-5 py-2 border border-teal-deep/15 text-teal-deep rounded-xl font-bold text-xs uppercase">
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <h4 className="font-heading text-sm font-bold text-teal-deep">{post.title}</h4>
+                              {!post.is_published && <span className="text-[9px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded-full uppercase">Draft</span>}
+                            </div>
+                            <p className="text-[10px] text-teal-deep/50">/{post.slug} · {post.category || "Uncategorized"} · {post.read_time}</p>
+                            {post.excerpt && <p className="text-xs text-teal-deep/60 line-clamp-2">{post.excerpt}</p>}
+                          </div>
+                          <div className="flex items-center space-x-2 flex-shrink-0">
+                            <button onClick={() => { setEditingBlogId(post.id); setEditingBlogPost({ ...post }); }}
+                              className="p-1.5 rounded-lg hover:bg-teal-deep/10 text-teal-deep/60 hover:text-teal-deep transition-colors">
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button onClick={() => deleteBlogPost(post.id, post.title)}
+                              className="p-1.5 rounded-lg hover:bg-red-50 text-teal-deep/60 hover:text-red-600 transition-colors">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 

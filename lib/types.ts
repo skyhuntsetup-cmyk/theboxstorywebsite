@@ -90,3 +90,64 @@ export interface OfflineInventoryItem {
   is_synced: boolean;
   synced_type: "curated" | "bazaar" | null;
 }
+
+export interface CategoryRow {
+  id: string;
+  created_at: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image: string | null;
+  display_order: number;
+  is_active: boolean;
+}
+
+export interface ProductRow {
+  id: string;
+  created_at: string;
+  name: string;
+  price: number;
+  image: string | null;
+  description: string | null;
+  category: string;
+  badge: string | null;
+}
+
+/** A product joined with the full list of categories it's tagged into. */
+export interface ProductWithCategories extends ProductRow {
+  categoryIds: string[];
+}
+
+export interface BlogPostRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  content: string;
+  category: string | null;
+  image: string | null;
+  tags: string[];
+  read_time: string | null;
+  is_published: boolean;
+  published_at: string;
+}
+
+export interface CatalogueCartItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+}
+
+export interface CatalogueLead {
+  id: string;
+  created_at: string;
+  name: string;
+  whatsapp: string;
+  cart_items: CatalogueCartItem[];
+  subtotal: number;
+  status: "browsing" | "shared";
+}

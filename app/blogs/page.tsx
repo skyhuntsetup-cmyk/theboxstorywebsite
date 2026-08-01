@@ -1,15 +1,27 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { blogPosts, BlogPost } from "../../data/blogs";
-import { Search, Calendar, Clock, BookOpen, ChevronRight, Sparkles } from "lucide-react";
+import { getAllBlogPosts, UnifiedBlogPost } from "../../lib/blog";
+import { Search, Calendar, Clock, BookOpen, ChevronRight, Sparkles, Loader } from "lucide-react";
 
 export default function BlogsIndex() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [blogPosts, setBlogPosts] = useState<UnifiedBlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const categories = ["All", "Customized", "Corporate", "Diwali", "Birthday", "Swag Kits"];
+  useEffect(() => {
+    getAllBlogPosts().then((posts) => {
+      setBlogPosts(posts);
+      setIsLoading(false);
+    });
+  }, []);
+
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(blogPosts.map((p) => p.category)))],
+    [blogPosts]
+  );
 
   const filteredPosts = useMemo(() => {
     return blogPosts.filter((post) => {
@@ -22,7 +34,7 @@ export default function BlogsIndex() {
 
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [blogPosts, searchQuery, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-background text-slate-800 py-12 px-6">
@@ -81,7 +93,11 @@ export default function BlogsIndex() {
 
         {/* Articles Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.length === 0 ? (
+          {isLoading ? (
+            <div className="col-span-full py-20 flex justify-center">
+              <Loader className="w-6 h-6 text-slate-400 animate-spin" />
+            </div>
+          ) : filteredPosts.length === 0 ? (
             <div className="col-span-full py-20 text-center space-y-3">
               <BookOpen className="w-10 h-10 text-slate-300 mx-auto" />
               <p className="text-sm font-semibold text-slate-550">No articles match your search query.</p>

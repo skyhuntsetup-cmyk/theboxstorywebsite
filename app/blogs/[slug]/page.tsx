@@ -1,14 +1,18 @@
 import React from "react";
 import Link from "next/link";
-import { blogPosts, BlogPost } from "../../../data/blogs";
-import { 
-  ArrowLeft, Calendar, Clock, Share2, Pin, Tag, ChevronRight, Gift, Building2, Sparkles 
+import { getAllBlogPosts, getBlogPostBySlug } from "../../../lib/blog";
+import {
+  ArrowLeft, Calendar, Clock, Share2, Pin, Tag, ChevronRight, Gift, Building2, Sparkles
 } from "lucide-react";
 import { Metadata } from "next";
 
-// Next.js static generation of blog paths
+// Next.js static generation of blog paths. New posts added via the admin
+// after this build aren't in this list, but Next.js still renders them
+// on-demand (dynamicParams defaults to true), hitting getBlogPostBySlug
+// directly — this list just pre-renders posts known at build time.
 export async function generateStaticParams() {
-  return blogPosts.map((post) => ({
+  const posts = await getAllBlogPosts();
+  return posts.map((post) => ({
     slug: post.slug,
   }));
 }
@@ -16,22 +20,23 @@ export async function generateStaticParams() {
 // Next.js dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
-  const post = blogPosts.find((p) => p.slug === resolvedParams.slug);
+  const post = await getBlogPostBySlug(resolvedParams.slug);
   if (!post) return { title: "Blog Not Found" };
+  const imageUrl = post.image.startsWith("http") ? post.image : `https://theboxstory.com${post.image}`;
   return {
     title: `${post.title} | Gifting Inspiration - The Box Story`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      images: [{ url: `https://theboxstory.com${post.image}` }],
+      images: [{ url: imageUrl }],
     },
   };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const post = blogPosts.find((p) => p.slug === resolvedParams.slug);
+  const post = await getBlogPostBySlug(resolvedParams.slug);
 
   if (!post) {
     return (
@@ -47,7 +52,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   }
 
   // Find related articles in the same category
-  const relatedPosts = blogPosts
+  const allPosts = await getAllBlogPosts();
+  const relatedPosts = allPosts
     .filter((p) => p.slug !== post.slug && p.category === post.category)
     .slice(0, 3);
 
@@ -109,7 +115,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   // Pre-formatted Pinterest save link parameters
   const absolutePostUrl = `https://theboxstory.com/blogs/${post.slug}`;
-  const absoluteMediaUrl = `https://theboxstory.com${post.image}`;
+  const absoluteMediaUrl = post.image.startsWith("http") ? post.image : `https://theboxstory.com${post.image}`;
   const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(absolutePostUrl)}&media=${encodeURIComponent(absoluteMediaUrl)}&description=${encodeURIComponent(post.title + " - " + post.excerpt)}`;
 
   return (

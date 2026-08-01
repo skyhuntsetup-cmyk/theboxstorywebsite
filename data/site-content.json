@@ -59,6 +59,12 @@
       "label": "Sitewide — Location line",
       "type": "text",
       "value": "New Delhi, India"
+    },
+    {
+      "key": "catalogue.whatsappNumber",
+      "label": "Catalogue — WhatsApp order number (digits only, with country code, e.g. 917838783488 — no + or spaces, used to build wa.me links)",
+      "type": "text",
+      "value": "917838783488"
     }
   ]
 }

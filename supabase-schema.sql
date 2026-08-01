@@ -6,7 +6,7 @@ CREATE TABLE public.products (
     price NUMERIC NOT NULL,
     image TEXT,
     description TEXT,
-    category TEXT NOT NULL,
+    category TEXT, -- legacy single-category value; superseded by product_categories below, kept nullable for old rows/back-compat only
     badge TEXT
 );
 
@@ -165,6 +165,123 @@ INSERT INTO public.box_styles (name, color, is_active) VALUES
 ('Classic Royal Gold', 'from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30', true),
 ('Blossom Rani Pink', 'from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20', true),
 ('Midnight Teal Elegance', 'from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30', true);
+
+
+-- 7.1 Create Categories Table (For Him, For Her, Anniversary, Birthday, Unique
+-- Gifts, plus the legacy single-category values below). A product can belong
+-- to any number of categories via product_categories, and shows up on every
+-- category page it's tagged into.
+CREATE TABLE public.categories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    name TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL UNIQUE,
+    description TEXT,
+    image TEXT,
+    display_order INTEGER NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access on categories"
+ON public.categories FOR SELECT
+USING (true);
+
+CREATE POLICY "Allow authenticated full access on categories"
+ON public.categories FOR ALL
+USING (auth.role() = 'authenticated');
+
+INSERT INTO public.categories (name, slug, display_order) VALUES
+('For Him', 'for-him', 1),
+('For Her', 'for-her', 2),
+('Anniversary', 'anniversary', 3),
+('Birthday', 'birthday', 4),
+('Unique Gifts', 'unique-gifts', 5),
+('Diwali', 'diwali', 6),
+('Weddings', 'weddings', 7),
+('Corporate', 'corporate', 8),
+('Housewarming', 'housewarming', 9)
+ON CONFLICT (slug) DO NOTHING;
+
+
+-- 7.2 Product <-> Category tagging (many-to-many). Tagging a product into a
+-- category here is what makes it appear on that category's page.
+CREATE TABLE public.product_categories (
+    product_id TEXT NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+    category_id UUID NOT NULL REFERENCES public.categories(id) ON DELETE CASCADE,
+    PRIMARY KEY (product_id, category_id)
+);
+
+ALTER TABLE public.product_categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access on product_categories"
+ON public.product_categories FOR SELECT
+USING (true);
+
+CREATE POLICY "Allow authenticated full access on product_categories"
+ON public.product_categories FOR ALL
+USING (auth.role() = 'authenticated');
+
+-- Backfill: tag every existing product into the category matching its old
+-- single `category` column, so nothing goes uncategorized after migration.
+INSERT INTO public.product_categories (product_id, category_id)
+SELECT p.id, c.id
+FROM public.products p
+JOIN public.categories c ON c.name = p.category
+ON CONFLICT DO NOTHING;
+
+
+-- 7.3 Create Blog Posts Table (self-service add/edit, replaces the static
+-- data/blogs.ts file as the source of truth for new and edited posts)
+CREATE TABLE public.blog_posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    excerpt TEXT,
+    content TEXT NOT NULL,
+    category TEXT,
+    image TEXT,
+    tags TEXT[] NOT NULL DEFAULT '{}',
+    read_time TEXT,
+    is_published BOOLEAN NOT NULL DEFAULT true,
+    published_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access on published blog_posts"
+ON public.blog_posts FOR SELECT
+USING (is_published = true);
+
+CREATE POLICY "Allow authenticated full access on blog_posts"
+ON public.blog_posts FOR ALL
+USING (auth.role() = 'authenticated');
+
+
+-- 7.4 Create Catalogue Leads Table (name + WhatsApp captured on the
+-- shareable catalogue link, plus a snapshot of their cart at share-out time)
+CREATE TABLE public.catalogue_leads (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    name TEXT NOT NULL,
+    whatsapp TEXT NOT NULL,
+    cart_items JSONB NOT NULL DEFAULT '[]',
+    subtotal NUMERIC NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'shared' CHECK (status IN ('browsing', 'shared'))
+);
+
+ALTER TABLE public.catalogue_leads ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public inserts on catalogue_leads"
+ON public.catalogue_leads FOR INSERT
+WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated full access on catalogue_leads"
+ON public.catalogue_leads FOR ALL
+USING (auth.role() = 'authenticated');
 
 
 -- 7. Create Offline Inventory Table

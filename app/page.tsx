@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { curatedProducts } from "../data/products";
+import { supabase } from "../lib/supabase";
 import { ProductCard } from "../components/ProductCard";
+import type { ProductRow } from "../lib/types";
 import {
   Sparkles, Gift, ArrowRight, CheckCircle2, ChevronRight, Zap, Star,
   Heart
@@ -40,9 +41,18 @@ export default function Home() {
     "home.mission.body",
     "Our vision is to revolutionize the art of gifting by creating personalized and memorable experiences that celebrate life's special moments."
   );
-  const bestsellers = curatedProducts.slice(0, 4); // Gifts that stand out
+  const [bestsellers, setBestsellers] = useState<ProductRow[]>([]);
   const [activeTab, setActiveTab] = useState<"occasion" | "recipient">("occasion");
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(4)
+      .then(({ data }) => { if (data) setBestsellers(data); });
+  }, []);
 
   // Bulk Gifting Form state
   const [formData, setFormData] = useState({
@@ -422,7 +432,14 @@ export default function Home() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {bestsellers.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={{
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image || "",
+              description: product.description || "",
+              badge: product.badge || undefined,
+            }} />
           ))}
         </div>
       </section>
