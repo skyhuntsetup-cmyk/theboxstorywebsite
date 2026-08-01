@@ -327,7 +327,7 @@ export default function CorporateGifting() {
               </div>
               <div className="flex flex-col space-y-2 pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/BAG CATALOGUE 2025-26.pdf"
+                  href="/corporate/catalog?file=BAG CATALOGUE 2025-26.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -335,7 +335,7 @@ export default function CorporateGifting() {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </a>
                 <a
-                  href="/catalogues/EXECUTIVE BAG CATALOGUE 2025-26.pdf"
+                  href="/corporate/catalog?file=EXECUTIVE BAG CATALOGUE 2025-26.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -360,7 +360,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/NOTEBOOK CATALOGUE 2025-26.pdf"
+                  href="/corporate/catalog?file=NOTEBOOK CATALOGUE 2025-26.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -385,7 +385,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/PEN & KEYCHAIN CATALOGUE 2025-26.pdf"
+                  href="/corporate/catalog?file=PEN & KEYCHAIN CATALOGUE 2025-26.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -410,7 +410,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/WALLET CATALOGUE 2025-26.pdf"
+                  href="/corporate/catalog?file=WALLET CATALOGUE 2025-26.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -435,7 +435,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/MEYVIN CATALOGUE 2025-26.pdf"
+                  href="/corporate/catalog?file=MEYVIN CATALOGUE 2025-26.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -460,7 +460,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/LIFESTYLE PRODUCT CATALOGUE 2025-26.pdf"
+                  href="/corporate/catalog?file=LIFESTYLE PRODUCT CATALOGUE 2025-26.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -485,7 +485,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/1.Portronics_PPT_July.pdf"
+                  href="/corporate/catalog?file=1.Portronics_PPT_July.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -510,7 +510,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/13.Wacaco Presentation 2023.pdf"
+                  href="/corporate/catalog?file=13.Wacaco Presentation 2023.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -535,7 +535,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/7.Aquaminder July 2026.pdf"
+                  href="/corporate/catalog?file=7.Aquaminder July 2026.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -560,7 +560,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/CORPORATE GIFTS.pdf"
+                  href="/corporate/catalog?file=CORPORATE GIFTS.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -585,7 +585,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/NOISE ELECTRONICS.pdf"
+                  href="/corporate/catalog?file=NOISE ELECTRONICS.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -610,7 +610,7 @@ export default function CorporateGifting() {
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href="/catalogues/DRINKWARE.pdf"
+                  href="/corporate/catalog?file=DRINKWARE.pdf"
                   target="_blank"
                   className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
@@ -636,7 +636,7 @@ export default function CorporateGifting() {
                 </div>
                 <div className="grid grid-cols-2 gap-3 pt-2 md:pt-0 pl-0 md:pl-6 border-l border-slate-100">
                   <a
-                    href="/catalogues/Flynn Premium Tee Catalogue-1.pdf"
+                    href="/corporate/catalog?file=Flynn Premium Tee Catalogue-1.pdf"
                     target="_blank"
                     className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >
@@ -644,7 +644,7 @@ export default function CorporateGifting() {
                     <ArrowRight className="w-2.5 h-2.5" />
                   </a>
                   <a
-                    href="/catalogues/golfer premium polo.pdf"
+                    href="/corporate/catalog?file=golfer premium polo.pdf"
                     target="_blank"
                     className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >
@@ -652,7 +652,7 @@ export default function CorporateGifting() {
                     <ArrowRight className="w-2.5 h-2.5" />
                   </a>
                   <a
-                    href="/catalogues/solid polo.pdf"
+                    href="/corporate/catalog?file=solid polo.pdf"
                     target="_blank"
                     className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >
@@ -660,7 +660,7 @@ export default function CorporateGifting() {
                     <ArrowRight className="w-2.5 h-2.5" />
                   </a>
                   <a
-                    href="/catalogues/green polo.pdf"
+                    href="/corporate/catalog?file=green polo.pdf"
                     target="_blank"
                     className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >

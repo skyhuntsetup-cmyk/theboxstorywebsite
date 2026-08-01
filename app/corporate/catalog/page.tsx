@@ -1,307 +1,326 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import {
-  ArrowLeft, Sparkles, Download, Search,
-  ChevronRight, Maximize2, Minimize2, ZoomIn, ZoomOut
+import { useSearchParams, useRouter } from "next/navigation";
+import { 
+  ArrowLeft, Download, Search, ChevronRight, FileText, Smartphone, Coffee, Luggage, PenTool, Shirt, Gift 
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import catalogConfig from "../../../data/catalog-config.json";
 
-export default function CleanCatalogReader() {
-  const [activePage, setActivePage] = useState(1);
+interface CatalogItem {
+  file: string;
+  title: string;
+  category: "Tech & Gadgets" | "Drinkware & Coffee" | "Bags & Leather" | "Stationery & Office" | "Apparel & Clothing" | "Corporate Proposals";
+  icon: any;
+  description: string;
+  size: string;
+}
+
+const catalogsList: CatalogItem[] = [
+  {
+    file: "1.Portronics_PPT_July.pdf",
+    title: "Portronics Tech Accessories",
+    category: "Tech & Gadgets",
+    icon: Smartphone,
+    description: "Wireless chargers, portable speakers, and smart B2B gadgets.",
+    size: "24.3 MB"
+  },
+  {
+    file: "NOISE ELECTRONICS.pdf",
+    title: "Noise Smart Electronics",
+    category: "Tech & Gadgets",
+    icon: Smartphone,
+    description: "Smartwatches, fitness bands, and premium audio accessories.",
+    size: "8.3 MB"
+  },
+  {
+    file: "13.Wacaco Presentation 2023.pdf",
+    title: "Wacaco Portable Coffee Gear",
+    category: "Drinkware & Coffee",
+    icon: Coffee,
+    description: "Luxury portable espresso makers and travel brewer sets.",
+    size: "8.8 MB"
+  },
+  {
+    file: "7.Aquaminder July 2026.pdf",
+    title: "Aquaminder Smart Hydration",
+    category: "Drinkware & Coffee",
+    icon: Coffee,
+    description: "Sensor-tracked smart flasks and temperature-display drinkware.",
+    size: "4.8 MB"
+  },
+  {
+    file: "MEYVIN CATALOGUE 2025-26.pdf",
+    title: "Meyvin Premium Flasks & Drinkware",
+    category: "Drinkware & Coffee",
+    icon: Coffee,
+    description: "Vacuum-insulated thermal bottles and matching coasters sets.",
+    size: "66.1 MB"
+  },
+  {
+    file: "DRINKWARE.pdf",
+    title: "Premium Drinkware & Tumblers",
+    category: "Drinkware & Coffee",
+    icon: Coffee,
+    description: "Double-walled travel mugs and thermal sports bottles.",
+    size: "21.6 MB"
+  },
+  {
+    file: "BAG CATALOGUE 2025-26.pdf",
+    title: "Bags & Executive Backpacks",
+    category: "Bags & Leather",
+    icon: Luggage,
+    description: "Premium laptop sleeves, leather bags, and business packs.",
+    size: "32.7 MB"
+  },
+  {
+    file: "EXECUTIVE BAG CATALOGUE 2025-26.pdf",
+    title: "Executive Bags & Travel Packs",
+    category: "Bags & Leather",
+    icon: Luggage,
+    description: "High-end corporate luggage sets and travel backpacks.",
+    size: "36.7 MB"
+  },
+  {
+    file: "WALLET CATALOGUE 2025-26.pdf",
+    title: "Wallets & Leather Accessories",
+    category: "Bags & Leather",
+    icon: Luggage,
+    description: "RFID-protected bifold wallets and travel passport folders.",
+    size: "27.7 MB"
+  },
+  {
+    file: "NOTEBOOK CATALOGUE 2025-26.pdf",
+    title: "Notebooks & Planners",
+    category: "Stationery & Office",
+    icon: PenTool,
+    description: "Genuine leather diaries, custom planners, and notebooks.",
+    size: "45.1 MB"
+  },
+  {
+    file: "PEN & KEYCHAIN CATALOGUE 2025-26.pdf",
+    title: "Writing Instruments & Keys",
+    category: "Stationery & Office",
+    icon: PenTool,
+    description: "Engraved metal rollerballs and custom leather keychains.",
+    size: "21.4 MB"
+  },
+  {
+    file: "CORPORATE GIFTS.pdf",
+    title: "Corporate Gift Proposals",
+    category: "Corporate Proposals",
+    icon: Gift,
+    description: "Pre-curated corporate gift sets and onboarding boxes.",
+    size: "25.1 MB"
+  },
+  {
+    file: "Flynn Premium Tee Catalogue-1.pdf",
+    title: "Flynn Premium Tees",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Premium cotton Flynn tee collections for branding.",
+    size: "2.0 MB"
+  },
+  {
+    file: "golfer premium polo.pdf",
+    title: "Golfer Premium Polos",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Custom logo polo shirts for corporate workspace wear.",
+    size: "9.4 MB"
+  },
+  {
+    file: "solid polo.pdf",
+    title: "Solid Polo Collections",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Classic solid color polos for workspace apparel.",
+    size: "2.5 MB"
+  },
+  {
+    file: "green polo.pdf",
+    title: "Green Polo Series",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Eco-friendly green series corporate polos.",
+    size: "15.1 MB"
+  }
+];
+
+function CatalogReaderContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const fileParam = searchParams.get("file");
+
+  const [selectedCatalog, setSelectedCatalog] = useState<CatalogItem>(catalogsList[0]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
-  const [zoomScale, setZoomScale] = useState(1);
-  
-  const pageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const totalPages = catalogConfig.totalPages;
-  const sections = catalogConfig.sections;
-
-  // Track page in viewport to update active page highlight in sidebar
+  // Handle URL param selection
   useEffect(() => {
-    const observerOptions = {
-      root: scrollContainerRef.current,
-      rootMargin: "-20% 0px -60% 0px", // Trigger when page occupies main view area
-      threshold: 0.1
-    };
-
-    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const pageNum = parseInt(entry.target.getAttribute("data-page") || "1");
-          setActivePage(pageNum);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(handleIntersection, observerOptions);
-    
-    // Observe all page elements
-    Object.values(pageRefs.current).forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  const scrollToPage = (pageNum: number) => {
-    const targetElement = pageRefs.current[pageNum];
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      setActivePage(pageNum);
+    if (fileParam) {
+      const match = catalogsList.find(c => c.file === fileParam);
+      if (match) {
+        setSelectedCatalog(match);
+      }
     }
+  }, [fileParam]);
+
+  const handleSelect = (item: CatalogItem) => {
+    setSelectedCatalog(item);
+    // Update URL query param quietly
+    router.replace(`/corporate/catalog?file=${item.file}`);
   };
 
-  // Keyboard navigation for jumping pages
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (zoomedImage) {
-        if (e.key === "Escape") setZoomedImage(null);
-        return;
-      }
-      if (e.key === "ArrowDown" || e.key === "PageDown") {
-        e.preventDefault();
-        const next = Math.min(activePage + 1, totalPages);
-        scrollToPage(next);
-      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-        e.preventDefault();
-        const prev = Math.max(activePage - 1, 1);
-        scrollToPage(prev);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activePage, zoomedImage, totalPages]);
-
-  // Filtered sections based on query
-  const filteredSections = sections.filter(sec => 
-    sec.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    sec.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCatalogs = catalogsList.filter(item => 
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="min-h-screen bg-[#faf4e7] text-slate-800 flex flex-col h-[calc(100vh-96px)] overflow-hidden">
       
       {/* Top Bar Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-teal-deep/5 px-6 py-4 mt-6 flex items-center justify-between z-10 shrink-0 shadow-sm animate-fade-in">
+      <header className="bg-white/90 backdrop-blur-md border-b border-teal-deep/5 px-6 py-4 mt-6 flex items-center justify-between z-10 shrink-0 shadow-sm animate-fade-in">
         <div className="flex items-center space-x-4">
           <Link 
             href="/corporate"
             className="p-2 bg-[#FCFAF2] hover:bg-teal-deep/5 border border-teal-deep/15 text-teal-deep rounded-full transition-all flex items-center justify-center shadow-sm"
-            title="Back to Corporate Gifting"
+            title="Back to Corporate"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div>
-            <h1 className="font-heading text-base sm:text-lg font-black text-teal-deep">Lifestyle Catalog Reader</h1>
+          <div className="text-left">
+            <h1 className="font-heading text-base sm:text-lg font-black text-teal-deep">Digital Catalog Showcase</h1>
             <p className="text-[9px] text-teal-deep/50 uppercase tracking-widest font-black flex items-center space-x-1">
-              <span>Clean Vertical Navigation</span>
-              <Sparkles className="w-2.5 h-2.5 text-saffron" />
+              <span>View Brochures Live on Site</span>
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
-          <span className="text-xs font-mono font-bold text-teal-deep bg-teal-deep/5 px-3 py-1.5 rounded-full border border-teal-deep/5">
-            Page {activePage} of {totalPages}
+          <span className="hidden md:inline-block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            Active: {selectedCatalog.category}
           </span>
-          <button 
-            onClick={() => alert("Downloading PDF catalog...")}
-            className="flex items-center space-x-1.5 bg-teal-deep hover:bg-teal-deep/95 text-white px-4 py-2 rounded-xl font-bold text-xs shadow transition-all"
+          <a 
+            href={`/catalogues/${selectedCatalog.file}`}
+            download
+            className="flex items-center space-x-1.5 bg-teal-deep hover:bg-teal-deep/95 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow transition-all"
           >
             <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Download PDF</span>
-          </button>
+            <span>Download ({selectedCatalog.size})</span>
+          </a>
         </div>
       </header>
 
-      {/* Main Split Body */}
+      {/* Main Split Layout */}
       <div className="flex-1 flex overflow-hidden relative">
         
-        {/* Left Side: Index & Search Sidebar */}
+        {/* Left Side: Sidebar Selection List */}
         <aside className="hidden md:flex flex-col w-80 bg-white border-r border-teal-deep/5 overflow-y-auto shrink-0 text-left p-6 space-y-6">
-          
-          {/* Index Search Bar */}
+          {/* Sidebar Search */}
           <div className="space-y-2">
-            <span className="text-[10px] font-black text-teal-deep/40 uppercase tracking-widest block">Search Catalog</span>
+            <span className="text-[10px] font-black text-teal-deep/40 uppercase tracking-widest block">Filter Collections</span>
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-teal-deep/30 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input 
                 type="text"
-                placeholder="Find section..."
+                placeholder="Search catalogs..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#FCFAF2] border border-teal-deep/10 rounded-xl pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-teal-deep/30 text-teal-deep"
+                className="w-full bg-[#FCFAF2] border border-teal-deep/10 rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none focus:border-teal-deep/35 text-teal-deep text-left"
               />
             </div>
           </div>
 
-          {/* Navigation Sections */}
+          {/* Catalog Selection List */}
           <div className="space-y-4 flex-1">
-            <span className="text-[10px] font-black text-teal-deep/40 uppercase tracking-widest block">Sections & Index</span>
-            <div className="space-y-1">
-              {filteredSections.map((sec, idx) => {
-                const isCurrentSec = activePage >= sec.startPage && activePage <= sec.endPage;
+            <span className="text-[10px] font-black text-teal-deep/40 uppercase tracking-widest block">Available Catalogues</span>
+            <div className="space-y-2">
+              {filteredCatalogs.map((item, idx) => {
+                const isSelected = selectedCatalog.file === item.file;
+                const IconComponent = item.icon;
                 return (
                   <button
                     key={idx}
-                    onClick={() => scrollToPage(sec.startPage)}
-                    className={`w-full text-left p-3.5 rounded-2xl border transition-all flex justify-between items-start space-x-2 ${
-                      isCurrentSec 
+                    onClick={() => handleSelect(item)}
+                    className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-start space-x-3 ${
+                      isSelected 
                         ? "bg-teal-deep text-white border-teal-deep shadow-md font-bold" 
-                        : "bg-[#FCFAF2]/40 hover:bg-[#FCFAF2] border-teal-deep/5 text-teal-deep hover:text-rani-pink"
+                        : "bg-[#FCFAF2]/40 hover:bg-[#FCFAF2] border-teal-deep/5 text-teal-deep"
                     }`}
                   >
-                    <div className="space-y-0.5">
-                      <span className="text-xs block font-bold leading-tight">{sec.title}</span>
-                      <span className={`text-[9px] block leading-relaxed ${isCurrentSec ? "text-white/70" : "text-teal-deep/50"}`}>
-                        {sec.description}
+                    <div className={`p-2 rounded-xl shrink-0 ${isSelected ? "bg-white/10 text-white" : "bg-teal-deep/5 text-teal-deep"}`}>
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-0.5 min-w-0">
+                      <span className="text-xs block font-bold leading-snug truncate">{item.title}</span>
+                      <span className={`text-[9px] block leading-relaxed truncate ${isSelected ? "text-white/70" : "text-teal-deep/50"}`}>
+                        {item.description}
                       </span>
                     </div>
-                    <span className={`text-[10px] font-mono font-bold shrink-0 ${isCurrentSec ? "text-white" : "text-saffron"}`}>
-                      P.{sec.startPage}
-                    </span>
                   </button>
                 );
               })}
-              {filteredSections.length === 0 && (
+              {filteredCatalogs.length === 0 && (
                 <div className="text-center py-8 text-teal-deep/40 text-xs font-medium">
-                  No sections match query.
+                  No brochures match query.
                 </div>
               )}
             </div>
           </div>
-
-          {/* Gifting Shortcut */}
-          <div className="bg-[#faf4e7] border border-teal-deep/5 p-4 rounded-2xl text-left space-y-2">
-            <span className="text-[9px] font-bold text-rani-pink uppercase tracking-widest block">Need Assistance?</span>
-            <p className="text-[10px] text-teal-deep/75 leading-relaxed">
-              Book a free consultation with our Jaipur catalog designers.
-            </p>
-            <Link 
-              href="/contact"
-              className="text-[9px] font-black text-teal-deep hover:underline uppercase tracking-wider flex items-center space-x-1"
-            >
-              <span>Talk to curator</span>
-              <ChevronRight className="w-3 h-3" />
-            </Link>
-          </div>
         </aside>
 
-        {/* Right/Center Column: Pure Vertical Stack Scroll Pane */}
-        <main 
-          ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto px-6 py-8 md:px-12 flex flex-col items-center space-y-8 scroll-smooth"
-        >
-          {Array.from({ length: totalPages }, (_, i) => {
-            const pageNum = i + 1;
-            return (
-              <div
-                key={pageNum}
-                ref={(el) => { pageRefs.current[pageNum] = el; }}
-                data-page={pageNum}
-                className={`relative rounded-3xl overflow-hidden border transition-all duration-300 max-w-2xl w-full shadow-sm ${
-                  activePage === pageNum ? "border-saffron shadow-md scale-[1.01]" : "border-teal-deep/5"
-                }`}
-              >
-                {/* Image Page block */}
-                <div 
-                  onClick={() => setZoomedImage(`/images/catalog/page_${pageNum}.png`)}
-                  className="w-full aspect-[1/1.4] bg-[#faf4e7] relative cursor-zoom-in group"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={`/images/catalog/page_${pageNum}.png`} 
-                    alt={`Catalog Page ${pageNum}`} 
-                    loading="lazy"
-                    className="w-full h-full object-contain block"
-                  />
-                  <div className="absolute inset-0 bg-teal-deep/0 group-hover:bg-teal-deep/5 transition-colors" />
-                  
-                  {/* Floating Page Badge */}
-                  <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-teal-deep/50 bg-[#FCFAF2]/80 backdrop-blur-sm border border-teal-deep/5 px-3 py-1 rounded-full shadow-sm">
-                    Page {pageNum}
-                  </span>
+        {/* Right Panel: Full Screen Embedded PDF iframe */}
+        <main className="flex-1 bg-slate-100/50 p-6 flex flex-col overflow-hidden relative">
+          
+          {/* Mobile Selector Dropdown */}
+          <div className="md:hidden w-full mb-4">
+            <select
+              value={selectedCatalog.file}
+              onChange={(e) => {
+                const match = catalogsList.find(c => c.file === e.target.value);
+                if (match) handleSelect(match);
+              }}
+              className="w-full bg-white border border-teal-deep/15 rounded-xl px-4 py-3 text-xs font-bold text-teal-deep shadow-sm focus:outline-none"
+            >
+              {catalogsList.map((c) => (
+                <option key={c.file} value={c.file}>
+                  {c.title} ({c.size})
+                </option>
+              ))}
+            </select>
+          </div>
 
-                  {/* Zoom hint icon */}
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-teal-deep/75 backdrop-blur-sm p-2 rounded-xl text-white shadow">
-                    <Maximize2 className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {/* Embedded PDF iframe */}
+          <div className="flex-1 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden relative">
+            <iframe
+              src={`/catalogues/${selectedCatalog.file}#toolbar=0&navpanes=0`}
+              className="w-full h-full border-0 bg-white"
+              title={selectedCatalog.title}
+              key={selectedCatalog.file} // Force reload of iframe when selection changes
+            />
+          </div>
+
+          {/* Desktop/Tablet Footer Status */}
+          <div className="hidden sm:flex justify-between items-center text-[10px] text-slate-400 mt-3 px-2 shrink-0">
+            <span>You are viewing: <strong>{selectedCatalog.title}</strong></span>
+            <span>Pre-curated collections are updated seasonal.</span>
+          </div>
         </main>
       </div>
 
-      {/* High-Resolution Zoom Lightbox Overlay */}
-      <AnimatePresence>
-        {zoomedImage && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setZoomedImage(null)}
-              className="absolute inset-0 bg-teal-deep/90 backdrop-blur-md"
-            />
-            
-            {/* Control Bar */}
-            <div className="absolute top-6 right-6 flex items-center space-x-2 z-20">
-              <button 
-                onClick={() => setZoomScale(prev => Math.max(prev - 0.25, 0.75))}
-                className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
-                title="Zoom Out"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </button>
-              <button 
-                onClick={() => setZoomScale(prev => Math.min(prev + 0.25, 2))}
-                className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
-                title="Zoom In"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </button>
-              <button 
-                onClick={() => { setZoomedImage(null); setZoomScale(1); }}
-                className="p-2 bg-white/15 hover:bg-white/25 text-white rounded-full transition-colors ml-2"
-                title="Close Zoom"
-              >
-                <Minimize2 className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Zoom Image container */}
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative max-w-4xl max-h-[90vh] z-10 overflow-auto"
-            >
-              <motion.div
-                animate={{ scale: zoomScale }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center justify-center"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={zoomedImage} 
-                  alt="Zoomed Catalog Page" 
-                  className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl bg-white"
-                />
-              </motion.div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
     </div>
+  );
+}
+
+export default function CleanCatalogReader() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#faf4e7] text-teal-deep font-bold">
+        Loading Catalog Showcase...
+      </div>
+    }>
+      <CatalogReaderContent />
+    </Suspense>
   );
 }
