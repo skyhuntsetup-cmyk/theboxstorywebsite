@@ -294,7 +294,7 @@ function CatalogReaderContent() {
           {/* Embedded PDF iframe */}
           <div className="flex-1 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden relative">
             <iframe
-              src={`/catalogues/${selectedCatalog.file}#toolbar=0&navpanes=0`}
+              src={`/catalogues/${selectedCatalog.file}#view=Fit&toolbar=0&navpanes=0`}
               className="w-full h-full border-0 bg-white"
               title={selectedCatalog.title}
               key={selectedCatalog.file} // Force reload of iframe when selection changes
