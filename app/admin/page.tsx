@@ -5,7 +5,7 @@ import { supabase } from "../../lib/supabase";
 import { 
   BarChart3, ShoppingBag, MessageSquare, Package, Loader,
   CheckCircle, Mail, Phone, Calendar, Search, RefreshCw,
-  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X, LogOut
+  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X, LogOut, Copy, Link2, Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem, CategoryRow, ProductWithCategories, BlogPostRow } from "../../lib/types";
@@ -27,6 +27,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [catalogueLinkCopied, setCatalogueLinkCopied] = useState(false);
 
   // Stats indicators
   const [stats, setStats] = useState({
@@ -62,7 +63,7 @@ export default function AdminDashboard() {
   const [isSavingCategory, setIsSavingCategory] = useState(false);
 
   // Products tab state (full CRUD, multi-category tagging)
-  const emptyProductForm = { id: "", name: "", price: "", image: "", description: "", badge: "", categoryIds: [] as string[] };
+  const emptyProductForm = { id: "", name: "", price: "", image: "", description: "", badge: "", stock_quantity: "", categoryIds: [] as string[] };
   const [newProduct, setNewProduct] = useState(emptyProductForm);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<(ProductWithCategories & { priceInput?: string }) | null>(null);
@@ -241,55 +242,43 @@ export default function AdminDashboard() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        // 2. Fetch Inquiries
-        const { data: iData } = await supabase
-          .from("inquiries")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        // 3. Fetch Products (with tagged categories), Categories, and Blog Posts
-        // via the service-role admin API — the direct client-side Supabase
-        // calls below only satisfy read-only RLS policies (`USING (true)`),
-        // but products/categories/blog also need admin writes, which the
-        // anon-key client can't do against `auth.role() = 'authenticated'`
-        // policies without a real Supabase Auth session.
-        const [prodRes, catRes, blogRes] = await Promise.all([
+        // 2-6. Fetch Inquiries, Products (+tagged categories), Categories,
+        // Blog Posts, Bazaar Items, Box Styles, and Offline Inventory, all
+        // via service-role admin API routes. Inquiries and offline_inventory
+        // have no public-read RLS policy at all (anon reads returned nothing
+        // silently); products/categories/blog/bazaar/box_styles are publicly
+        // readable but also need admin writes here, which the anon-key
+        // client can't do against `auth.role() = 'authenticated'` policies
+        // without a real Supabase Auth session.
+        const [iRes, prodRes, catRes, blogRes, bRes, bsRes, invRes] = await Promise.all([
+          fetch("/api/admin/inquiries").then(r => r.json()).catch(() => null),
           fetch("/api/admin/products").then(r => r.json()).catch(() => null),
           fetch("/api/admin/categories").then(r => r.json()).catch(() => null),
           fetch("/api/admin/blog").then(r => r.json()).catch(() => null),
+          fetch("/api/admin/bazaar").then(r => r.json()).catch(() => null),
+          fetch("/api/admin/box-styles").then(r => r.json()).catch(() => null),
+          fetch("/api/admin/inventory").then(r => r.json()).catch(() => null),
         ]);
+        const iData = iRes?.success ? iRes.inquiries : null;
         if (prodRes?.success) setProducts(prodRes.products);
         if (catRes?.success) setCategories(catRes.categories);
         if (blogRes?.success) setBlogPosts(blogRes.posts);
-
-        // 4. Fetch Bazaar Items
-        const { data: bData } = await supabase
-          .from("bazaar_items")
-          .select("*")
-          .order("category");
-
-        // 5. Fetch Box Styles
-        const { data: bsData } = await supabase
-          .from("box_styles")
-          .select("*")
-          .order("name");
-
-        // 6. Fetch Offline Inventory
-        const { data: invData } = await supabase
-          .from("offline_inventory")
-          .select("*")
-          .order("product_code");
+        const bData = bRes?.success ? bRes.items : null;
+        const bsData = bsRes?.success ? bsRes.styles : null;
+        const invData = invRes?.success ? invRes.items : null;
 
         if (oData) {
           setOrders(oData);
           
           // Calculate Stats
-          const revenue = oData.reduce((acc, curr) => acc + Number(curr.subtotal || 0), 0);
+          const revenue = oData.reduce((acc: number, curr: Order) => acc + Number(curr.subtotal || 0), 0);
           const paid = oData.filter(o => o.status === "paid").length;
           const claimed = oData.filter(o => o.status === "claimed").length;
 
           // Calculate Offline Inventory Value
-          const invValue = invData ? invData.reduce((acc, curr) => acc + (Number(curr.purchase_price || 0) * Number(curr.stock_quantity || 0)), 0) : 0;
+          const invValue = invData
+            ? invData.reduce((acc: number, curr: OfflineInventoryItem) => acc + (Number(curr.purchase_price || 0) * Number(curr.stock_quantity || 0)), 0)
+            : 0;
           const skuCount = invData ? invData.length : 0;
 
           setStats({
@@ -319,16 +308,14 @@ export default function AdminDashboard() {
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from("orders")
-        .update({ status: newStatus })
-        .eq("id", orderId);
-
-      if (error) {
-        alert("Failed to update status: " + error.message);
-      } else {
-        setRefreshTrigger(prev => prev + 1);
-      }
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to update status: " + data.error);
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
@@ -336,16 +323,14 @@ export default function AdminDashboard() {
 
   const toggleBazaarActive = async (itemId: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from("bazaar_items")
-        .update({ is_active: !currentStatus })
-        .eq("id", itemId);
-
-      if (error) {
-        alert("Failed to toggle status: " + error.message);
-      } else {
-        setRefreshTrigger(prev => prev + 1);
-      }
+      const res = await fetch(`/api/admin/bazaar/${itemId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !currentStatus }),
+      });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to toggle status: " + data.error);
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
@@ -353,16 +338,14 @@ export default function AdminDashboard() {
 
   const toggleBoxActive = async (boxId: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from("box_styles")
-        .update({ is_active: !currentStatus })
-        .eq("id", boxId);
-
-      if (error) {
-        alert("Failed to toggle status: " + error.message);
-      } else {
-        setRefreshTrigger(prev => prev + 1);
-      }
+      const res = await fetch(`/api/admin/box-styles/${boxId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !currentStatus }),
+      });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to toggle status: " + data.error);
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
@@ -375,21 +358,17 @@ export default function AdminDashboard() {
       return;
     }
     try {
-      const { error } = await supabase
-        .from("bazaar_items")
-        .insert([{
-          name: newBazaar.name,
-          price: Number(newBazaar.price),
-          image: newBazaar.image,
-          category: newBazaar.category,
-          is_active: true
-        }]);
-
-      if (error) {
-        alert("Failed to add: " + error.message);
-      } else {
+      const res = await fetch("/api/admin/bazaar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBazaar),
+      });
+      const data = await res.json();
+      if (data.success) {
         setNewBazaar({ name: "", price: "", image: "", category: "Sweets" });
         setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to add: " + data.error);
       }
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
@@ -403,19 +382,17 @@ export default function AdminDashboard() {
       return;
     }
     try {
-      const { error } = await supabase
-        .from("box_styles")
-        .insert([{
-          name: newBox.name,
-          color: newBox.color,
-          is_active: true
-        }]);
-
-      if (error) {
-        alert("Failed to add: " + error.message);
-      } else {
+      const res = await fetch("/api/admin/box-styles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBox),
+      });
+      const data = await res.json();
+      if (data.success) {
         setNewBox({ name: "", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" });
         setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to add: " + data.error);
       }
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
@@ -429,22 +406,13 @@ export default function AdminDashboard() {
       return;
     }
     try {
-      const { error } = await supabase
-        .from("offline_inventory")
-        .insert([{
-          product_code: newInventory.product_code,
-          name: newInventory.name,
-          vendor_name: newInventory.vendor_name,
-          purchase_price: Number(newInventory.purchase_price),
-          selling_price: Number(newInventory.selling_price),
-          photo_drive_link: newInventory.photo_drive_link || null,
-          stock_quantity: Number(newInventory.stock_quantity || 0),
-          is_synced: false
-        }]);
-
-      if (error) {
-        alert("Failed to add: " + error.message);
-      } else {
+      const res = await fetch("/api/admin/inventory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newInventory),
+      });
+      const data = await res.json();
+      if (data.success) {
         setNewInventory({
           product_code: "",
           name: "",
@@ -455,6 +423,8 @@ export default function AdminDashboard() {
           stock_quantity: "0",
         });
         setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to add: " + data.error);
       }
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
@@ -464,16 +434,10 @@ export default function AdminDashboard() {
   const deleteInventoryItem = async (code: string) => {
     if (!confirm("Are you sure you want to delete this inventory item?")) return;
     try {
-      const { error } = await supabase
-        .from("offline_inventory")
-        .delete()
-        .eq("product_code", code);
-
-      if (error) {
-        alert("Failed to delete: " + error.message);
-      } else {
-        setRefreshTrigger(prev => prev + 1);
-      }
+      const res = await fetch(`/api/admin/inventory/${encodeURIComponent(code)}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) setRefreshTrigger(prev => prev + 1);
+      else alert("Failed to delete: " + data.error);
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
@@ -483,24 +447,25 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (!editingInventory) return;
     try {
-      const { error } = await supabase
-        .from("offline_inventory")
-        .update({
+      const res = await fetch(`/api/admin/inventory/${encodeURIComponent(editingInventory.product_code)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name: editingInventory.name,
           vendor_name: editingInventory.vendor_name,
           purchase_price: Number(editingInventory.purchase_price),
           selling_price: Number(editingInventory.selling_price),
           photo_drive_link: editingInventory.photo_drive_link || null,
           stock_quantity: Number(editingInventory.stock_quantity || 0),
-        })
-        .eq("product_code", editingInventory.product_code);
-
-      if (error) {
-        alert("Failed to update: " + error.message);
-      } else {
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
         setEditingInventoryCode(null);
         setEditingInventory(null);
         setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Failed to update: " + data.error);
       }
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
@@ -638,6 +603,7 @@ export default function AdminDashboard() {
           image: editingProduct.image,
           description: editingProduct.description,
           badge: editingProduct.badge,
+          stock_quantity: editingProduct.stock_quantity,
           categoryIds: editingProduct.categoryIds,
         }),
       });
@@ -749,52 +715,56 @@ export default function AdminDashboard() {
     if (!syncingItem) return;
     try {
       if (type === "curated") {
-        // Sync to products table
-        const { error } = await supabase
-          .from("products")
-          .insert([{
+        const categoryId = categories.find((c) => c.name === syncCategory)?.id;
+        if (!categoryId) {
+          alert(`No "${syncCategory}" category found — create it under the Categories tab first.`);
+          return;
+        }
+        const res = await fetch("/api/admin/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             id: syncingItem.product_code,
             name: syncingItem.name,
             price: Number(syncingItem.selling_price),
             image: syncingItem.photo_drive_link || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80",
             description: `Offline Store exclusive catalog item by ${syncingItem.vendor_name}. Code: ${syncingItem.product_code}`,
-            category: syncCategory,
-            badge: "Offline Treasure"
-          }]);
-
-        if (error) {
-          alert("Failed to sync as product: " + error.message);
+            badge: "Offline Treasure",
+            categoryIds: [categoryId],
+          }),
+        });
+        const data = await res.json();
+        if (!data.success) {
+          alert("Failed to sync as product: " + data.error);
           return;
         }
       } else {
-        // Sync to bazaar_items table
-        const { error } = await supabase
-          .from("bazaar_items")
-          .insert([{
+        const res = await fetch("/api/admin/bazaar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             name: syncingItem.name,
             price: Number(syncingItem.selling_price),
             image: syncingItem.photo_drive_link || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300&auto=format&fit=crop&q=80",
             category: syncBazaarCategory,
-            is_active: true
-          }]);
-
-        if (error) {
-          alert("Failed to sync as bazaar item: " + error.message);
+          }),
+        });
+        const data = await res.json();
+        if (!data.success) {
+          alert("Failed to sync as bazaar item: " + data.error);
           return;
         }
       }
 
       // Update sync flag on offline_inventory
-      const { error: updateError } = await supabase
-        .from("offline_inventory")
-        .update({
-          is_synced: true,
-          synced_type: type
-        })
-        .eq("product_code", syncingItem.product_code);
-
-      if (updateError) {
-        console.error("Warning: Sync succeeded but flag update failed:", updateError.message);
+      const flagRes = await fetch(`/api/admin/inventory/${encodeURIComponent(syncingItem.product_code)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_synced: true, synced_type: type }),
+      });
+      const flagData = await flagRes.json();
+      if (!flagData.success) {
+        console.error("Warning: Sync succeeded but flag update failed:", flagData.error);
       }
 
       setSyncingItem(null);
@@ -851,6 +821,31 @@ export default function AdminDashboard() {
             <span>Log Out</span>
           </button>
         </div>
+      </div>
+
+      {/* Shareable Catalogue Link */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-teal-deep text-white rounded-2xl px-6 py-4 shadow-sm">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+            <Link2 className="w-4.5 h-4.5" />
+          </div>
+          <div>
+            <span className="text-xs font-bold block">Shareable Gift Catalogue</span>
+            <span className="text-[11px] text-white/60">Drop this link on WhatsApp — customers browse, add to cart, and send their order back to you.</span>
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            const url = typeof window !== "undefined" ? `${window.location.origin}/catalogue` : "https://theboxstory.co.in/catalogue";
+            navigator.clipboard.writeText(url);
+            setCatalogueLinkCopied(true);
+            setTimeout(() => setCatalogueLinkCopied(false), 2000);
+          }}
+          className="flex items-center justify-center space-x-1.5 text-xs font-bold bg-white text-teal-deep px-4 py-2.5 rounded-full hover:bg-white/90 transition-colors flex-shrink-0"
+        >
+          {catalogueLinkCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+          <span>{catalogueLinkCopied ? "Copied!" : "Copy Link"}</span>
+        </button>
       </div>
 
       {/* Stats Board */}
@@ -1154,6 +1149,11 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-teal-deep/60">Stock Quantity (leave blank for unlimited/not tracked; 0 hides &quot;Add to Bag&quot; and shows Sold Out)</label>
+                    <input type="number" min={0} placeholder="e.g. 12" value={newProduct.stock_quantity} onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: e.target.value })}
+                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                  </div>
+                  <div className="space-y-1">
                     <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
                     <input type="text" placeholder="https://..." value={newProduct.image} onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
@@ -1269,7 +1269,7 @@ export default function AdminDashboard() {
                           <tr>
                             <td colSpan={5} className="p-4 bg-slate-50/50">
                               <form onSubmit={updateProduct} className="space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                                   <div className="space-y-1">
                                     <label className="text-[10px] font-bold text-teal-deep/60">Name</label>
                                     <input type="text" value={editingProduct.name} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
@@ -1283,6 +1283,11 @@ export default function AdminDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-[10px] font-bold text-teal-deep/60">Badge</label>
                                     <input type="text" value={editingProduct.badge || ""} onChange={(e) => setEditingProduct({ ...editingProduct, badge: e.target.value })}
+                                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-teal-deep/60">Stock (blank = unlimited)</label>
+                                    <input type="number" min={0} value={editingProduct.stock_quantity ?? ""} onChange={(e) => setEditingProduct({ ...editingProduct, stock_quantity: e.target.value === "" ? null : Number(e.target.value) })}
                                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                   </div>
                                 </div>

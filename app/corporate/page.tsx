@@ -22,6 +22,7 @@ export default function CorporateGifting() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [activeProfileTab, setActiveProfileTab] = useState<"offerings" | "branding" | "benefits" | "steps">("offerings");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,74 +165,223 @@ export default function CorporateGifting() {
         </section>
 
         {/* Corporate Gifting Profile & Why Choose Us */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-[#FCFAF2]/65 p-8 md:p-12 rounded-[40px] border border-teal-deep/5 text-left animate-fade-in">
-          {/* Left Column: Corporate Gifting Profile */}
-          <div className="lg:col-span-5 space-y-6">
-            <span className="text-xs font-bold text-saffron bg-saffron/10 px-3 py-1.5 rounded-full uppercase tracking-wider inline-block">
-              Corporate Profile
-            </span>
-            <h2 className="font-heading text-3xl font-black text-teal-deep leading-tight">
-              Thoughtful Gifting, Crafted with Precision
-            </h2>
-            <p className="text-xs md:text-sm text-slate-650 leading-relaxed font-light">
-              At The Box Story, we believe corporate gifting is a strategic investment in relationships. Whether celebrating a major milestone, welcoming new hires, or thanking valuable clients, we curate hampers that are designed to be opened slowly.
-            </p>
-            <p className="text-xs md:text-sm text-slate-650 leading-relaxed font-light">
-              Every hamper starts as a sketch in our Jaipur studio, combining premium products with artisanal craft pieces like clay potters&apos; diyas, Mysore sandalwood, and sweets from third-generation sweetmakers.
-            </p>
-            <div className="border-t border-teal-deep/10 pt-4 flex items-center space-x-4">
-              <span className="font-heading text-xs font-bold text-teal-deep">Legacy of Collaborations:</span>
-              <span className="text-[10px] text-slate-500 font-bold bg-[#FAF4E8] px-2.5 py-1 rounded-md border border-slate-200">Startups & Enterprises</span>
-              <span className="text-[10px] text-slate-500 font-bold bg-[#FAF4E8] px-2.5 py-1 rounded-md border border-slate-200">Destinations</span>
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-white border border-slate-200 p-8 md:p-12 rounded-[40px] shadow-sm text-left animate-fade-in">
+          {/* Left Column: Corporate Gifting Profile Summary */}
+          <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
+            <div className="space-y-6">
+              <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 border border-saffron/15 px-3 py-1.5 rounded-full inline-block">
+                Corporate Gifting Partner
+              </span>
+              <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
+                Strengthening Relationships, One Thoughtful Gift at a Time
+              </h2>
+              <p className="text-xs text-slate-650 leading-relaxed font-light">
+                At The Box Story, we view corporate gifting as a strategic investment in connections. We curate bespoke corporate hampers designed to communicate gratitude, foster trust, and enhance brand loyalty across all stakeholder groups.
+              </p>
+              <p className="text-xs text-slate-650 leading-relaxed font-light">
+                Whether welcome hampers for remote hires, premium executive appreciation cases, or traditional auspicious Diwali baskets—our curations blend heritage craftsmanship (Jaipur studio design, hand-cast clay diyas, and Mysore sandalwood) with smart logistics.
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-6 border-t border-slate-100">
+              <div className="bg-[#FAF4E8]/50 border border-[#E2BA5F]/20 rounded-2xl p-4 space-y-2">
+                <span className="text-[9px] font-bold text-saffron uppercase tracking-widest block">Download Gifting Deck</span>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Access our 37-page corporate profile detailing bulk catalogs, collaborations, and past works.
+                </p>
+                <a
+                  href="/corporate/catalog?file=The%20Box%20Story%20-%20Corporate%20Gifting%20Profile.pdf"
+                  target="_blank"
+                  className="inline-flex items-center space-x-1.5 text-xs font-black text-teal-deep hover:text-saffron transition-colors"
+                >
+                  <span>View Gifting Profile PDF</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Right Column: Why Choose Us (4 Cards Grid) */}
-          <div className="lg:col-span-7 space-y-6">
-            <h3 className="font-heading text-xl font-black text-teal-deep">
-              Why Partner with The Box Story?
-            </h3>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <div className="w-8 h-8 bg-saffron/15 text-saffron rounded-lg flex items-center justify-center font-bold">
-                  ✨
-                </div>
-                <h4 className="font-heading text-sm font-bold text-teal-deep">Sensory & Artisanal Curation</h4>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Direct partnerships with clay potters, brass engravers, and organic tea farmers ensure authentic, hand-cast heritage pieces in every box.
-                </p>
-              </div>
+          {/* Right Column: Interactive Profile Tabs Showcase */}
+          <div className="lg:col-span-7 space-y-6 flex flex-col">
+            <div className="space-y-2">
+              <h3 className="font-heading text-lg font-black text-slate-900">
+                Explore Our Gifting Blueprint
+              </h3>
+              <p className="text-[11px] text-slate-550 leading-normal">
+                Click on the tabs below to read about our capabilities, branding details, and strategic B2B advantages.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <div className="w-8 h-8 bg-rani-pink/15 text-rani-pink rounded-lg flex items-center justify-center font-bold">
-                  🖋️
-                </div>
-                <h4 className="font-heading text-sm font-bold text-teal-deep">Full Logo & Name Personalization</h4>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Screen-printed logo boxes, engraved thermal flasks, laser-etched pens/notebooks, and handwritten-style greeting cards.
-                </p>
-              </div>
+            {/* Tabs Selector Navigation Row */}
+            <div className="flex flex-wrap gap-1.5 border-b border-slate-100 pb-3">
+              {[
+                { id: "offerings", label: "Capabilities", icon: "✨" },
+                { id: "branding", label: "Branding", icon: "🖋️" },
+                { id: "benefits", label: "Benefits", icon: "📈" },
+                { id: "steps", label: "4-Step Guide", icon: "🎁" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveProfileTab(tab.id as any)}
+                  className={`text-[10px] font-black uppercase tracking-wider px-3.5 py-2.5 rounded-xl border transition-all flex items-center space-x-1.5 ${
+                    activeProfileTab === tab.id
+                      ? "bg-slate-900 border-slate-900 text-white shadow-sm"
+                      : "bg-[#FCFAF2]/30 border-slate-150 text-slate-650 hover:bg-slate-100"
+                  }`}
+                >
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
 
-              <div className="space-y-2">
-                <div className="w-8 h-8 bg-teal-deep/15 text-teal-deep rounded-lg flex items-center justify-center font-bold">
-                  🔗
-                </div>
-                <h4 className="font-heading text-sm font-bold text-teal-deep">Magical Claims Portal</h4>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  No spreadsheets or size-chasing. Recipient receives a secure link, selects their custom treats or apparel size, and confirms address.
-                </p>
-              </div>
+            {/* Tab content displays */}
+            <div className="flex-1 min-h-[300px] flex items-stretch">
+              <AnimatePresence mode="wait">
+                {activeProfileTab === "offerings" && (
+                  <motion.div
+                    key="offerings"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full text-left"
+                  >
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Diverse Product Selection</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        We source premium gourmet treats, custom chocolate brittles, luxury home decor, and cutting-edge tech gadgets from trusted brands like Portronics and Noise.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Premium Packaging Formats</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Packaging options are as important as the gift. Select reusable pine wood sliding chests, rigid gold-foiled dresser boxes, or customizable eco-friendly trays.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Streamlined Distribution</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Leave logistics to us. We support bulk single-point shipping as well as individual home drop-shipping to remote employees across multiple global addresses.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Diwali & Festive Specialities</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Add traditional auspicious additions like hand-painted clay diyas, brass urli bowls, dry fruits jars, and heritage Pichwai floral sleeves.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
 
-              <div className="space-y-2">
-                <div className="w-8 h-8 bg-[#8F9489]/15 text-emerald-800 rounded-lg flex items-center justify-center font-bold">
-                  🌱
-                </div>
-                <h4 className="font-heading text-sm font-bold text-teal-deep">Premium Sustainable Formats</h4>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Durable gold-foiled rigid boxes, reusable pine wood chests, leatherette boxes, and eco-friendly wellness blends.
-                </p>
-              </div>
+                {activeProfileTab === "branding" && (
+                  <motion.div
+                    key="branding"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full text-left"
+                  >
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Logo Embossing & Foiling</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Print your company logo on the exterior of the box with gold foil stamping or screen-printing to elevate the perceived brand value.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Laser Monogram Engraving</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Personalize premium metal pens, vacuum-insulated bottles, and wood notebook covers with individual employee/client names.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Color-Coordinated Design</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Match tissue paper fills, satin ribbons, custom sleeves, and packaging designs directly with your corporate brand guidelines.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Calligraphed Message Cards</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Ditch generic cards. Provide customized cursive hand-written calligraphy greeting tags or premium custom-printed brand cards.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeProfileTab === "benefits" && (
+                  <motion.div
+                    key="benefits"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full text-left"
+                  >
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Relationship Strengthening</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Acts as a gesture of goodwill, building stronger connections and encouraging long-term loyalty with partners and team members.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Enhanced Brand Exposure</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Branded utility keepsakes keep your company name on recipients&apos; desks and in their thoughts daily in a non-intrusive way.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Increased Client Retention</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Thoughtful thank-you gestures differentiate your service, elevating B2B client satisfaction and reducing churn.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Positive Corporate Image</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Highlights your commitment to employee appreciation and corporate social responsibility (CSR) with sustainable gift options.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeProfileTab === "steps" && (
+                  <motion.div
+                    key="steps"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full text-left"
+                  >
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Step 1: Choose Your Base Box</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Select a box matching your styling budget—wooden sliding chests, sleek rigid drawers, or open display baskets.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Step 2: Curate Product Inclusions</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Select from gourmet treats, dry fruits jars, desktop office supplies, tech charging pads, or coffee accessories.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Step 3: Personalize and Brand</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Add your brand logo, name monograms, custom tissue fillers, and coordinate color palettes with ribbon selections.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-black text-slate-900">Step 4: Confirm and Deliver</h4>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                        Confirm quantities and upload destination addresses. Our logistics team handles assembly and timely shipment.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </section>

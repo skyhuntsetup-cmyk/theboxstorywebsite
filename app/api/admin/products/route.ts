@@ -25,7 +25,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, name, price, image, description, badge, categoryIds } = body;
+    const { id, name, price, image, description, badge, stock_quantity, categoryIds } = body;
     if (!id || !name || price == null) {
       return NextResponse.json({ success: false, error: "id, name, and price are required." }, { status: 400 });
     }
@@ -38,7 +38,13 @@ export async function POST(req: NextRequest) {
     // product_categories; left null for new products.
     const { error: insertError } = await supabase
       .from("products")
-      .insert([{ id, name, price: Number(price), image: image || null, description: description || null, badge: badge || null }]);
+      .insert([{
+        id, name, price: Number(price),
+        image: image || null,
+        description: description || null,
+        badge: badge || null,
+        stock_quantity: stock_quantity === "" || stock_quantity == null ? null : Number(stock_quantity),
+      }]);
     if (insertError) return NextResponse.json({ success: false, error: insertError.message }, { status: 400 });
 
     const { error: tagError } = await supabase

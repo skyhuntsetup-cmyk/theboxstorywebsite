@@ -302,8 +302,15 @@ CREATE TABLE public.offline_inventory (
 ALTER TABLE public.offline_inventory ENABLE ROW LEVEL SECURITY;
 
 -- Allow Authenticated (Admins) Full Access
-CREATE POLICY "Allow authenticated full access on offline_inventory" 
-ON public.offline_inventory FOR ALL 
+CREATE POLICY "Allow authenticated full access on offline_inventory"
+ON public.offline_inventory FOR ALL
 USING (auth.role() = 'authenticated');
 
+
+-- 9. Stock tracking on the live storefront catalog. NULL means "not tracked"
+-- (always shown as available, existing behavior for every pre-existing
+-- product); 0 means out of stock and hides the Add/Buy control; any positive
+-- number is shown as-is. This is separate from offline_inventory, which is
+-- back-office purchase/vendor bookkeeping, not what the storefront reads.
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS stock_quantity INTEGER;
 

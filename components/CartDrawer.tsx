@@ -128,7 +128,7 @@ export const CartDrawer = () => {
 
                         {/* If customized, show hamper item pills */}
                         {item.isCustomBox && item.boxItems && (
-                          <div className="flex flex-wrap gap-1 mb-3">
+                          <div className="flex flex-wrap gap-1 mb-2">
                             {item.boxItems.map((boxItem, idx) => (
                               <span
                                 key={idx}
@@ -138,6 +138,12 @@ export const CartDrawer = () => {
                               </span>
                             ))}
                           </div>
+                        )}
+
+                        {item.giftMessage && (
+                          <p className="text-[10px] italic text-rani-pink/80 mb-3 line-clamp-1">
+                            &quot;{item.giftMessage}&quot;
+                          </p>
                         )}
 
                         <div className="flex items-center justify-between">

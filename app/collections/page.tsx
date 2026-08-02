@@ -264,6 +264,7 @@ export default function Collections() {
                           image: product.image || "",
                           description: product.description || "",
                           badge: product.badge || undefined,
+                          stock_quantity: product.stock_quantity,
                         }} />
                       </motion.div>
                     ))

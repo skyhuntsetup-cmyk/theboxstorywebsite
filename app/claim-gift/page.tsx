@@ -375,6 +375,16 @@ function ClaimGiftContent() {
                     </div>
                   ))}
                 </div>
+                {boxItems.some((item) => "giftMessage" in item && item.giftMessage) && (
+                  <div className="bg-white border border-gold/20 p-5 rounded-2xl text-left space-y-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Greeting Card</span>
+                    {boxItems
+                      .filter((item): item is OrderItem => "giftMessage" in item && Boolean(item.giftMessage))
+                      .map((item, idx) => (
+                        <p key={idx} className="font-heading italic text-sm text-teal-deep/80 leading-relaxed">&quot;{item.giftMessage}&quot;</p>
+                      ))}
+                  </div>
+                )}
               </div>
             )}
 

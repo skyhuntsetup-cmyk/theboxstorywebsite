@@ -274,15 +274,21 @@ export default function CataloguePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => {
               const inCart = cart.find((i) => i.id === product.id);
+              const isOutOfStock = product.stock_quantity === 0;
               return (
                 <div key={product.id} className="bg-white rounded-3xl overflow-hidden border border-teal-deep/5 shadow-sm flex flex-col">
-                  <div className="aspect-[4/5] bg-teal-deep/5 overflow-hidden">
+                  <div className="aspect-[4/5] bg-teal-deep/5 overflow-hidden relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={product.image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80"}
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full object-cover ${isOutOfStock ? "grayscale opacity-60" : ""}`}
                     />
+                    {isOutOfStock && (
+                      <span className="absolute top-3 left-3 bg-slate-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                        Sold Out
+                      </span>
+                    )}
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div>
@@ -291,7 +297,9 @@ export default function CataloguePage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="font-heading text-base font-extrabold text-teal-deep">₹{product.price}</span>
-                      {inCart ? (
+                      {isOutOfStock ? (
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Unavailable</span>
+                      ) : inCart ? (
                         <div className="flex items-center space-x-2 bg-teal-deep/5 rounded-full px-1">
                           <button onClick={() => updateQuantity(product.id, -1)} className="p-1.5 text-teal-deep hover:text-rani-pink"><Minus className="w-3.5 h-3.5" /></button>
                           <span className="text-xs font-bold w-4 text-center">{inCart.quantity}</span>

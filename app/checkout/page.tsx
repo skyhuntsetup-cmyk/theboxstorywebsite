@@ -11,6 +11,7 @@ export default function Checkout() {
   const { cartItems, clearCart } = useGift();
   const [deliveryMode, setDeliveryMode] = useState<"physical" | "magical">("physical");
   const [createdOrderId, setCreatedOrderId] = useState<string>("");
+  const [placedGiftMessages, setPlacedGiftMessages] = useState<string[]>([]);
 
   const [shippingInfo, setShippingInfo] = useState({
     firstName: "",
@@ -91,6 +92,7 @@ export default function Checkout() {
         quantity: item.quantity,
         isCustomBox: item.isCustomBox || false,
         boxItems: item.boxItems || null,
+        giftMessage: item.giftMessage || undefined,
       })),
     };
 
@@ -105,6 +107,7 @@ export default function Checkout() {
 
       if (response.ok && data.success) {
         setCreatedOrderId(data.order.id);
+        setPlacedGiftMessages(cartItems.map((item) => item.giftMessage).filter((m): m is string => Boolean(m)));
         setPaymentStep("success");
         setPaymentSuccess(true);
         setIsProcessingPayment(false);
@@ -140,7 +143,7 @@ export default function Checkout() {
               Celebrate the Moment!
             </h1>
             <p className="text-xs text-teal-deep/75 max-w-sm mx-auto leading-relaxed text-center">
-              Your order has been recorded and the Razorpay gateway confirmed your receipt. 
+              Your order has been recorded. Our team will reach out on WhatsApp or phone shortly to confirm payment and delivery details.
               {deliveryMode === "magical" ? (
                 <span> We have generated your <strong>Magical Gift Link</strong>. You can send it to your recipient to let them claim their package.</span>
               ) : (
@@ -148,6 +151,15 @@ export default function Checkout() {
               )}
             </p>
           </div>
+
+          {placedGiftMessages.length > 0 && (
+            <div className="bg-[#042F2E]/5 border border-teal-deep/5 p-4 rounded-2xl text-left space-y-3">
+              <span className="text-[10px] font-bold text-teal-deep/50 uppercase">Greeting Card{placedGiftMessages.length > 1 ? "s" : ""}</span>
+              {placedGiftMessages.map((msg, idx) => (
+                <p key={idx} className="font-heading italic text-sm text-teal-deep/80 leading-relaxed">&quot;{msg}&quot;</p>
+              ))}
+            </div>
+          )}
 
           {deliveryMode === "magical" && (
             <div className="bg-[#042F2E]/5 border border-teal-deep/5 p-4 rounded-2xl text-left space-y-2">
@@ -471,7 +483,7 @@ export default function Checkout() {
                     className="p-4 bg-white/10 border border-white/5 rounded-2xl flex items-center space-x-3 text-xs"
                   >
                     <div className="w-4.5 h-4.5 border-2 border-gold border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                    <span>Razorpay is authorizing transaction. Please do not close...</span>
+                    <span>Placing your order. Please do not close...</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -483,12 +495,12 @@ export default function Checkout() {
                 className="w-full flex items-center justify-center space-x-2 py-4 bg-white hover:bg-gold-light text-teal-deep rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all"
               >
                 <ShieldCheck className="w-4 h-4 text-teal-deep" />
-                <span>Pay via Razorpay</span>
+                <span>Confirm &amp; Place Order</span>
               </button>
 
               <div className="flex items-center justify-center space-x-1.5 text-[10px] text-white/50">
                 <CreditCard className="w-3.5 h-3.5" />
-                <span>SSL Encrypted Secure Gateway Connection</span>
+                <span>We&apos;ll call or WhatsApp you to confirm payment</span>
               </div>
             </div>
           </div>

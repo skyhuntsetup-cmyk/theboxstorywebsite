@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { curatedProducts, Product } from "../../data/products";
+import React, { useState, useRef, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
+import type { CategoryRow, ProductWithCategories } from "../../lib/types";
 import { Sparkles, Send, Bot, User, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -10,7 +11,8 @@ interface ChatMessage {
   id: string;
   sender: "user" | "bot";
   text: string;
-  recommendations?: Product[];
+  recommendations?: ProductWithCategories[];
+  categorySlug?: string;
 }
 
 export default function GiftGenie() {
@@ -23,13 +25,38 @@ export default function GiftGenie() {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<CategoryRow[]>([]);
+  const [products, setProducts] = useState<ProductWithCategories[]>([]);
   const nextId = useRef(0);
+
+  // Live catalog, so the Genie always recommends what's actually stocked and
+  // tagged in Admin rather than a stale, hand-picked seed list.
+  useEffect(() => {
+    const load = async () => {
+      const [{ data: catData }, { data: prodData }] = await Promise.all([
+        supabase.from("categories").select("*").eq("is_active", true),
+        supabase.from("products").select("*, product_categories(category_id)").order("name"),
+      ]);
+      if (catData) setCategories(catData);
+      if (prodData) {
+        setProducts(
+          prodData.map((p) => {
+            const { product_categories, ...rest } = p as typeof p & { product_categories: { category_id: string }[] };
+            return { ...rest, categoryIds: (product_categories || []).map((pc: { category_id: string }) => pc.category_id) };
+          })
+        );
+      }
+    };
+    load();
+  }, []);
 
   const presets = [
     "Corporate gifts for my team under ₹2500",
     "Traditional Diwali gift for parents",
     "Romance anniversary box for spouse",
   ];
+
+  const findCategory = (name: string) => categories.find((c) => c.name.toLowerCase() === name.toLowerCase());
 
   const handleSend = (text: string) => {
     if (!text.trim()) return;
@@ -45,22 +72,30 @@ export default function GiftGenie() {
     setIsLoading(true);
 
     setTimeout(() => {
-      let filtered: Product[] = [];
       const query = text.toLowerCase();
+      let matchedCategory: CategoryRow | undefined;
 
       if (query.includes("corp") || query.includes("team") || query.includes("office") || query.includes("exec")) {
-        filtered = curatedProducts.filter((p) => p.category === "Corporate");
+        matchedCategory = findCategory("Corporate");
       } else if (query.includes("diwali") || query.includes("fest") || query.includes("sweets") || query.includes("mithai")) {
-        filtered = curatedProducts.filter((p) => p.category === "Diwali");
+        matchedCategory = findCategory("Diwali");
       } else if (query.includes("wedding") || query.includes("brides") || query.includes("couple") || query.includes("marriage")) {
-        filtered = curatedProducts.filter((p) => p.category === "Weddings");
+        matchedCategory = findCategory("Weddings");
       } else if (query.includes("anniv") || query.includes("wife") || query.includes("love") || query.includes("husband") || query.includes("spouse")) {
-        filtered = curatedProducts.filter((p) => p.category === "Anniversary");
+        matchedCategory = findCategory("Anniversary");
       } else if (query.includes("house") || query.includes("warm") || query.includes("home")) {
-        filtered = curatedProducts.filter((p) => p.category === "Housewarming");
-      } else {
-        filtered = curatedProducts.slice(0, 3);
+        matchedCategory = findCategory("Housewarming");
+      } else if (query.includes("him") || query.includes("dad") || query.includes("father") || query.includes("brother")) {
+        matchedCategory = findCategory("For Him");
+      } else if (query.includes("her") || query.includes("mom") || query.includes("mother") || query.includes("sister")) {
+        matchedCategory = findCategory("For Her");
+      } else if (query.includes("birthday")) {
+        matchedCategory = findCategory("Birthday");
       }
+
+      let filtered = matchedCategory
+        ? products.filter((p) => p.categoryIds.includes(matchedCategory!.id))
+        : products.slice(0, 3);
 
       if (query.includes("under") || query.includes("below") || query.includes("within")) {
         const numbers = query.match(/\d+/g);
@@ -73,8 +108,12 @@ export default function GiftGenie() {
       const botMsg: ChatMessage = {
         id: `bot-${nextId.current++}`,
         sender: "bot",
-        text: `Here are the matching gift hamper combinations I found inside the catalog:`,
+        text:
+          filtered.length > 0
+            ? "Here are the matching gift hamper combinations I found inside the catalog:"
+            : "I couldn't find a match in the current catalog — try a different occasion or a higher budget.",
         recommendations: filtered.slice(0, 3),
+        categorySlug: matchedCategory?.slug,
       };
 
       setMessages((prev) => [...prev, botMsg]);
@@ -89,7 +128,7 @@ export default function GiftGenie() {
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-50 rounded-full blur-3xl -z-10" />
 
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-between space-y-8">
-        
+
         {/* Editorial header */}
         <section className="text-center space-y-4">
           <div className="inline-flex items-center space-x-1.5 bg-teal-deep/5 border border-teal-deep/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-deep uppercase tracking-widest">
@@ -106,7 +145,7 @@ export default function GiftGenie() {
 
         {/* Chat History Panel */}
         <div className="flex-1 min-h-[400px] bg-white border border-slate-200 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-sm rounded-[40px] overflow-hidden relative">
-          
+
           <div className="flex-1 overflow-y-auto space-y-6 max-h-[450px] pr-1">
             <AnimatePresence>
               {messages.map((msg) => (
@@ -142,13 +181,17 @@ export default function GiftGenie() {
                             className="bg-white border border-slate-200 rounded-2xl overflow-hidden p-3 space-y-3 shadow-sm"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={prod.image} alt={prod.name} className="w-full aspect-[4/3] object-cover rounded-xl" />
+                            <img
+                              src={prod.image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&auto=format&fit=crop&q=80"}
+                              alt={prod.name}
+                              className="w-full aspect-[4/3] object-cover rounded-xl"
+                            />
                             <div className="space-y-1">
                               <span className="text-[11px] font-bold text-slate-800 block truncate leading-snug">{prod.name}</span>
                               <span className="text-[10px] text-saffron font-bold block">₹{prod.price}</span>
                             </div>
                             <Link
-                              href={`/collections`}
+                              href={msg.categorySlug ? `/collections/${msg.categorySlug}` : "/collections"}
                               className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-bold text-[9px] block text-center uppercase tracking-wider transition-colors"
                             >
                               Details

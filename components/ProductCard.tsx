@@ -13,11 +13,13 @@ interface ProductCardProps {
     image: string;
     description: string;
     badge?: string;
+    stock_quantity?: number | null;
   };
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useGift();
+  const isOutOfStock = product.stock_quantity === 0;
 
   return (
     <motion.div
@@ -34,30 +36,36 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isOutOfStock ? "grayscale opacity-60" : ""}`}
           onError={(e) => {
             e.currentTarget.src = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80";
           }}
         />
 
         {/* Badge Overlay */}
-        {product.badge && (
+        {isOutOfStock ? (
+          <span className="absolute top-4 left-4 bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
+            Sold Out
+          </span>
+        ) : product.badge ? (
           <span className="absolute top-4 left-4 bg-saffron text-[#FAF4E8] text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
             {product.badge}
           </span>
-        )}
+        ) : null}
 
         {/* Quick Interaction Overlay */}
-        <div className="absolute inset-0 bg-teal-deep/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3">
-          <button 
-            onClick={() => addToCart(product)}
-            className="p-3 bg-white text-teal-deep hover:bg-rani-pink hover:text-[#FAF4E8] rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
-            title="Add to Bag"
-            aria-label={`Quick add ${product.name} to Cart`}
-          >
-            <ShoppingBag className="w-5 h-5" />
-          </button>
-        </div>
+        {!isOutOfStock && (
+          <div className="absolute inset-0 bg-teal-deep/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3">
+            <button
+              onClick={() => addToCart(product)}
+              className="p-3 bg-white text-teal-deep hover:bg-rani-pink hover:text-[#FAF4E8] rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+              title="Add to Bag"
+              aria-label={`Quick add ${product.name} to Cart`}
+            >
+              <ShoppingBag className="w-5 h-5" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Product Information */}
@@ -78,11 +86,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           <button
             onClick={() => addToCart(product)}
-            className="inline-flex items-center space-x-1 px-4 py-2 bg-teal-deep hover:bg-rani-pink text-[#FAF4E8] hover:text-[#FAF4E8] text-xs font-bold rounded-full transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
-            aria-label={`Add ${product.name} to Bag`}
+            disabled={isOutOfStock}
+            className="inline-flex items-center space-x-1 px-4 py-2 bg-teal-deep hover:bg-rani-pink text-[#FAF4E8] hover:text-[#FAF4E8] text-xs font-bold rounded-full transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100 disabled:hover:bg-teal-deep"
+            aria-label={isOutOfStock ? `${product.name} is sold out` : `Add ${product.name} to Bag`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            <span>Add to Bag</span>
+            <span>{isOutOfStock ? "Sold Out" : "Add to Bag"}</span>
           </button>
         </div>
       </div>

@@ -8,6 +8,7 @@ export interface OrderItem {
   image?: string;
   isCustomBox?: boolean;
   boxItems?: { id: string; name: string; price: number; image: string }[];
+  giftMessage?: string;
 }
 
 export interface ShippingAddress {
@@ -111,6 +112,7 @@ export interface ProductRow {
   description: string | null;
   category: string;
   badge: string | null;
+  stock_quantity: number | null;
 }
 
 /** A product joined with the full list of categories it's tagged into. */

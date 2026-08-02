@@ -11,6 +11,7 @@ export interface CartItem {
   description: string;
   isCustomBox?: boolean;
   boxItems?: { id: string; name: string; price: number; image: string }[];
+  giftMessage?: string;
 }
 
 export interface BoxItem {
@@ -32,7 +33,7 @@ interface GiftContextType {
   addToBox: (item: BoxItem) => boolean; // returns true if added, false if full
   removeFromBox: (id: string) => void;
   clearBox: () => void;
-  moveBoxToCart: (boxStyleName?: string) => void;
+  moveBoxToCart: (boxStyleName?: string, giftMessage?: string) => void;
   clearCart: () => void;
 }
 
@@ -114,7 +115,7 @@ export const GiftProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setBuildABoxItems([]);
   };
 
-  const moveBoxToCart = (boxStyleName = "Classic Royal Box") => {
+  const moveBoxToCart = (boxStyleName = "Classic Royal Box", giftMessage?: string) => {
     if (buildABoxItems.length === 0) return;
 
     const boxTotal = buildABoxItems.reduce((acc, item) => acc + item.price, 250); // ₹250 base for premium packaging
@@ -128,6 +129,7 @@ export const GiftProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isCustomBox: true,
       boxItems: [...buildABoxItems],
       quantity: 1,
+      giftMessage: giftMessage?.trim() || undefined,
     };
 
     saveCart([...cartItems, newCartItem]);
