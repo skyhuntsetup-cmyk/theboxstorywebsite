@@ -50,8 +50,8 @@ export default function CorporateGifting() {
   };
 
   const stats = [
-    { number: "4,95,000+", label: "Hampers Shipped" },
-    { number: "500+", label: "Enterprise Brands" },
+    { number: "10,000+", label: "Hampers Shipped" },
+    { number: "30+", label: "Enterprise Brands" },
     { number: "100%", label: "On-time Dispatch Rate" },
   ];
 

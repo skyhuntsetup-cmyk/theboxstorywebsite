@@ -99,12 +99,28 @@ export const Navbar = () => {
   const pathname = usePathname();
   const { cartItems, setCartOpen } = useGift();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const shouldFloat = pathname !== "/" || isScrolled;
+
   return (
-    <header className="relative mx-auto mt-3 w-[92%] max-w-6xl">
-      <nav className="backdrop-blur-md bg-[#FAF4E8]/75 border border-[#042F2E]/10 px-6 py-4 rounded-full flex items-center justify-between shadow-[0_10px_30px_rgba(4,47,46,0.06)] transition-all duration-300 hover:border-[#042F2E]/20">
+    <header className={`transition-all duration-300 ${shouldFloat ? "mx-auto mt-3 w-[92%] max-w-6xl" : "w-full max-w-none mt-0"}`}>
+      <nav className={`transition-all duration-300 flex items-center justify-between ${
+        shouldFloat
+          ? "backdrop-blur-md bg-[#FAF4E8]/75 border border-[#042F2E]/10 px-6 py-3 rounded-full shadow-[0_10px_30px_rgba(4,47,46,0.06)] hover:border-[#042F2E]/20"
+          : "bg-[#FAF4E8] border-b border-[#042F2E]/10 px-8 py-4 rounded-none shadow-none"
+      }`}>
         {/* Brand Logo */}
         <Link href="/" className="flex items-center space-x-2 group">
           <span className="font-heading text-2xl md:text-3xl font-extrabold tracking-tight text-teal-deep">

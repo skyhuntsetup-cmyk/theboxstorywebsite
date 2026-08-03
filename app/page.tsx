@@ -292,31 +292,44 @@ export default function Home() {
               <motion.div
                 animate={{ y: [0, -10, 0], rotate: [0, 2, 0] }}
                 transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                className="absolute top-4 left-6 w-full h-full border border-gold/30 bg-gradient-to-tr from-[#FAF4E8]/85 to-gold/20 rounded-3xl backdrop-blur-md shadow-[0_30px_60px_rgba(226,186,95,0.15)] flex flex-col p-8 justify-between z-20"
+                className="absolute top-4 left-6 w-full h-full border border-gold/30 rounded-3xl overflow-hidden shadow-[0_30px_60px_rgba(226,186,95,0.25)] flex flex-col p-8 justify-between z-20"
+                style={{
+                  backgroundImage: "linear-gradient(to top, rgba(13, 27, 23, 0.95) 0%, rgba(13, 27, 23, 0.4) 50%, rgba(13, 27, 23, 0.15) 100%), url('https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&auto=format&fit=crop&q=80')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center"
+                }}
               >
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-saffron bg-saffron/10 border border-saffron/20 px-3 py-1 rounded-full">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#FCFAF2] bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full">
                     Satin Wrap & Rigid Box
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-gold" />
+                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-gold animate-pulse" />
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="w-12 h-1.5 bg-rani-pink rounded-full" />
-                  <h3 className="font-heading text-2xl font-bold leading-tight text-teal-deep">
+                  <h3 className="font-heading text-2xl font-black leading-tight text-white">
                     The Royal Heritage Hamper
                   </h3>
                   <div className="flex space-x-2">
-                    <span className="text-[10px] bg-teal-deep/5 px-2 py-0.5 rounded-full text-teal-deep/75">Brass Diya</span>
-                    <span className="text-[10px] bg-teal-deep/5 px-2 py-0.5 rounded-full text-teal-deep/75">Mithai</span>
-                    <span className="text-[10px] bg-teal-deep/5 px-2 py-0.5 rounded-full text-teal-deep/75">Saffron</span>
+                    <span className="text-[10px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Brass Diya</span>
+                    <span className="text-[10px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Mithai</span>
+                    <span className="text-[10px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Saffron</span>
                   </div>
                 </div>
               </motion.div>
 
-              <div className="absolute top-12 left-12 w-full h-full bg-[#FAF4E8] border border-slate-200 rounded-3xl shadow-sm z-10" />
+              {/* Background Layer (Visual Stack) */}
+              <div 
+                className="absolute top-12 left-12 w-full h-full border border-slate-200/50 rounded-3xl shadow-md z-10 opacity-80" 
+                style={{
+                  backgroundImage: "linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.65)), url('https://images.unsplash.com/photo-1512909006721-3d6018887383?w=800&auto=format&fit=crop&q=80')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center"
+                }}
+              />
 
               <motion.div
                 animate={{ y: [-15, 15, -15] }}
