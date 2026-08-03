@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   Building, Gift, CheckCircle2, ChevronRight,
-  Globe, Laptop, Star, ArrowRight
+  Globe, Laptop, Star, ArrowRight, ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -184,19 +184,29 @@ export default function CorporateGifting() {
             </div>
 
             <div className="space-y-4 pt-6 border-t border-slate-100">
-              <div className="bg-[#FAF4E8]/50 border border-[#E2BA5F]/20 rounded-2xl p-4 space-y-2">
-                <span className="text-[9px] font-bold text-saffron uppercase tracking-widest block">Download Gifting Deck</span>
+              <div className="bg-[#FAF4E8]/50 border border-[#E2BA5F]/20 rounded-2xl p-4 space-y-3">
+                <span className="text-[9px] font-bold text-saffron uppercase tracking-widest block">Corporate Deck & Profile</span>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
                   Access our 37-page corporate profile detailing bulk catalogs, collaborations, and past works.
                 </p>
-                <a
-                  href="/corporate/catalog?file=The%20Box%20Story%20-%20Corporate%20Gifting%20Profile.pdf"
-                  target="_blank"
-                  className="inline-flex items-center space-x-1.5 text-xs font-black text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>View Gifting Profile PDF</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+                  <Link
+                    href="/corporate/profile"
+                    className="inline-flex items-center space-x-1.5 text-xs font-black text-teal-deep hover:text-rani-pink transition-colors"
+                  >
+                    <span>Open Digital Deck</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <span className="hidden sm:inline text-slate-300 text-xs">|</span>
+                  <a
+                    href="/corporate/catalog?file=The%20Box%20Story%20-%20Corporate%20Gifting%20Profile.pdf"
+                    target="_blank"
+                    className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-500 hover:text-teal-deep transition-colors"
+                  >
+                    <span>Download PDF</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
