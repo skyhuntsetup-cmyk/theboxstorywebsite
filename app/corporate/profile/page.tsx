@@ -1,525 +1,524 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { 
-  ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, 
-  Sparkles, Gift, ShieldCheck, Truck, Percent, 
-  Award, Heart, Layers, Laptop, PenTool, ExternalLink, HelpCircle
+  ArrowLeft, ArrowRight, Sparkles, Gift, ShieldCheck, 
+  Truck, Award, Heart, Layers, Laptop, PenTool, 
+  ExternalLink, CheckCircle2, ChevronRight, HelpCircle, Users
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-interface Slide {
-  id: string;
-  title: string;
-  subtitle?: string;
-  content: React.ReactNode;
-}
+export default function CorporateProfilePage() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 }
+    }
+  };
 
-export default function CorporateProfileDeck() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6 }
+    }
+  };
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === "Right") {
-        nextSlide();
-      } else if (e.key === "ArrowLeft" || e.key === "Left") {
-        prevSlide();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentSlide]);
-
-  const slides: Slide[] = [
-    // Slide 1: Welcome Cover
-    {
-      id: "cover",
-      title: "Corporate Gifting Profile",
-      subtitle: "The Box Story",
-      content: (
-        <div className="flex flex-col items-center justify-center text-center space-y-6 h-full max-w-2xl mx-auto">
-          <div className="inline-flex items-center space-x-2 bg-saffron/10 border border-saffron/20 px-4 py-2 rounded-full text-xs font-bold text-saffron uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5 text-saffron animate-pulse" />
-            <span>Premium B2B Gifting</span>
-          </div>
-          <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-teal-deep tracking-tight leading-tight">
-            Gifts That <br />
-            Tell a <span className="text-rani-pink italic font-serif font-normal">Story</span>
-          </h2>
-          <div className="w-16 h-1.5 bg-gold rounded-full" />
-          <p className="text-sm text-slate-650 leading-relaxed font-light">
-            Welcome to a world of thoughtful curation, where every detail is meticulously crafted to bring joy and warmth to your corporate relationships.
-          </p>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-            Press Right Arrow Key or Click Next to Begin
-          </p>
-        </div>
-      )
-    },
-    // Slide 2: About Our Brand
-    {
-      id: "about",
-      title: "About Our Brand",
-      subtitle: "Diwali Spirit Meets the Art of Gifting",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full max-w-4xl mx-auto text-left">
-          <div className="space-y-4">
-            <h3 className="font-heading text-2xl font-black text-teal-deep">
-              Thoughtful Experiences
-            </h3>
-            <p className="text-xs text-slate-600 leading-relaxed font-light">
-              At The Box Story, we understand that gifting is more than just a tradition — it&apos;s an opportunity to express gratitude, build connections, and foster enduring business relationships.
+  return (
+    <div className="min-h-screen bg-background text-slate-800">
+      
+      {/* 1. HERO SECTION: Editorial & Luxury Banner */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-amber-50/50 via-background to-rose-50/50 py-20 px-6 md:px-12 border-b border-slate-200/50 text-left">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 space-y-6">
+            <Link href="/corporate" className="inline-flex items-center space-x-1 text-xs font-bold text-slate-500 hover:text-teal-deep transition-colors mb-2">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Corporate Home</span>
+            </Link>
+            <div className="inline-flex items-center space-x-2 bg-saffron/10 border border-saffron/25 px-4 py-2 rounded-full text-xs font-bold text-saffron uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
+              <span>Official B2B Profile</span>
+            </div>
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-7xl font-black text-teal-deep leading-[1.05] tracking-tight">
+              Thoughtful Curation <br />
+              For Your <span className="text-rani-pink italic font-serif font-normal">Business Relations</span>
+            </h1>
+            <p className="text-sm sm:text-base text-slate-650 leading-relaxed max-w-xl font-light">
+              We translate appreciation into tangible sensory unboxing experiences. High-end customized hampers, sustainable boxes, and bespoke branding crafted to leave a lasting professional impression.
             </p>
-            <p className="text-xs text-slate-600 leading-relaxed font-light">
-              Our catalogs are a reflection of our commitment to delivering not just gifts, but experiences that resonate with the spirit of the season. We bring together the finest gourmet treats, wellness essentials, and tech accessories wrapped in custom-designed packages.
-            </p>
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <a
+                href="#brief-form"
+                className="inline-flex items-center justify-center space-x-2 bg-teal-deep hover:bg-teal-deep/95 text-white px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-wider shadow transition-all duration-300 transform hover:-translate-y-0.5"
+              >
+                <span>Brief our Styling team</span>
+                <ChevronRight className="w-4 h-4" />
+              </a>
+              <a
+                href="/corporate/catalog?file=The%20Box%20Story%20-%20Corporate%20Gifting%20Profile.pdf"
+                target="_blank"
+                className="inline-flex items-center justify-center space-x-2 bg-white hover:bg-slate-50 text-teal-deep border border-slate-200 px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-wider shadow-sm transition-all duration-300 transform hover:-translate-y-0.5"
+              >
+                <span>Download PDF Deck</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
           </div>
-          <div className="bg-[#FCFAF2]/80 border border-[#042F2E]/5 rounded-3xl p-6 space-y-4">
-            <h4 className="font-heading text-sm font-bold text-teal-deep">Our Core Commitments</h4>
-            <ul className="space-y-3">
-              {[
-                { title: "Meticulous Detail", desc: "Every item is selected for quality, utility, and sensory delight." },
-                { title: "Artisanal Collaboration", desc: "We partner directly with traditional potters and premium sweetmakers." },
-                { title: "Seamless Fulfillment", desc: "End-to-end management, from custom styling to drop-shipping." }
-              ].map((c, i) => (
-                <li key={i} className="flex items-start space-x-3 text-left">
-                  <div className="w-5 h-5 rounded-full bg-saffron/10 text-saffron flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900">{c.title}</h5>
-                    <p className="text-[10px] text-slate-500">{c.desc}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )
-    },
-    // Slide 3: Benefits of Corporate Gifting
-    {
-      id: "benefits",
-      title: "Strategic Benefits",
-      subtitle: "Why Corporate Gifting is an Investment",
-      content: (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
-          {[
-            {
-              icon: Heart,
-              color: "text-rani-pink bg-rani-pink/5",
-              title: "Building Stronger Relationships",
-              desc: "Corporate gifts serve as a gesture of goodwill, reinforcing relationships with both clients and employees. By appreciating partnership efforts, you foster loyalty and build a dependable support network."
-            },
-            {
-              icon: Award,
-              color: "text-saffron bg-saffron/5",
-              title: "Enhanced Brand Visibility",
-              desc: "Branded custom gifts act as tools for continuous brand exposure. Every functional item used by a recipient keeps your business top-of-mind in a non-intrusive, organic manner."
-            },
-            {
-              icon: ShieldCheck,
-              color: "text-teal-deep bg-teal-deep/5",
-              title: "Increased Client Retention",
-              desc: "Clients who receive thoughtful tokens of appreciation are far more likely to retain your services. Custom gifting differentiates your brand, elevating satisfaction and driving repeat business."
-            },
-            {
-              icon: Layers,
-              color: "text-emerald-800 bg-emerald-50/50",
-              title: "Positive Company Image",
-              desc: "Highlight your commitment to employee wellness and corporate social responsibility. A positive reputation makes your company highly attractive to top talent and prospective partners."
-            }
-          ].map((b, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 p-5 rounded-2xl flex items-start space-x-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${b.color}`}>
-                <b.icon className="w-5 h-5" />
+          
+          <div className="lg:col-span-5 relative">
+            <div className="absolute top-0 right-0 w-72 h-72 bg-gold/10 rounded-full blur-3xl -z-10" />
+            <div className="relative border border-slate-200 bg-[#FCFAF2]/50 p-6 md:p-8 rounded-[36px] shadow-sm space-y-6">
+              <div className="flex justify-between items-center border-b border-slate-150 pb-4">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">The Box Story Legacy</span>
+                <span className="text-xs font-bold text-saffron bg-saffron/10 px-2.5 py-1 rounded-md border border-saffron/20">EST. 2020</span>
               </div>
-              <div className="space-y-1">
-                <h4 className="text-xs font-bold text-slate-900">{b.title}</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed font-light">{b.desc}</p>
+              <div className="space-y-4 text-xs leading-relaxed text-slate-600 font-light">
+                <p>
+                  Corporate gifting is a strategic investment. Standard catalog pens and plastic folders get tossed aside — we design items that are placed prominently on desks and opened slowly.
+                </p>
+                <p>
+                  Combining gourmet tastes, functional tech utility, and artisanal products, our design team builds layouts that fit your brand guidelines perfectly.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-150">
+                <div>
+                  <span className="text-2xl font-black text-slate-900 block">10k+</span>
+                  <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Kits Shipped</span>
+                </div>
+                <div>
+                  <span className="text-2xl font-black text-slate-900 block">30+</span>
+                  <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Top Brands</span>
+                </div>
+                <div>
+                  <span className="text-2xl font-black text-slate-900 block">100%</span>
+                  <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">On-time dispatch</span>
+                </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      )
-    },
-    // Slide 4: What We Offer
-    {
-      id: "offerings",
-      title: "Our Core Offerings",
-      subtitle: "Versatile Solutions Tailored to Your Brand",
-      content: (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto text-left">
+      </section>
+
+      {/* 2. THE BRAND STORY: Curation Philosophy */}
+      <section className="py-24 px-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center text-left">
+          <div className="lg:col-span-5 space-y-4">
+            <span className="text-[10px] font-black uppercase tracking-widest text-saffron bg-saffron/10 px-3 py-1.5 rounded-full inline-block">
+              Our Vision
+            </span>
+            <h2 className="font-heading text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+              Crafting Sensory <br />
+              Unboxing Experiences
+            </h2>
+            <div className="w-12 h-1 bg-gold rounded-full" />
+          </div>
+          <div className="lg:col-span-7 text-slate-650 space-y-4 text-sm leading-relaxed font-light">
+            <p>
+              At The Box Story, we believe corporate gifting is a powerful tool to strengthen bonds, express appreciation, and build lasting relationships with your clients, partners, and employees.
+            </p>
+            <p>
+              Every hamper starts as a creative sketch in our studio, combining premium products with high-end customized packaging solutions. We provide a seamless, stress-free process for selecting, personalizing, and delivering your corporate gifts at scale.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. STRATEGIC BENEFITS: Why it matters */}
+      <section className="bg-slate-50 py-24 px-6 border-y border-slate-200/50">
+        <div className="max-w-6xl mx-auto space-y-16">
+          <div className="space-y-3 text-center">
+            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+              Strategic Advantages
+            </span>
+            <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Why Invest in Premium Gifting?</h2>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              Corporate gifts are a direct representation of your brand values. Here is how premium curation yields real business returns.
+            </p>
+          </div>
+
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
+            {[
+              {
+                icon: Heart,
+                color: "bg-rani-pink/10 text-rani-pink",
+                title: "Build Stronger Relationships",
+                desc: "Acts as a gesture of goodwill, reinforcing mutual respect with clients, employees, and board members to secure long-term loyalty."
+              },
+              {
+                icon: Award,
+                color: "bg-saffron/10 text-saffron",
+                title: "Enhanced Brand Exposure",
+                desc: "Useful, premium office keepsakes keep your company logo prominently displayed on desks and in daily use, driving constant recall."
+              },
+              {
+                icon: ShieldCheck,
+                color: "bg-teal-deep/10 text-teal-deep",
+                title: "Increased Client Retention",
+                desc: "Differentiates your brand from standard competitors. Thoughtful appreciation cards and gifts build emotional client lock-in."
+              },
+              {
+                icon: Users,
+                color: "bg-emerald-100 text-emerald-800",
+                title: "Create Positive Brand Image",
+                desc: "Projects your organization as caring, detail-oriented, and employee-focused, attracting premium partners and top industry talent."
+              }
+            ].map((benefit, idx) => (
+              <motion.div 
+                key={idx} 
+                variants={itemVariants}
+                className="bg-white border border-slate-200 p-6 rounded-2xl text-left space-y-4 hover:shadow-md transition-shadow"
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${benefit.color}`}>
+                  <benefit.icon className="w-5 h-5" />
+                </div>
+                <h3 className="font-heading text-sm font-bold text-slate-900">{benefit.title}</h3>
+                <p className="text-[11px] text-slate-500 leading-relaxed font-light">{benefit.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 4. CAPABILITIES: What we offer */}
+      <section className="py-24 px-6 max-w-6xl mx-auto space-y-16">
+        <div className="space-y-3 text-center">
+          <span className="text-[10px] font-bold text-teal-deep uppercase tracking-widest bg-teal-deep/5 border border-teal-deep/15 px-2.5 py-1 rounded-full inline-block">
+            Our Capabilities
+          </span>
+          <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">What We Offer</h2>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            We provide a complete, comprehensive corporate gifting package, handling everything from product selection to individual home deliveries.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
             {
               icon: Gift,
               title: "Diverse Selection",
-              desc: "From premium gourmet treats and artisanal sweets to custom wellness blends and premium tech gadgets (Portronics, Noise)."
+              desc: "Premium gourmet treats, wellness essentials, custom lifestyle decor, and advanced technology gadgets sourced from premium manufacturers."
             },
             {
               icon: PenTool,
-              title: "Customization & Branding",
-              desc: "Gold-foil logo prints on boxes, custom sleeves in corporate colors, name engravings, and handwritten calligraphy cards."
+              title: "Extensive Customization",
+              desc: "Gold-foil logo prints on boxes, corporate ribbon matching, custom-dyed papers, name monogram engraving, and custom message cards."
             },
             {
               icon: Layers,
               title: "Premium Packaging",
-              desc: "Reusable pine wood chest boxes, gold-foiled rigid drawers, leatherette trays, and sustainable eco-friendly wraps."
+              desc: "Gold-foiled rigid drawers, reusable sliding pine wood boxes, leatherette trays, and eco-friendly zero-waste wrap layouts."
             },
             {
               icon: Truck,
-              title: "Streamlined Logistics",
-              desc: "Individual drop-shipping directly to employee home addresses globally, with secure online size/treat claim portals."
+              title: "Global Address Delivery",
+              desc: "No spreadsheet headaches. We support bulk shipping to corporate offices as well as drop-shipping to individual home addresses globally."
             },
             {
-              icon: Percent,
-              title: "Early Bird Offers",
-              desc: "Diwali launch discounts, packaging upgrades, and free volume customization for orders booked before seasonal peaks."
+              icon: Laptop,
+              title: "Secure Claims Portals",
+              desc: "Branded unboxing claim links. Recipients visit a secure portal, input their address and apparel size, and claim their curated gift."
             },
             {
               icon: HelpCircle,
-              title: "Dedicated Account Support",
-              desc: "Our design experts guide you through box styling, mockup generation, and product coordination step-by-step."
+              title: "Volume Optimization",
+              desc: "Special early bird proposals, volume discount levels, and dedicated corporate stylists to design mockups and draft timelines."
             }
-          ].map((o, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 p-5 rounded-2xl space-y-2">
-              <div className="w-8 h-8 bg-slate-50 text-teal-deep rounded-lg flex items-center justify-center font-bold">
-                <o.icon className="w-4.5 h-4.5" />
+          ].map((item, idx) => (
+            <div key={idx} className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm text-left space-y-4 hover:shadow-md transition-shadow">
+              <div className="w-10 h-10 bg-[#FAF4E8] text-teal-deep rounded-xl flex items-center justify-center font-bold">
+                <item.icon className="w-5 h-5" />
               </div>
-              <h4 className="text-xs font-bold text-slate-900">{o.title}</h4>
-              <p className="text-[10px] text-slate-500 leading-relaxed font-light">{o.desc}</p>
+              <h3 className="font-heading text-base font-bold text-slate-900">{item.title}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-light">{item.desc}</p>
             </div>
           ))}
         </div>
-      )
-    },
-    // Slide 5: Gifting Formats
-    {
-      id: "formats",
-      title: "Gifting Formats",
-      subtitle: "Curations for Every Style & Budget",
-      content: (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
-          {[
-            {
-              title: "Pre-Curated Luxury Hampers",
-              desc: "Fully designed and ready-made premium boxes combining high-end utility items, organic foods, and holiday decor. Perfect for quick selection and guaranteed unboxing impact.",
-              tags: ["Ready-to-Ship", "Auspicious Accents", "Corporate Elite"]
-            },
-            {
-              title: "Customizable Gift Hampers",
-              desc: "Tailored to your specific budget, tastes, and theme. Mix and match corporate swag, dry fruit jars, and custom accessories to create a layout unique to your organization.",
-              tags: ["Bespoke Budgeting", "Flexible Items", "Custom Theme"]
-            },
-            {
-              title: "Eco-Friendly Gifts",
-              desc: "Commit to corporate social responsibility (CSR) and sustainability with zero-waste items. Includes reusable drinkware, organic teas, and plantable seed-paper logs.",
-              tags: ["Sustainable", "Acacia Honey", "Zero-Waste"]
-            },
-            {
-              title: "Tech Gadgets & Accessories",
-              desc: "High-end utility accessories designed to enhance productivity and lifestyle. Branded wireless chargers, noise-canceling headphones, and smart thermal flasks.",
-              tags: ["Portronics Gear", "Smart Drinkware", "Premium Desk"]
-            }
-          ].map((f, idx) => (
-            <div key={idx} className="bg-[#FAF4E8]/40 border border-slate-200/80 p-5 rounded-2xl space-y-3 flex flex-col justify-between">
-              <div className="space-y-1.5">
-                <h4 className="text-xs font-black text-slate-900">{f.title}</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed font-light">{f.desc}</p>
+      </section>
+
+      {/* 5. GIFTING FORMATS & CATEGORIES */}
+      <section className="bg-slate-50 py-24 px-6 border-y border-slate-200/50 text-left">
+        <div className="max-w-6xl mx-auto space-y-16">
+          <div className="space-y-3 text-center">
+            <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/5 border border-saffron/15 px-2.5 py-1 rounded-full inline-block">
+              Corporate Formats
+            </span>
+            <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Custom Formats for Every Occasion</h2>
+            <p className="text-xs text-slate-555 max-w-md mx-auto">
+              We design specific gifting formats tailored to employee onboarding, client appreciation, milestone rewards, and seasonal festivals.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block">
+                  Onboarding & HR Kits
+                </span>
+                <h3 className="font-heading text-xl font-bold text-slate-900">New Hire Welcome Kits</h3>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  Align new hires immediately with custom-branded swag. Incorporate laser-engraved notebooks, vacuum flasks, cotton hoodies, and premium cookies inside custom box sleeves.
+                </p>
               </div>
-              <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100/50">
-                {f.tags.map((t, i) => (
-                  <span key={i} className="text-[9px] bg-teal-deep/5 text-teal-deep/80 px-2 py-0.5 rounded-full font-bold">{t}</span>
-                ))}
+              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+                <span>✓ Logo Swag</span>
+                <span>•</span>
+                <span>✓ Onboarding</span>
+                <span>•</span>
+                <span>✓ Welcome Kits</span>
               </div>
             </div>
-          ))}
-        </div>
-      )
-    },
-    // Slide 6: Make Your Own Hamper (4 Steps)
-    {
-      id: "steps",
-      title: "Make Your Own Hamper",
-      subtitle: "Four Easy Steps to Bespoke Curations",
-      content: (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto text-left">
-          {[
-            {
-              step: "Step 01",
-              title: "Choose Packaging",
-              desc: "Select rigid boxes, wooden chests, eco-friendly trays, or open display trays (Delhi NCR only) to set the visual tone."
-            },
-            {
-              step: "Step 02",
-              title: "Select Products",
-              desc: "Fill the hamper from gourmet sweets, organic coffees, keychains, flasks, desk books, or premium cookies."
-            },
-            {
-              step: "Step 03",
-              title: "Add Custom Branding",
-              desc: "Place your logo, select coordinate ribbons, and customize message greetings with individual names."
-            },
-            {
-              step: "Step 04",
-              title: "Review & Ship",
-              desc: "Confirm your quantities, verify mockups, and let our logistics team ship directly to recipients."
-            }
-          ].map((s, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 p-5 rounded-2xl relative space-y-3 flex flex-col justify-between">
-              <span className="absolute top-4 right-4 text-[24px] font-serif font-bold text-rani-pink/10 tracking-tighter leading-none">{s.step}</span>
-              <div className="space-y-1.5">
-                <h4 className="text-xs font-black text-slate-900 pr-10">{s.title}</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed font-light">{s.desc}</p>
+
+            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/10 px-2.5 py-1 rounded-md inline-block">
+                  B2B Milestone Rewards
+                </span>
+                <h3 className="font-heading text-xl font-bold text-slate-900">Executive & Client Appreciation</h3>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  Build loyalty among VIP accounts and long-term business partners. Luxury copper pitchers, organic loose tea leaf blends, and premium almond brittles arranged in reusable pine wood boxes.
+                </p>
               </div>
-              <div className="w-6 h-6 rounded-full bg-saffron/10 text-saffron flex items-center justify-center font-bold text-[10px] mt-2">➔</div>
+              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+                <span>✓ Pine Wood Slider</span>
+                <span>•</span>
+                <span>✓ Gourmet Foods</span>
+                <span>•</span>
+                <span>✓ Client VIP</span>
+              </div>
             </div>
-          ))}
-        </div>
-      )
-    },
-    // Slide 7: Customization & Branding Details
-    {
-      id: "customization",
-      title: "Customization & Branding",
-      subtitle: "Every Gift is a Representative of Your Brand",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full max-w-4xl mx-auto text-left">
-          <div className="space-y-4">
-            <h3 className="font-heading text-2xl font-black text-teal-deep">
-              Branding That Speaks
-            </h3>
-            <p className="text-xs text-slate-650 leading-relaxed font-light">
-              Logo placements on hampers and boxes reinforce brand recognition and elevate perceived value. We transform everyday corporate products into bespoke keepsakes that recipients will treasure.
-            </p>
-            <p className="text-xs text-slate-650 leading-relaxed font-light">
-              Whether gold-foil hot stamping, custom-printed box sleeves, or individual name monogram engraving on flasks and diaries — our customization options ensure complete design alignment with your corporate guidelines.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { title: "Box Branding", desc: "Gold foil stamp or screen print on rigid boxes." },
-              { title: "Name Engraving", desc: "Laser etch names on metal pens, flasks & tech." },
-              { title: "Custom Sleeves", desc: "Full-color paper sleeves matching brand colors." },
-              { title: "Bespoke Tags", desc: "Calligraphy printed messages and custom labels." }
-            ].map((b, i) => (
-              <div key={i} className="bg-white border border-slate-200 p-4 rounded-xl space-y-1">
-                <h4 className="text-xs font-bold text-slate-900">{b.title}</h4>
-                <p className="text-[9px] text-slate-500 leading-normal font-light">{b.desc}</p>
+
+            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <span className="text-[10px] font-bold text-teal-deep uppercase tracking-widest bg-teal-deep/5 px-2.5 py-1 rounded-full inline-block">
+                  Eco-Friendly Curation
+                </span>
+                <h3 className="font-heading text-xl font-bold text-slate-900">Sustainable & Wellness Hampers</h3>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  Demonstrate environmental values. Plantable seeds stationery logs, reusable cork-wrapped glass tumblers, organic acacia honeys, and soy wax candles packed in bio-friendly trays.
+                </p>
               </div>
-            ))}
+              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+                <span>✓ Zero-Waste</span>
+                <span>•</span>
+                <span>✓ Wellness Blends</span>
+                <span>•</span>
+                <span>✓ Acacia Honey</span>
+              </div>
+            </div>
+
+            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <span className="text-[10px] font-bold text-emerald-850 uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-md inline-block">
+                  High-Utility Gear
+                </span>
+                <h3 className="font-heading text-xl font-bold text-slate-900 font-black">Modern Tech & Desk Swag</h3>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  Gifts that stay on the desk. Smart thermal flasks, wireless multi-port power banks, desk humidifiers, and customized mugs from premium brands like Portronics.
+                </p>
+              </div>
+              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+                <span>✓ Portronics Flasks</span>
+                <span>•</span>
+                <span>✓ Multi-Port Charger</span>
+                <span>•</span>
+                <span>✓ Desk Swag</span>
+              </div>
+            </div>
           </div>
         </div>
-      )
-    },
-    // Slide 8: Brand Collaborations
-    {
-      id: "collaborations",
-      title: "Brand Collaborations",
-      subtitle: "Trusted by Top Enterprises & Startups",
-      content: (
-        <div className="space-y-6 max-w-3xl mx-auto text-center h-full flex flex-col justify-center">
-          <div className="space-y-3">
-            <h3 className="font-heading text-xl font-bold text-teal-deep">
-              Our Legacy of Collaborations
-            </h3>
-            <p className="text-xs text-slate-600 leading-relaxed max-w-xl mx-auto font-light">
-              Over the years, we&apos;ve had the privilege of working with respected names across finance, tech, healthcare, and consumer goods. Each project is an opportunity for us to understand a brand&apos;s vision and deliver gifting solutions that align with their goals.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 items-center justify-center py-4">
-            {["Google", "CRED", "TATA", "Razorpay", "Zomato", "Microsoft"].map((b, idx) => (
-              <div key={idx} className="bg-[#FAF4E8]/40 border border-slate-200/50 p-4 rounded-xl text-center">
-                <span className="font-heading text-sm font-black text-slate-500 block tracking-tight uppercase">{b}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-            Finance • Tech • Startups • Healthcare • Enterprises
+      </section>
+
+      {/* 6. FOUR EASY STEPS TIMELINE */}
+      <section className="py-24 px-6 max-w-6xl mx-auto space-y-16">
+        <div className="space-y-3 text-center">
+          <span className="text-[10px] font-bold text-teal-deep uppercase tracking-widest bg-teal-deep/5 border border-teal-deep/15 px-2.5 py-1 rounded-full inline-block">
+            Curation Process
+          </span>
+          <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Make Your Own Gift Hamper</h2>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            Our streamlined process makes custom bulk box curation simple, quick, and fully transparent.
           </p>
         </div>
-      )
-    },
-    // Slide 9: Contact & Get in Touch
-    {
-      id: "contact",
-      title: "Let's Collaborate",
-      subtitle: "Start Your Gifting Journey",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full max-w-4xl mx-auto text-left">
-          <div className="space-y-4">
-            <h3 className="font-heading text-2xl font-black text-teal-deep">
-              Thank You
-            </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {[
+            {
+              step: "01",
+              title: "Choose Packaging",
+              desc: "Select the base box to match your budget and branding. Options include gold-foiled rigid drawer boxes, pine wood sliding boxes, and open display trays (Delhi NCR only)."
+            },
+            {
+              step: "02",
+              title: "Select Products",
+              desc: "Mix and match items from our extensive categories of premium sweets, organic wellness teas, gourmet almond brittles, keychains, metal flasks, or smart technology items."
+            },
+            {
+              step: "03",
+              title: "Add Custom Branding",
+              desc: "Integrate your corporate guidelines. Add logo hot-stamps, coordinate color ribbons, laser-engrave names on flasks, and draft personalized message card calligraphy."
+            },
+            {
+              step: "04",
+              title: "Confirm & Ship",
+              desc: "Verify quantities, sign off on 3D box mockups, and upload destination address files. Our logistics team handles assembly, packaging, and timely dispatch."
+            }
+          ].map((s, idx) => (
+            <div key={idx} className="bg-white border border-slate-200 p-6 rounded-2xl relative space-y-4 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+              <span className="text-4xl font-serif font-black text-saffron/15 block text-right">{s.step}</span>
+              <div className="space-y-2 text-left">
+                <h3 className="font-heading text-base font-bold text-slate-900">{s.title}</h3>
+                <p className="text-[11px] text-slate-550 leading-relaxed font-light">{s.desc}</p>
+              </div>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">The Box Story</span>
+                <span className="w-5 h-5 rounded-full bg-saffron/10 text-saffron flex items-center justify-center text-xs">➔</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 7. CUSTOMIZATION DETAIL PANEL */}
+      <section className="bg-slate-50 py-24 px-6 border-t border-slate-200/50 text-left">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-5 space-y-6">
+            <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/10 px-2.5 py-1 rounded-md inline-block">
+              Corporate Branding
+            </span>
+            <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
+              Bespoke Identity on Every Curation
+            </h2>
             <p className="text-xs text-slate-650 leading-relaxed font-light">
-              At The Box Story, we believe every gift tells a story — a story of appreciation, connection, and shared success. We look forward to collaborating with you to make your gifting unforgettable.
+              Gifts are a representative of your brand&apos;s commitment to quality. We ensure extensive customization options to align every element of the box directly with your corporate branding guidelines.
             </p>
-            <div className="space-y-2 pt-2 text-xs">
-              <p className="flex items-center space-x-2 text-slate-600">
-                <span className="font-bold text-teal-deep">Mail:</span>
+            <p className="text-xs text-slate-650 leading-relaxed font-light">
+              From gold-foil hot-stamps and screen prints on rigid boxes to monogram name laser engraving on flasks and tech items, we make every recipient feel uniquely valued.
+            </p>
+          </div>
+          
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {[
+              {
+                title: "Box Branding & Sleeves",
+                desc: "Screen-print or gold foil stamp your brand logo directly onto the lid of rigid boxes. For ready-made boxes, add a full-color custom paper wrap sleeve."
+              },
+              {
+                title: "Laser Name Engraving",
+                desc: "Etch individual employee names directly onto vacuum flasks, metal pens, and diaries. Creates a high-end permanent personal attachment."
+              },
+              {
+                title: "Color Match ribbons",
+                desc: "Coordinated ribbon selections and tissue fills matching your brand book. We custom-source corporate colors for ribbons and packaging sleeves."
+              },
+              {
+                title: "Calligraphy Message Cards",
+                desc: "Complete the box with custom-printed corporate cards or cursive handwritten-style calligraphy tags to convey personal sentiments."
+              }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white border border-slate-200 p-6 rounded-2xl space-y-2">
+                <div className="w-5 h-5 rounded-full bg-teal-deep/5 text-teal-deep flex items-center justify-center text-xs font-bold font-mono">✓</div>
+                <h4 className="text-xs font-bold text-slate-900">{item.title}</h4>
+                <p className="text-[10px] text-slate-500 leading-relaxed font-light">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8. CLIENT COLLABORATIONS TICKER */}
+      <section className="py-24 px-6 max-w-6xl mx-auto space-y-12">
+        <div className="space-y-3 text-center">
+          <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+            Collaborations
+          </span>
+          <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Our Legacy of Collaborations</h2>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            We partner with startups, premium wedding destinations, and large enterprise brands to execute custom gifting campaigns.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+          {["Google", "CRED", "TATA", "Razorpay", "Zomato", "Microsoft"].map((b, idx) => (
+            <div key={idx} className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center flex items-center justify-center hover:shadow-md transition-shadow">
+              <span className="font-heading text-base font-black text-slate-500 tracking-tight uppercase">{b}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 9. BRIEF FORM CONTAINER / CALL TO ACTION */}
+      <section id="brief-form" className="bg-teal-deep text-[#FAF4E8] py-24 px-6 md:px-12 text-left relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-white/10 px-2.5 py-1 rounded-md inline-block">
+              Start Curation
+            </span>
+            <h2 className="font-heading text-3xl sm:text-4xl font-black tracking-tight leading-tight">
+              Ready to Crate <br />
+              Your Custom Box?
+            </h2>
+            <p className="text-xs text-[#FAF4E8]/80 leading-relaxed font-light">
+              Send us details about your corporate occasion, expected quantities, and budget preferences. Our styling specialists will get back to you with custom 3D mockups.
+            </p>
+            <div className="space-y-2 text-xs">
+              <p className="flex items-center space-x-2 text-[#FAF4E8]/80">
+                <span className="font-bold">Email:</span>
                 <span>sayhi@theboxstory.co.in</span>
               </p>
-              <p className="flex items-center space-x-2 text-slate-600">
-                <span className="font-bold text-teal-deep">Phone:</span>
+              <p className="flex items-center space-x-2 text-[#FAF4E8]/80">
+                <span className="font-bold">Phone:</span>
                 <span>+91 97179 99223 / +91 85756 75685</span>
               </p>
-              <p className="flex items-center space-x-2 text-slate-600">
-                <span className="font-bold text-teal-deep">Site:</span>
-                <span>www.theboxstory.co.in</span>
-              </p>
             </div>
           </div>
           
-          <div className="bg-[#FCFAF2]/60 border border-[#042F2E]/10 p-6 rounded-3xl space-y-4 flex flex-col justify-between h-full">
-            <div className="space-y-2">
-              <h4 className="font-heading text-sm font-bold text-slate-900">Ready to start curation?</h4>
-              <p className="text-[10px] text-slate-500 leading-relaxed font-light">
-                Fill out our design brief questionnaire and our creative styling specialists will get back to you with custom 3D mockups.
-              </p>
-            </div>
-            <div className="flex flex-col space-y-2 pt-4">
-              <Link
-                href="/corporate#brief-form"
-                className="w-full text-center bg-teal-deep hover:bg-teal-deep/90 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition-all"
-              >
-                Brief Our Designers
-              </Link>
-              <a
-                href="/corporate/catalog?file=The%20Box%20Story%20-%20Corporate%20Gifting%20Profile.pdf"
-                target="_blank"
-                className="w-full text-center bg-white border border-slate-200 text-teal-deep py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-50 transition-all flex items-center justify-center space-x-1.5"
-              >
-                <span>Download PDF Deck</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
+          <div className="bg-white text-slate-800 p-8 rounded-3xl shadow-lg space-y-4">
+            <h3 className="font-heading text-base font-bold text-teal-deep">Inquire for Bulk Orders</h3>
+            <p className="text-[10px] text-slate-500 font-light">
+              Enter your details below and our corporate client managers will reach out to you within 24 hours.
+            </p>
+            <form onSubmit={(e) => { e.preventDefault(); alert('Inquiry Sent! Our B2B managers will call you back shortly.'); }} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Full Name</label>
+                <input required type="text" placeholder="Your Name" className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Company Email</label>
+                <input required type="email" placeholder="name@company.com" className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Occasion Type</label>
+                  <select className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep">
+                    <option>Onboarding</option>
+                    <option>Client Appreciation</option>
+                    <option>Milestone Reward</option>
+                    <option>Festival / Holiday</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Est. Quantity</label>
+                  <input type="number" placeholder="MOQ 20" min="20" className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep" />
+                </div>
+              </div>
+              <button type="submit" className="w-full bg-rani-pink hover:bg-rani-pink/95 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
+                Submit Design Request
+              </button>
+            </form>
           </div>
         </div>
-      )
-    }
-  ];
+      </section>
 
-  const nextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
-
-  const activeSlide = slides[currentSlide];
-
-  return (
-    <div className="min-h-screen bg-background text-slate-800 flex flex-col py-6 px-4 md:px-8">
-      {/* Top Header Row */}
-      <div className="max-w-5xl w-full mx-auto flex items-center justify-between py-4 border-b border-slate-200/60 mb-6">
-        <Link href="/corporate" className="flex items-center space-x-1.5 text-xs text-slate-500 hover:text-teal-deep transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Corporate</span>
-        </Link>
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-          Interactive Deck • Slide {currentSlide + 1} of {slides.length}
-        </span>
-      </div>
-
-      {/* Main Slide Card Container */}
-      <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col md:flex-row gap-6 items-stretch">
-        
-        {/* Left Side: Table of Contents Index Panel */}
-        <div className="w-full md:w-60 bg-white border border-slate-200/80 rounded-3xl p-5 flex flex-col justify-between shrink-0">
-          <div className="space-y-4">
-            <h4 className="font-heading text-xs font-black text-slate-400 uppercase tracking-widest">
-              Slide Contents
-            </h4>
-            <div className="space-y-1.5 flex flex-col">
-              {slides.map((slide, idx) => (
-                <button
-                  key={slide.id}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`text-left px-3 py-2 rounded-xl text-xs transition-all duration-200 flex items-center space-x-2 ${
-                    currentSlide === idx
-                      ? "bg-teal-deep text-white font-bold shadow-sm"
-                      : "text-slate-650 hover:bg-slate-50"
-                  }`}
-                >
-                  <span className="text-[10px] opacity-50 font-mono">0{idx + 1}</span>
-                  <span className="truncate">{slide.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          <div className="pt-4 border-t border-slate-100 hidden md:block">
-            <div className="bg-[#FCFAF2] border border-[#E2BA5F]/20 rounded-xl p-3 text-left">
-              <span className="text-[9px] font-bold text-saffron uppercase tracking-wider block">Pro Tip</span>
-              <p className="text-[10px] text-slate-500 leading-normal">
-                Use your keyboard left & right arrow keys to navigate pages.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: The Active Slide Display */}
-        <div className="flex-1 bg-white border border-slate-200/80 rounded-3xl shadow-sm p-6 md:p-10 flex flex-col justify-between relative overflow-hidden min-h-[480px]">
-          {/* Subtle gold decoration */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-2xl pointer-events-none" />
-          
-          {/* Slide Header */}
-          <div className="space-y-1 border-b border-slate-100 pb-4 text-left">
-            <span className="text-[9px] font-black uppercase text-saffron tracking-widest">{activeSlide.subtitle || "The Box Story"}</span>
-            <h2 className="font-heading text-2xl font-black text-teal-deep leading-tight">{activeSlide.title}</h2>
-          </div>
-
-          {/* Slide Content Body */}
-          <div className="flex-1 py-8 flex items-center justify-center">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeSlide.id}
-                initial={{ opacity: 0, x: 15 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -15 }}
-                transition={{ duration: 0.25 }}
-                className="w-full h-full"
-              >
-                {activeSlide.content}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Slide Footer Navigation */}
-          <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-4">
-            <button
-              onClick={prevSlide}
-              disabled={currentSlide === 0}
-              className={`flex items-center space-x-1.5 text-xs font-bold py-2 px-4 rounded-xl border transition-all ${
-                currentSlide === 0
-                  ? "opacity-30 border-slate-100 text-slate-300 cursor-not-allowed"
-                  : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Previous</span>
-            </button>
-            
-            <button
-              onClick={nextSlide}
-              disabled={currentSlide === slides.length - 1}
-              className={`flex items-center space-x-1.5 text-xs font-bold py-2 px-4 rounded-xl border transition-all ${
-                currentSlide === slides.length - 1
-                  ? "opacity-30 border-slate-100 text-slate-300 cursor-not-allowed"
-                  : "bg-slate-900 hover:bg-slate-800 text-white border-slate-950 shadow-sm"
-              }`}
-            >
-              <span>Next</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
