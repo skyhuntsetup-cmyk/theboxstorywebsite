@@ -28,10 +28,10 @@ export default function CorporateProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-slate-800">
+    <div className="min-h-screen bg-[#FAF4E8] text-slate-800">
       
       {/* 1. HERO SECTION: Editorial & Luxury Banner */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-amber-50/50 via-background to-rose-50/50 py-20 px-6 md:px-12 border-b border-slate-200/50 text-left">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#FAF4E8] via-[#FCFAF2] to-[#FAF4E8] py-20 px-6 md:px-12 border-b border-[#042F2E]/10 text-left">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-6">
             <Link href="/corporate" className="inline-flex items-center space-x-1 text-xs font-bold text-slate-500 hover:text-teal-deep transition-colors mb-2">
@@ -52,7 +52,7 @@ export default function CorporateProfilePage() {
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <a
                 href="#brief-form"
-                className="inline-flex items-center justify-center space-x-2 bg-teal-deep hover:bg-teal-deep/95 text-white px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-wider shadow transition-all duration-300 transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center space-x-2 bg-teal-deep hover:bg-teal-deep/95 text-[#FAF4E8] px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-wider shadow transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 <span>Brief our Styling team</span>
                 <ChevronRight className="w-4 h-4" />
@@ -60,7 +60,7 @@ export default function CorporateProfilePage() {
               <a
                 href="/corporate/catalog?file=The%20Box%20Story%20-%20Corporate%20Gifting%20Profile.pdf"
                 target="_blank"
-                className="inline-flex items-center justify-center space-x-2 bg-white hover:bg-slate-50 text-teal-deep border border-slate-200 px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-wider shadow-sm transition-all duration-300 transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center space-x-2 bg-[#FCFAF2] hover:bg-[#FAF4E8] text-teal-deep border border-[#042F2E]/10 px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-wider shadow-sm transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 <span>Download PDF Deck</span>
                 <ExternalLink className="w-4 h-4" />
@@ -70,8 +70,8 @@ export default function CorporateProfilePage() {
           
           <div className="lg:col-span-5 relative">
             <div className="absolute top-0 right-0 w-72 h-72 bg-gold/10 rounded-full blur-3xl -z-10" />
-            <div className="relative border border-slate-200 bg-[#FCFAF2]/50 p-6 md:p-8 rounded-[36px] shadow-sm space-y-6">
-              <div className="flex justify-between items-center border-b border-slate-150 pb-4">
+            <div className="relative border border-[#042F2E]/10 bg-[#FCFAF2]/80 p-6 md:p-8 rounded-[36px] shadow-[0_8px_30px_rgba(4,47,46,0.02)] space-y-6">
+              <div className="flex justify-between items-center border-b border-[#042F2E]/10 pb-4">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">The Box Story Legacy</span>
                 <span className="text-xs font-bold text-saffron bg-saffron/10 px-2.5 py-1 rounded-md border border-saffron/20">EST. 2020</span>
               </div>
@@ -83,7 +83,7 @@ export default function CorporateProfilePage() {
                   Combining gourmet tastes, functional tech utility, and artisanal products, our design team builds layouts that fit your brand guidelines perfectly.
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-150">
+              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#042F2E]/10">
                 <div>
                   <span className="text-2xl font-black text-slate-900 block">10k+</span>
                   <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Kits Shipped</span>
@@ -126,16 +126,16 @@ export default function CorporateProfilePage() {
         </div>
       </section>
 
-      {/* 3. STRATEGIC BENEFITS: Why it matters */}
-      <section className="bg-slate-50 py-24 px-6 border-y border-slate-200/50">
+      {/* 3. STRATEGIC BENEFITS: Why it matters (Premium Dark Section) */}
+      <section className="bg-teal-deep text-[#FAF4E8] py-24 px-6 border-y border-[#042F2E]/10">
         <div className="max-w-6xl mx-auto space-y-16">
           <div className="space-y-3 text-center">
-            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+            <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/10 border border-saffron/15 px-2.5 py-1 rounded-full inline-block">
               Strategic Advantages
             </span>
-            <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Why Invest in Premium Gifting?</h2>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Corporate gifts are a direct representation of your brand values. Here is how premium curation yields real business returns.
+            <h2 className="font-heading text-2xl md:text-4xl font-black text-white">Why Invest in Premium Gifting?</h2>
+            <p className="text-xs text-[#FAF4E8]/80 max-w-md mx-auto">
+              Corporate gifts are a direct representation of your brand values. Here is how premium curation yields real B2B returns.
             </p>
           </div>
 
@@ -149,25 +149,25 @@ export default function CorporateProfilePage() {
             {[
               {
                 icon: Heart,
-                color: "bg-rani-pink/10 text-rani-pink",
+                color: "bg-rani-pink/20 text-rani-pink",
                 title: "Build Stronger Relationships",
                 desc: "Acts as a gesture of goodwill, reinforcing mutual respect with clients, employees, and board members to secure long-term loyalty."
               },
               {
                 icon: Award,
-                color: "bg-saffron/10 text-saffron",
+                color: "bg-saffron/20 text-saffron",
                 title: "Enhanced Brand Exposure",
                 desc: "Useful, premium office keepsakes keep your company logo prominently displayed on desks and in daily use, driving constant recall."
               },
               {
                 icon: ShieldCheck,
-                color: "bg-teal-deep/10 text-teal-deep",
+                color: "bg-[#FAF4E8]/20 text-[#FAF4E8]",
                 title: "Increased Client Retention",
                 desc: "Differentiates your brand from standard competitors. Thoughtful appreciation cards and gifts build emotional client lock-in."
               },
               {
                 icon: Users,
-                color: "bg-emerald-100 text-emerald-800",
+                color: "bg-emerald-800/30 text-emerald-300",
                 title: "Create Positive Brand Image",
                 desc: "Projects your organization as caring, detail-oriented, and employee-focused, attracting premium partners and top industry talent."
               }
@@ -175,13 +175,13 @@ export default function CorporateProfilePage() {
               <motion.div 
                 key={idx} 
                 variants={itemVariants}
-                className="bg-white border border-slate-200 p-6 rounded-2xl text-left space-y-4 hover:shadow-md transition-shadow"
+                className="bg-[#032322] border border-white/5 p-6 rounded-2xl text-left space-y-4 hover:shadow-lg transition-all duration-300"
               >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${benefit.color}`}>
                   <benefit.icon className="w-5 h-5" />
                 </div>
-                <h3 className="font-heading text-sm font-bold text-slate-900">{benefit.title}</h3>
-                <p className="text-[11px] text-slate-500 leading-relaxed font-light">{benefit.desc}</p>
+                <h3 className="font-heading text-sm font-bold text-white">{benefit.title}</h3>
+                <p className="text-[11px] text-[#FAF4E8]/70 leading-relaxed font-light">{benefit.desc}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -233,7 +233,7 @@ export default function CorporateProfilePage() {
               desc: "Special early bird proposals, volume discount levels, and dedicated corporate stylists to design mockups and draft timelines."
             }
           ].map((item, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm text-left space-y-4 hover:shadow-md transition-shadow">
+            <div key={idx} className="bg-[#FCFAF2]/80 border border-[#042F2E]/5 p-8 rounded-2xl shadow-[0_8px_30px_rgba(4,47,46,0.01)] text-left space-y-4 hover:shadow-md transition-shadow">
               <div className="w-10 h-10 bg-[#FAF4E8] text-teal-deep rounded-xl flex items-center justify-center font-bold">
                 <item.icon className="w-5 h-5" />
               </div>
@@ -245,20 +245,20 @@ export default function CorporateProfilePage() {
       </section>
 
       {/* 5. GIFTING FORMATS & CATEGORIES */}
-      <section className="bg-slate-50 py-24 px-6 border-y border-slate-200/50 text-left">
+      <section className="bg-[#FCFAF2]/50 py-24 px-6 border-y border-[#042F2E]/10 text-left">
         <div className="max-w-6xl mx-auto space-y-16">
           <div className="space-y-3 text-center">
             <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/5 border border-saffron/15 px-2.5 py-1 rounded-full inline-block">
               Corporate Formats
             </span>
-            <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Custom Formats for Every Occasion</h2>
-            <p className="text-xs text-slate-555 max-w-md mx-auto">
+            <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900 text-center">Custom Formats for Every Occasion</h2>
+            <p className="text-xs text-slate-555 max-w-md mx-auto text-center">
               We design specific gifting formats tailored to employee onboarding, client appreciation, milestone rewards, and seasonal festivals.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+            <div className="bg-[#FCFAF2]/90 border border-[#042F2E]/5 p-8 rounded-3xl flex flex-col justify-between space-y-6 shadow-sm hover:shadow-md transition-all">
               <div className="space-y-3">
                 <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block">
                   Onboarding & HR Kits
@@ -268,7 +268,7 @@ export default function CorporateProfilePage() {
                   Align new hires immediately with custom-branded swag. Incorporate laser-engraved notebooks, vacuum flasks, cotton hoodies, and premium cookies inside custom box sleeves.
                 </p>
               </div>
-              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+              <div className="border-t border-[#042F2E]/10 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
                 <span>✓ Logo Swag</span>
                 <span>•</span>
                 <span>✓ Onboarding</span>
@@ -277,7 +277,7 @@ export default function CorporateProfilePage() {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+            <div className="bg-[#FCFAF2]/90 border border-[#042F2E]/5 p-8 rounded-3xl flex flex-col justify-between space-y-6 shadow-sm hover:shadow-md transition-all">
               <div className="space-y-3">
                 <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/10 px-2.5 py-1 rounded-md inline-block">
                   B2B Milestone Rewards
@@ -287,7 +287,7 @@ export default function CorporateProfilePage() {
                   Build loyalty among VIP accounts and long-term business partners. Luxury copper pitchers, organic loose tea leaf blends, and premium almond brittles arranged in reusable pine wood boxes.
                 </p>
               </div>
-              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+              <div className="border-t border-[#042F2E]/10 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
                 <span>✓ Pine Wood Slider</span>
                 <span>•</span>
                 <span>✓ Gourmet Foods</span>
@@ -296,7 +296,7 @@ export default function CorporateProfilePage() {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+            <div className="bg-[#FCFAF2]/90 border border-[#042F2E]/5 p-8 rounded-3xl flex flex-col justify-between space-y-6 shadow-sm hover:shadow-md transition-all">
               <div className="space-y-3">
                 <span className="text-[10px] font-bold text-teal-deep uppercase tracking-widest bg-teal-deep/5 px-2.5 py-1 rounded-full inline-block">
                   Eco-Friendly Curation
@@ -306,7 +306,7 @@ export default function CorporateProfilePage() {
                   Demonstrate environmental values. Plantable seeds stationery logs, reusable cork-wrapped glass tumblers, organic acacia honeys, and soy wax candles packed in bio-friendly trays.
                 </p>
               </div>
-              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+              <div className="border-t border-[#042F2E]/10 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
                 <span>✓ Zero-Waste</span>
                 <span>•</span>
                 <span>✓ Wellness Blends</span>
@@ -315,7 +315,7 @@ export default function CorporateProfilePage() {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 p-8 rounded-3xl flex flex-col justify-between space-y-6">
+            <div className="bg-[#FCFAF2]/90 border border-[#042F2E]/5 p-8 rounded-3xl flex flex-col justify-between space-y-6 shadow-sm hover:shadow-md transition-all">
               <div className="space-y-3">
                 <span className="text-[10px] font-bold text-emerald-850 uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-md inline-block">
                   High-Utility Gear
@@ -325,7 +325,7 @@ export default function CorporateProfilePage() {
                   Gifts that stay on the desk. Smart thermal flasks, wireless multi-port power banks, desk humidifiers, and customized mugs from premium brands like Portronics.
                 </p>
               </div>
-              <div className="border-t border-slate-100 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
+              <div className="border-t border-[#042F2E]/10 pt-4 flex space-x-3 text-[10px] text-slate-500 font-bold">
                 <span>✓ Portronics Flasks</span>
                 <span>•</span>
                 <span>✓ Multi-Port Charger</span>
@@ -344,7 +344,7 @@ export default function CorporateProfilePage() {
             Curation Process
           </span>
           <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Make Your Own Gift Hamper</h2>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
+          <p className="text-xs text-slate-500 max-w-md mx-auto text-center">
             Our streamlined process makes custom bulk box curation simple, quick, and fully transparent.
           </p>
         </div>
@@ -372,13 +372,13 @@ export default function CorporateProfilePage() {
               desc: "Verify quantities, sign off on 3D box mockups, and upload destination address files. Our logistics team handles assembly, packaging, and timely dispatch."
             }
           ].map((s, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 p-6 rounded-2xl relative space-y-4 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+            <div key={idx} className="bg-[#FCFAF2]/80 border border-[#042F2E]/5 p-6 rounded-2xl relative space-y-4 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-305 shadow-[0_8px_30px_rgba(4,47,46,0.01)]">
               <span className="text-4xl font-serif font-black text-saffron/15 block text-right">{s.step}</span>
               <div className="space-y-2 text-left">
                 <h3 className="font-heading text-base font-bold text-slate-900">{s.title}</h3>
                 <p className="text-[11px] text-slate-550 leading-relaxed font-light">{s.desc}</p>
               </div>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+              <div className="pt-2 border-t border-[#042F2E]/10 flex items-center justify-between">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">The Box Story</span>
                 <span className="w-5 h-5 rounded-full bg-saffron/10 text-saffron flex items-center justify-center text-xs">➔</span>
               </div>
@@ -388,7 +388,7 @@ export default function CorporateProfilePage() {
       </section>
 
       {/* 7. CUSTOMIZATION DETAIL PANEL */}
-      <section className="bg-slate-50 py-24 px-6 border-t border-slate-200/50 text-left">
+      <section className="bg-[#FCFAF2]/30 py-24 px-6 border-t border-[#042F2E]/10 text-left">
         <div className="max-w-6xl mx-auto space-y-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
@@ -429,8 +429,8 @@ export default function CorporateProfilePage() {
                   img: "/images/corporate-profile/page_16_img_1.png"
                 }
               ].map((item, idx) => (
-                <div key={idx} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-                  <div className="relative aspect-video w-full overflow-hidden bg-slate-100 border-b border-slate-100">
+                <div key={idx} className="bg-[#FCFAF2]/90 border border-[#042F2E]/5 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                  <div className="relative aspect-video w-full overflow-hidden bg-slate-100 border-b border-[#042F2E]/10">
                     <img
                       src={item.img}
                       alt={item.title}
@@ -499,7 +499,7 @@ export default function CorporateProfilePage() {
               tag: "VIP Partner Gift"
             }
           ].map((item, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+            <div key={idx} className="bg-[#FCFAF2]/90 border border-[#042F2E]/5 rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-305 flex flex-col justify-between">
               <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
                 <img
                   src={item.img}
@@ -515,7 +515,7 @@ export default function CorporateProfilePage() {
                   <h3 className="font-heading text-sm font-bold text-slate-900">{item.title}</h3>
                   <p className="text-[11px] text-slate-500 leading-relaxed font-light">{item.desc}</p>
                 </div>
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-4">
+                <div className="pt-4 border-t border-[#042F2E]/10 flex items-center justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-4">
                   <span>The Box Story</span>
                   <span>Curation</span>
                 </div>
@@ -526,7 +526,7 @@ export default function CorporateProfilePage() {
       </section>
 
       {/* 9. CLIENT COLLABORATIONS TICKER */}
-      <section className="bg-slate-50 py-24 px-6 border-y border-slate-200/50 space-y-12">
+      <section className="bg-[#FCFAF2]/50 py-24 px-6 border-y border-[#042F2E]/10 space-y-12">
         <div className="max-w-6xl mx-auto space-y-12">
           <div className="space-y-3 text-center">
             <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
@@ -547,7 +547,7 @@ export default function CorporateProfilePage() {
               { name: "Zomato", img: "/images/corporate-profile/page_18_img_5.png" },
               { name: "Microsoft", img: "/images/corporate-profile/page_18_img_6.png" }
             ].map((logo, idx) => (
-              <div key={idx} className="bg-white border border-slate-200/80 p-4 h-20 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center">
+              <div key={idx} className="bg-[#FCFAF2]/90 border border-[#042F2E]/5 p-4 h-20 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center">
                 <img
                   src={logo.img}
                   alt={logo.name}
@@ -559,7 +559,7 @@ export default function CorporateProfilePage() {
         </div>
       </section>
 
-      {/* 9. BRIEF FORM CONTAINER / CALL TO ACTION */}
+      {/* 10. BRIEF FORM CONTAINER / CALL TO ACTION */}
       <section id="brief-form" className="bg-teal-deep text-[#FAF4E8] py-24 px-6 md:px-12 text-left relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -586,7 +586,7 @@ export default function CorporateProfilePage() {
             </div>
           </div>
           
-          <div className="bg-white text-slate-800 p-8 rounded-3xl shadow-lg space-y-4">
+          <div className="bg-[#FCFAF2]/95 text-slate-800 p-8 rounded-3xl shadow-xl space-y-4 border border-[#042F2E]/5">
             <h3 className="font-heading text-base font-bold text-teal-deep">Inquire for Bulk Orders</h3>
             <p className="text-[10px] text-slate-500 font-light">
               Enter your details below and our corporate client managers will reach out to you within 24 hours.
@@ -594,16 +594,16 @@ export default function CorporateProfilePage() {
             <form onSubmit={(e) => { e.preventDefault(); alert('Inquiry Sent! Our B2B managers will call you back shortly.'); }} className="space-y-4">
               <div>
                 <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Full Name</label>
-                <input required type="text" placeholder="Your Name" className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep" />
+                <input required type="text" placeholder="Your Name" className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Company Email</label>
-                <input required type="email" placeholder="name@company.com" className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep" />
+                <input required type="email" placeholder="name@company.com" className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Occasion Type</label>
-                  <select className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep">
+                  <select className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep">
                     <option>Onboarding</option>
                     <option>Client Appreciation</option>
                     <option>Milestone Reward</option>
@@ -612,7 +612,7 @@ export default function CorporateProfilePage() {
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Est. Quantity</label>
-                  <input type="number" placeholder="MOQ 20" min="20" className="w-full text-xs border border-slate-200 px-3 py-2.5 rounded-xl bg-slate-50 focus:outline-none focus:border-teal-deep" />
+                  <input type="number" placeholder="MOQ 20" min="20" className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
                 </div>
               </div>
               <button type="submit" className="w-full bg-rani-pink hover:bg-rani-pink/95 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
