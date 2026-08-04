@@ -389,69 +389,173 @@ export default function CorporateProfilePage() {
 
       {/* 7. CUSTOMIZATION DETAIL PANEL */}
       <section className="bg-slate-50 py-24 px-6 border-t border-slate-200/50 text-left">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 space-y-6">
-            <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/10 px-2.5 py-1 rounded-md inline-block">
-              Corporate Branding
-            </span>
-            <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
-              Bespoke Identity on Every Curation
-            </h2>
-            <p className="text-xs text-slate-650 leading-relaxed font-light">
-              Gifts are a representative of your brand&apos;s commitment to quality. We ensure extensive customization options to align every element of the box directly with your corporate branding guidelines.
-            </p>
-            <p className="text-xs text-slate-650 leading-relaxed font-light">
-              From gold-foil hot-stamps and screen prints on rigid boxes to monogram name laser engraving on flasks and tech items, we make every recipient feel uniquely valued.
-            </p>
-          </div>
-          
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {[
-              {
-                title: "Box Branding & Sleeves",
-                desc: "Screen-print or gold foil stamp your brand logo directly onto the lid of rigid boxes. For ready-made boxes, add a full-color custom paper wrap sleeve."
-              },
-              {
-                title: "Laser Name Engraving",
-                desc: "Etch individual employee names directly onto vacuum flasks, metal pens, and diaries. Creates a high-end permanent personal attachment."
-              },
-              {
-                title: "Color Match ribbons",
-                desc: "Coordinated ribbon selections and tissue fills matching your brand book. We custom-source corporate colors for ribbons and packaging sleeves."
-              },
-              {
-                title: "Calligraphy Message Cards",
-                desc: "Complete the box with custom-printed corporate cards or cursive handwritten-style calligraphy tags to convey personal sentiments."
-              }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 p-6 rounded-2xl space-y-2">
-                <div className="w-5 h-5 rounded-full bg-teal-deep/5 text-teal-deep flex items-center justify-center text-xs font-bold font-mono">✓</div>
-                <h4 className="text-xs font-bold text-slate-900">{item.title}</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed font-light">{item.desc}</p>
-              </div>
-            ))}
+        <div className="max-w-6xl mx-auto space-y-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-5 space-y-6">
+              <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/10 px-2.5 py-1 rounded-md inline-block">
+                Corporate Branding
+              </span>
+              <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
+                Bespoke Identity on Every Curation
+              </h2>
+              <p className="text-xs text-slate-650 leading-relaxed font-light">
+                Gifts are a representative of your brand&apos;s commitment to quality. We ensure extensive customization options to align every element of the box directly with your corporate branding guidelines.
+              </p>
+              <p className="text-xs text-slate-650 leading-relaxed font-light">
+                From gold-foil hot-stamps and screen prints on rigid boxes to monogram name laser engraving on flasks and tech items, we make every recipient feel uniquely valued.
+              </p>
+            </div>
+            
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {[
+                {
+                  title: "Customized Boxes",
+                  desc: "Screen-print or gold foil stamp your brand logo directly onto the lid of rigid boxes. For ready-made boxes, add a full-color custom paper wrap sleeve.",
+                  img: "/images/corporate-profile/page_13_img_1.png"
+                },
+                {
+                  title: "Customized Cards",
+                  desc: "Complete the box with custom-printed corporate cards or cursive handwritten-style calligraphy tags to convey personal sentiments.",
+                  img: "/images/corporate-profile/page_14_img_1.png"
+                },
+                {
+                  title: "Customized Labels",
+                  desc: "Coordinated ribbon selections, customized product jars labels, and tissue fills matching your exact brand guidelines.",
+                  img: "/images/corporate-profile/page_15_img_1.png"
+                },
+                {
+                  title: "Customized Tags",
+                  desc: "Individual tags etched on acrylic or wood, and screen-printed ribbons in corporate colors for a luxurious finishing touch.",
+                  img: "/images/corporate-profile/page_16_img_1.png"
+                }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                  <div className="relative aspect-video w-full overflow-hidden bg-slate-100 border-b border-slate-100">
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-5 space-y-1.5 text-left">
+                    <h4 className="text-xs font-black text-slate-900">{item.title}</h4>
+                    <p className="text-[10px] text-slate-500 leading-relaxed font-light">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 8. CLIENT COLLABORATIONS TICKER */}
-      <section className="py-24 px-6 max-w-6xl mx-auto space-y-12">
+      {/* 8. SIGNATURE CURATIONS GALLERY */}
+      <section className="py-24 px-6 max-w-6xl mx-auto space-y-16 text-left">
         <div className="space-y-3 text-center">
           <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
-            Collaborations
+            Curated Showcase
           </span>
-          <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900">Our Legacy of Collaborations</h2>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
-            We partner with startups, premium wedding destinations, and large enterprise brands to execute custom gifting campaigns.
+          <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900 text-center">Signature Hampers Curation Gallery</h2>
+          <p className="text-xs text-slate-500 max-w-md mx-auto text-center">
+            A selection of actual premium corporate hampers and swag kits curated for employee welcomes, milestone celebrations, and B2B VIP gifting.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-          {["Google", "CRED", "TATA", "Razorpay", "Zomato", "Microsoft"].map((b, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center flex items-center justify-center hover:shadow-md transition-shadow">
-              <span className="font-heading text-base font-black text-slate-500 tracking-tight uppercase">{b}</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            {
+              title: "The Coffee Connoisseur Hamper",
+              desc: "Araku Valley single-origin coffee beans, a customized name-engraved ceramic mug, and handcrafted oats cookies in a matte rigid sliding box.",
+              img: "/images/corporate-profile/page_19_img_1.png",
+              tag: "Premium Executive"
+            },
+            {
+              title: "Saffron Tea & Honey Wellness",
+              desc: "Kashmiri organic saffron tea leaves, a decorative brass infuser spoon, wild acacia forest honey, and decorative dry fruit jars.",
+              img: "/images/corporate-profile/page_21_img_1.png",
+              tag: "Artisanal Wellness"
+            },
+            {
+              title: "Modern Tech & Desk Swag Kit",
+              desc: "Custom-engraved thermal insulated flask, smart charging pad desk organizer, leather key ring, and executive notebooks.",
+              img: "/images/corporate-profile/page_23_img_1.png",
+              tag: "New Hire Onboarding"
+            },
+            {
+              title: "Sustainable Cork & Glass Case",
+              desc: "Reusable cork-wrapped glass tumblers with glass straws, plantable stationery pencil logs, and organic seed cards.",
+              img: "/images/corporate-profile/page_25_img_1.png",
+              tag: "Zero-Waste CSR"
+            },
+            {
+              title: "Auspicious Traditional Tray",
+              desc: "Pure Mysore sandalwood incense cones, handcrafted clay-brass diyas, and premium salted cashews arranged in a reusable gold-wrapped tray.",
+              img: "/images/corporate-profile/page_27_img_1.png",
+              tag: "Milestone Celebration"
+            },
+            {
+              title: "Premium Oak Wooden Gift Box",
+              desc: "Gourmet hazelnut chocolate brittles, customized leather cardholders, and vacuum-insulated travel tumblers in a reusable pine wood slide chest.",
+              img: "/images/corporate-profile/page_31_img_1.png",
+              tag: "VIP Partner Gift"
+            }
+          ].map((item, idx) => (
+            <div key={idx} className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+                <span className="absolute top-3 left-3 bg-teal-deep text-[#FCFAF2] text-[8px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md">
+                  {item.tag}
+                </span>
+              </div>
+              <div className="p-6 space-y-2 flex-1 flex flex-col justify-between">
+                <div className="space-y-1">
+                  <h3 className="font-heading text-sm font-bold text-slate-900">{item.title}</h3>
+                  <p className="text-[11px] text-slate-500 leading-relaxed font-light">{item.desc}</p>
+                </div>
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-4">
+                  <span>The Box Story</span>
+                  <span>Curation</span>
+                </div>
+              </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 9. CLIENT COLLABORATIONS TICKER */}
+      <section className="bg-slate-50 py-24 px-6 border-y border-slate-200/50 space-y-12">
+        <div className="max-w-6xl mx-auto space-y-12">
+          <div className="space-y-3 text-center">
+            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+              Collaborations
+            </span>
+            <h2 className="font-heading text-2xl md:text-4xl font-black text-slate-900 text-center">Our Legacy of Collaborations</h2>
+            <p className="text-xs text-slate-500 max-w-md mx-auto text-center">
+              We partner with startups, premium wedding destinations, and large enterprise brands to execute custom gifting campaigns.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 items-center">
+            {[
+              { name: "Google", img: "/images/corporate-profile/page_18_img_1.png" },
+              { name: "CRED", img: "/images/corporate-profile/page_18_img_2.png" },
+              { name: "TATA", img: "/images/corporate-profile/page_18_img_3.png" },
+              { name: "Razorpay", img: "/images/corporate-profile/page_18_img_4.png" },
+              { name: "Zomato", img: "/images/corporate-profile/page_18_img_5.png" },
+              { name: "Microsoft", img: "/images/corporate-profile/page_18_img_6.png" }
+            ].map((logo, idx) => (
+              <div key={idx} className="bg-white border border-slate-200/80 p-4 h-20 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center">
+                <img
+                  src={logo.img}
+                  alt={logo.name}
+                  className="max-h-full max-w-full object-contain mx-auto"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
