@@ -122,7 +122,7 @@ export default function GiftGenie() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-12 px-6 relative overflow-hidden flex flex-col justify-between">
+    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-10 px-6 relative overflow-hidden flex flex-col justify-between">
       {/* Light background glows */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-amber-100 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-50 rounded-full blur-3xl -z-10" />
@@ -187,12 +187,12 @@ export default function GiftGenie() {
                               className="w-full aspect-[4/3] object-cover rounded-xl"
                             />
                             <div className="space-y-1">
-                              <span className="text-[11px] font-bold text-slate-800 block truncate leading-snug">{prod.name}</span>
-                              <span className="text-[10px] text-saffron font-bold block">₹{prod.price}</span>
+                              <span className="text-[13px] font-bold text-slate-800 block truncate leading-snug">{prod.name}</span>
+                              <span className="text-[12px] text-saffron font-bold block">₹{prod.price}</span>
                             </div>
                             <Link
                               href={msg.categorySlug ? `/collections/${msg.categorySlug}` : "/collections"}
-                              className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-bold text-[9px] block text-center uppercase tracking-wider transition-colors"
+                              className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-bold text-[11px] block text-center uppercase tracking-wider transition-colors"
                             >
                               Details
                             </Link>
@@ -232,7 +232,7 @@ export default function GiftGenie() {
                 <button
                   key={idx}
                   onClick={() => handleSend(preset)}
-                  className="text-[10px] font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-full hover:bg-slate-100 text-teal-deep transition-colors uppercase tracking-wider"
+                  className="text-[12px] font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-full hover:bg-slate-100 text-teal-deep transition-colors uppercase tracking-wider"
                 >
                   {preset}
                 </button>

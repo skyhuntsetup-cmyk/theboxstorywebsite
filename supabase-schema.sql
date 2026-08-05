@@ -314,3 +314,78 @@ USING (auth.role() = 'authenticated');
 -- back-office purchase/vendor bookkeeping, not what the storefront reads.
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS stock_quantity INTEGER;
 
+
+-- 10. Corporate Campaigns: admin-managed employee gifting claim panels.
+-- A campaign is either 'single' (one hamper for everyone) or 'choice'
+-- (employee picks one of several hampers). Each campaign gets `num_hampers`
+-- unique, random, one-time-use codes. None of these three tables have any
+-- public RLS policy — the claim flow never queries Supabase directly from
+-- the browser, only through rate-limited /api/claim-campaign/* routes using
+-- the service-role client, so codes can never be listed/enumerated
+-- client-side (same treatment as offline_inventory above).
+
+CREATE TABLE public.corporate_campaigns (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    name TEXT NOT NULL,
+    logo_url TEXT,
+    campaign_type TEXT NOT NULL CHECK (campaign_type IN ('single', 'choice')),
+    num_hampers INTEGER NOT NULL CHECK (num_hampers > 0),
+    custom_fields JSONB NOT NULL DEFAULT '[]',
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+ALTER TABLE public.corporate_campaigns ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow authenticated full access on corporate_campaigns"
+ON public.corporate_campaigns FOR ALL
+USING (auth.role() = 'authenticated');
+
+
+CREATE TABLE public.campaign_products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    campaign_id UUID NOT NULL REFERENCES public.corporate_campaigns(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    description TEXT,
+    image_url TEXT,
+    display_order INTEGER NOT NULL DEFAULT 0
+);
+
+ALTER TABLE public.campaign_products ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow authenticated full access on campaign_products"
+ON public.campaign_products FOR ALL
+USING (auth.role() = 'authenticated');
+
+
+CREATE TABLE public.campaign_codes (
+    code TEXT PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    campaign_id UUID NOT NULL REFERENCES public.corporate_campaigns(id) ON DELETE CASCADE,
+    is_redeemed BOOLEAN NOT NULL DEFAULT false,
+    redeemed_at TIMESTAMP WITH TIME ZONE,
+    selected_product_id UUID REFERENCES public.campaign_products(id),
+    recipient_name TEXT,
+    recipient_phone TEXT,
+    recipient_email TEXT,
+    shipping_address JSONB,
+    custom_field_answers JSONB NOT NULL DEFAULT '{}',
+    fulfillment_status TEXT NOT NULL DEFAULT 'pending' CHECK (fulfillment_status IN ('pending', 'shipped'))
+);
+
+ALTER TABLE public.campaign_codes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow authenticated full access on campaign_codes"
+ON public.campaign_codes FOR ALL
+USING (auth.role() = 'authenticated');
+
+
+-- 10.1 Storage bucket for campaign logos/product photos. Public read (so the
+-- images actually display on the claim page), no public write — uploads only
+-- go through the service-role client in app/api/admin/campaigns/upload.
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('campaign-assets', 'campaign-assets', true)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Allow public read on campaign-assets"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'campaign-assets');
+

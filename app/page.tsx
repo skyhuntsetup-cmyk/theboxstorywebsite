@@ -13,6 +13,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { getContent } from "../lib/siteContent";
 
+const revealProps = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.5 },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
@@ -300,7 +317,7 @@ export default function Home() {
                 }}
               >
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#FCFAF2] bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full">
+                  <span className="text-[12px] uppercase font-bold tracking-widest text-[#FCFAF2] bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full">
                     Satin Wrap & Rigid Box
                   </span>
                   <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
@@ -314,9 +331,9 @@ export default function Home() {
                     The Royal Heritage Hamper
                   </h3>
                   <div className="flex space-x-2">
-                    <span className="text-[10px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Brass Diya</span>
-                    <span className="text-[10px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Mithai</span>
-                    <span className="text-[10px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Saffron</span>
+                    <span className="text-[12px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Brass Diya</span>
+                    <span className="text-[12px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Mithai</span>
+                    <span className="text-[12px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Saffron</span>
                   </div>
                 </div>
               </motion.div>
@@ -361,8 +378,8 @@ export default function Home() {
       </section>
 
       {/* 3. CIRCULAR CATEGORY SHOWCASE */}
-      <section className="max-w-6xl mx-auto px-6 space-y-10 text-center">
-        <div className="space-y-4">
+      <section className="max-w-6xl mx-auto px-6 space-y-8 text-center">
+        <motion.div {...revealProps} className="space-y-4">
           <h2 className="font-heading text-3xl font-black text-teal-deep">
             Find the Perfect Gift Box
           </h2>
@@ -388,43 +405,51 @@ export default function Home() {
               Shop By Recipient
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Categories slider row */}
-        <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
+        <motion.div
+          key={activeTab}
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="flex flex-wrap justify-center gap-6 sm:gap-10"
+        >
           {circularCategories[activeTab].map((cat, idx) => (
-            <Link
-              key={idx}
-              href="/collections"
-              className="group flex flex-col items-center space-y-3 focus:outline-none w-24 sm:w-28"
-            >
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-teal-deep/5 shadow-sm group-hover:shadow-md group-hover:border-rani-pink/20 transition-all duration-300 relative bg-white">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=200&auto=format&fit=crop&q=80";
-                  }}
-                />
-                <div className="absolute inset-0 bg-teal-deep/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white animate-spin" />
+            <motion.div key={idx} variants={staggerItem} whileHover={{ y: -4 }}>
+              <Link
+                href="/collections"
+                className="group flex flex-col items-center space-y-3 focus:outline-none w-24 sm:w-28"
+              >
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-teal-deep/5 shadow-sm group-hover:shadow-md group-hover:border-rani-pink/20 transition-all duration-300 relative bg-white">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=200&auto=format&fit=crop&q=80";
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-teal-deep/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white animate-spin" />
+                  </div>
                 </div>
-              </div>
-              <span className="text-xs font-bold text-teal-deep group-hover:text-rani-pink transition-colors">
-                {cat.name}
-              </span>
-            </Link>
+                <span className="text-xs font-bold text-teal-deep group-hover:text-rani-pink transition-colors">
+                  {cat.name}
+                </span>
+              </Link>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* 5. GIFTS THAT STAND OUT - BESTSELLERS SECTION */}
-      <section className="max-w-6xl mx-auto px-6 space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <section className="max-w-6xl mx-auto px-6 space-y-10">
+        <motion.div {...revealProps} className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-3 text-left">
-            <span className="text-[10px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
+            <span className="text-[12px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
               Curated Masterpieces
             </span>
             <h2 className="font-heading text-3xl md:text-4xl font-extrabold text-teal-deep">
@@ -441,7 +466,7 @@ export default function Home() {
             <span>View All Bestsellers</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {bestsellers.map((product) => (
@@ -459,47 +484,54 @@ export default function Home() {
       </section>
 
       {/* 3.5 WHAT WE OFFER SECTION */}
-      <section className="max-w-6xl mx-auto px-6 space-y-12 text-center">
-        <div className="space-y-3">
-          <span className="text-[10px] font-bold tracking-widest text-rani-pink bg-rani-pink/10 px-3 py-1 rounded-full uppercase">
+      <section className="max-w-6xl mx-auto px-6 space-y-10 text-center">
+        <motion.div {...revealProps} className="space-y-3">
+          <span className="text-[12px] font-bold tracking-widest text-rani-pink bg-rani-pink/10 px-3 py-1 rounded-full uppercase">
             Signature Services
           </span>
           <h2 className="font-heading text-3xl font-black text-teal-deep">What We Offer</h2>
           <p className="text-xs sm:text-sm text-teal-deep/60 max-w-md mx-auto leading-relaxed">
             Beautifully curated collections, bespoke unboxing studios, and high-volume corporate services scaled for your needs.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
           {offers.map((off, idx) => (
-            <Link
-              key={idx}
-              href={off.link}
-              className="group bg-white border border-teal-deep/5 rounded-3xl p-6 text-left flex flex-col justify-between h-72 shadow-sm hover:shadow-md hover:border-rani-pink/10 transition-all duration-300"
-            >
-              <div className="space-y-4">
-                <span className="inline-block bg-saffron/5 text-saffron text-[9px] font-black tracking-wider uppercase border border-saffron/10 px-2.5 py-1 rounded-full">
-                  {off.badge}
-                </span>
-                <h3 className="font-heading text-lg font-black text-teal-deep group-hover:text-rani-pink transition-colors">
-                  {off.title}
-                </h3>
-                <p className="text-xs text-teal-deep/65 leading-relaxed">
-                  {off.desc}
-                </p>
-              </div>
+            <motion.div key={idx} variants={staggerItem} whileHover={{ y: -5 }}>
+              <Link
+                href={off.link}
+                className="group bg-white border border-teal-deep/5 rounded-3xl p-6 text-left flex flex-col justify-between h-72 shadow-sm hover:shadow-md hover:border-rani-pink/10 transition-all duration-300"
+              >
+                <div className="space-y-4">
+                  <span className="inline-block bg-saffron/5 text-saffron text-[11px] font-black tracking-wider uppercase border border-saffron/10 px-2.5 py-1 rounded-full">
+                    {off.badge}
+                  </span>
+                  <h3 className="font-heading text-lg font-black text-teal-deep group-hover:text-rani-pink transition-colors">
+                    {off.title}
+                  </h3>
+                  <p className="text-xs text-teal-deep/65 leading-relaxed">
+                    {off.desc}
+                  </p>
+                </div>
 
-              <div className="flex items-center space-x-1.5 text-xs font-bold text-teal-deep group-hover:text-saffron transition-colors pt-4 border-t border-teal-deep/5">
-                <span>Explore Channel</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-teal-deep group-hover:text-saffron transition-colors pt-4 border-t border-teal-deep/5">
+                  <span>Explore Channel</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* 6. THE CUSTOM CONFIGURATOR CTA */}
-      <section className="bg-[#042F2E]/5 rounded-[40px] max-w-6xl mx-auto p-8 md:p-16 border border-teal-deep/5 relative overflow-hidden">
+      <motion.section {...revealProps} className="bg-[#042F2E]/5 rounded-[40px] max-w-6xl mx-auto p-8 md:p-16 border border-teal-deep/5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-gold/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-rani-pink/5 rounded-full blur-3xl" />
 
@@ -523,10 +555,18 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-6"
+          >
             {steps.map((step, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                variants={staggerItem}
+                whileHover={{ y: -4 }}
                 className="bg-white/60 backdrop-blur-sm p-6 rounded-3xl border border-teal-deep/5 flex flex-col justify-between h-56 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="space-y-4">
@@ -536,19 +576,20 @@ export default function Home() {
                   <h3 className="font-heading text-sm font-bold text-teal-deep">
                     {step.title}
                   </h3>
-                  <p className="text-[11px] text-teal-deep/70 leading-relaxed">
+                  <p className="text-[13px] text-teal-deep/70 leading-relaxed">
                     {step.desc}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 7. AI GIFT GENIE BANNER */}
       <section className="max-w-6xl mx-auto px-6">
         <motion.div
+          {...revealProps}
           whileHover={{ y: -4 }}
           className="relative rounded-[40px] overflow-hidden bg-gradient-to-r from-amber-50 via-background to-rose-50 border border-amber-200 p-8 md:p-12 text-slate-800 shadow-sm flex flex-col md:flex-row justify-between items-center gap-8 text-left"
         >
@@ -558,7 +599,7 @@ export default function Home() {
           <div className="space-y-4 relative z-10 max-w-xl text-center md:text-left">
             <div className="inline-flex items-center space-x-1.5 bg-saffron/10 border border-saffron/20 px-3.5 py-1.5 rounded-full">
               <Sparkles className="w-3.5 h-3.5 text-saffron animate-pulse" />
-              <span className="text-[10px] font-bold tracking-widest text-saffron uppercase">
+              <span className="text-[12px] font-bold tracking-widest text-saffron uppercase">
                 Interactive Assistant
               </span>
             </div>
@@ -582,7 +623,7 @@ export default function Home() {
       </section>
 
       {/* 4. BRAND MISSION STATEMENT */}
-      <section className="max-w-4xl mx-auto px-6 text-center relative py-12">
+      <motion.section {...revealProps} className="max-w-4xl mx-auto px-6 text-center relative py-10">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
 
@@ -596,23 +637,31 @@ export default function Home() {
           </p>
           <div className="w-16 h-0.5 bg-saffron mx-auto rounded-full" />
         </div>
-      </section>
+      </motion.section>
 
       {/* 8. TESTIMONIALS SLIDER SECTION */}
-      <section className="max-w-6xl mx-auto px-6 space-y-10 text-center">
-        <div className="space-y-3">
-          <span className="text-[10px] font-bold tracking-widest text-rani-pink bg-rani-pink/10 px-3 py-1 rounded-full uppercase">
+      <section className="max-w-6xl mx-auto px-6 space-y-8 text-center">
+        <motion.div {...revealProps} className="space-y-3">
+          <span className="text-[12px] font-bold tracking-widest text-rani-pink bg-rani-pink/10 px-3 py-1 rounded-full uppercase">
             Client Testimonials
           </span>
           <h2 className="font-heading text-3xl font-black text-teal-deep">
             Trusted by Gifting Lovers
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
           {testimonials.map((t, idx) => (
-            <div
+            <motion.div
               key={idx}
+              variants={staggerItem}
+              whileHover={{ y: -4 }}
               className="bg-white border border-teal-deep/5 p-8 rounded-3xl shadow-sm text-left flex flex-col justify-between h-72 relative"
             >
               <div className="space-y-4">
@@ -628,22 +677,22 @@ export default function Home() {
               <div className="border-t border-teal-deep/5 pt-4 flex justify-between items-center mt-auto">
                 <div className="flex flex-col">
                   <span className="text-xs font-bold text-teal-deep">{t.author}</span>
-                  <span className="text-[10px] text-teal-deep/50">{t.role}</span>
+                  <span className="text-[12px] text-teal-deep/50">{t.role}</span>
                 </div>
                 <Heart className="w-4 h-4 text-rani-pink/30" />
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* 2.5 TRUSTED BY MANY CLIENT CAROUSEL */}
       <section className="max-w-6xl mx-auto px-6 text-center space-y-8">
-        <div className="space-y-1">
-          <span className="text-[9px] uppercase tracking-widest font-black text-saffron block">Our Corporate Partners</span>
+        <motion.div {...revealProps} className="space-y-1">
+          <span className="text-[11px] uppercase tracking-widest font-black text-saffron block">Our Corporate Partners</span>
           <h2 className="font-heading text-2xl font-black text-teal-deep">Trusted By Industry Leaders</h2>
-        </div>
-        
+        </motion.div>
+
         <div className="relative py-4 overflow-hidden bg-white/40 border-y border-teal-deep/5 backdrop-blur-sm">
           <div className="flex space-x-16 animate-marquee whitespace-nowrap">
             {[...clientLogos, ...clientLogos].map((client, idx) => (
@@ -651,7 +700,7 @@ export default function Home() {
                 <span className="font-heading text-lg font-black tracking-tight text-teal-deep hover:text-rani-pink transition-colors">
                   {client.name}
                 </span>
-                <span className="text-[8px] text-teal-deep/40 uppercase tracking-widest">{client.type}</span>
+                <span className="text-[10px] text-teal-deep/40 uppercase tracking-widest">{client.type}</span>
               </div>
             ))}
           </div>
@@ -660,11 +709,11 @@ export default function Home() {
 
       {/* 8.5 QUICK BULK & CORPORATE GIFTING CONTACT FORM */}
       <section id="bulk-contact" className="max-w-4xl mx-auto px-6">
-        <div className="bg-white border border-teal-deep/5 rounded-[40px] p-8 md:p-14 shadow-lg text-left grid grid-cols-1 md:grid-cols-12 gap-8 items-start relative overflow-hidden">
+        <motion.div {...revealProps} className="bg-white border border-teal-deep/5 rounded-[40px] p-8 md:p-14 shadow-lg text-left grid grid-cols-1 md:grid-cols-12 gap-8 items-start relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-saffron/5 rounded-full blur-3xl -z-10" />
           
           <div className="md:col-span-5 space-y-6">
-            <span className="text-[9px] uppercase tracking-widest font-black text-saffron bg-saffron/10 border border-saffron/25 px-3.5 py-1.5 rounded-full inline-block">
+            <span className="text-[11px] uppercase tracking-widest font-black text-saffron bg-saffron/10 border border-saffron/25 px-3.5 py-1.5 rounded-full inline-block">
               Inquire Now
             </span>
             <h2 className="font-heading text-3xl font-black text-teal-deep leading-tight">
@@ -791,7 +840,7 @@ export default function Home() {
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                   <h3 className="font-heading text-xl font-bold text-teal-deep">Inquiry Logged!</h3>
-                  <p className="text-[11px] text-teal-deep/70 max-w-xs mx-auto leading-relaxed">
+                  <p className="text-[13px] text-teal-deep/70 max-w-xs mx-auto leading-relaxed">
                     Thank you! Our bulk accounts consultant will reach out via WhatsApp/Email in under 12 hours.
                   </p>
                   <button
@@ -804,23 +853,31 @@ export default function Home() {
               )}
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* 8.8 INSTAGRAM FEED SECTION (Inspired by confettigifts.in footer display) */}
       <section className="max-w-6xl mx-auto px-6 space-y-8 text-center">
-        <div className="space-y-2">
+        <motion.div {...revealProps} className="space-y-2">
           <InstagramIcon className="w-6 h-6 text-rani-pink mx-auto animate-bounce" />
           <h2 className="font-heading text-3xl font-black text-teal-deep">Shop Our Instagram</h2>
           <p className="text-xs text-teal-deep/60 max-w-sm mx-auto leading-relaxed">
             Follow <a href="https://instagram.com/theboxstory" target="_blank" rel="noopener noreferrer" className="text-rani-pink font-bold hover:underline">@theboxstory</a> on Instagram for unboxing reels, artisan stories, and hampers updates.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+        >
           {instagramPosts.map((url, idx) => (
-            <a
+            <motion.a
               key={idx}
+              variants={staggerItem}
+              whileHover={{ y: -3 }}
               href="https://instagram.com/theboxstory"
               target="_blank"
               rel="noopener noreferrer"
@@ -834,25 +891,32 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-[#9D174D]/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-[#FAF4E8] space-y-1">
                 <InstagramIcon className="w-5 h-5 text-[#FAF4E8]" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Shop the Look</span>
+                <span className="text-[12px] font-bold uppercase tracking-wider">Shop the Look</span>
               </div>
-            </a>
+            </motion.a>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* 9. FAQ ACCORDION SECTION */}
-      <section className="max-w-4xl mx-auto px-6 space-y-10 text-left">
-        <h2 className="font-heading text-3xl font-black text-teal-deep text-center">
+      <section className="max-w-4xl mx-auto px-6 space-y-8 text-left">
+        <motion.h2 {...revealProps} className="font-heading text-3xl font-black text-teal-deep text-center">
           Gifting Questions? We Have Answers
-        </h2>
+        </motion.h2>
 
-        <div className="space-y-4">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="space-y-4"
+        >
           {faqs.map((faq, idx) => {
             const isFaqActive = activeFaq === idx;
             return (
-              <div
+              <motion.div
                 key={idx}
+                variants={staggerItem}
                 className="bg-white rounded-2xl border border-teal-deep/5 overflow-hidden transition-all shadow-sm"
               >
                 <button
@@ -880,10 +944,10 @@ export default function Home() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </section>
     </div>
   );

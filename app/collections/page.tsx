@@ -7,6 +7,7 @@ import { ProductCard } from "../../components/ProductCard";
 import { SlidersHorizontal, Gift, X, Tag, IndianRupee, Loader } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { CategoryRow, ProductWithCategories } from "../../lib/types";
+import { revealProps } from "../../lib/motion";
 
 // Curated icons for categories that have one in /public/images/icons; anything
 // else (including new categories added later via the admin) falls back to a
@@ -79,14 +80,19 @@ export default function Collections() {
   }, [products, selectedCategoryId, selectedPriceRange]);
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-10 px-6">
-      <div className="max-w-6xl mx-auto space-y-12">
+    <div className="min-h-screen bg-background text-slate-800 py-8 px-6">
+      <div className="max-w-6xl mx-auto space-y-10">
 
         {/* Banner: Clean Minimalist Editorial Layout */}
-        <section className="relative rounded-[32px] overflow-hidden bg-white border border-slate-200/60 p-8 md:p-14 shadow-sm text-left">
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative rounded-[32px] overflow-hidden bg-white border border-slate-200/60 p-8 md:p-14 shadow-sm text-left"
+        >
           <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100 rounded-full blur-3xl -z-10" />
           <div className="space-y-4 max-w-xl">
-            <span className="text-[10px] tracking-widest font-black uppercase text-slate-400 block">
+            <span className="text-[12px] tracking-widest font-black uppercase text-slate-400 block">
               Pre-Curated Selection
             </span>
             <h1 className="font-heading text-4xl sm:text-5xl font-light text-slate-900 tracking-tight leading-tight">
@@ -98,10 +104,10 @@ export default function Collections() {
               Discover gift box curations styled for Diwali, luxury marriages, B2B milestones, and corporate celebrations.
             </p>
           </div>
-        </section>
+        </motion.section>
 
         {/* Visual Category Filters */}
-        <section className="bg-white border border-slate-200/60 rounded-[32px] p-6 shadow-sm">
+        <motion.section {...revealProps} className="bg-white border border-slate-200/60 rounded-[32px] p-6 shadow-sm">
           <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
             <button
               onClick={() => setSelectedCategoryId("All")}
@@ -114,7 +120,7 @@ export default function Collections() {
               }`}>
                 <Gift className="w-7 h-7 text-teal-deep/70" />
               </div>
-              <span className={`text-[10px] sm:text-xs font-bold transition-colors text-center ${
+              <span className={`text-[12px] sm:text-xs font-bold transition-colors text-center ${
                 selectedCategoryId === "All" ? "text-rani-pink font-extrabold" : "text-slate-500 group-hover:text-slate-900"
               }`}>
                 All Gifts
@@ -140,7 +146,7 @@ export default function Collections() {
                       <Gift className="w-7 h-7 text-teal-deep/70" />
                     )}
                   </div>
-                  <span className={`text-[10px] sm:text-xs font-bold transition-colors text-center ${
+                  <span className={`text-[12px] sm:text-xs font-bold transition-colors text-center ${
                     selectedCategoryId === cat.id ? "text-rani-pink font-extrabold" : "text-slate-500 group-hover:text-slate-900"
                   }`}>
                     {cat.name}
@@ -149,7 +155,7 @@ export default function Collections() {
               );
             })}
           </div>
-        </section>
+        </motion.section>
 
         {/* Catalog Body with Split Sidebar Filter */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 items-start">
@@ -163,7 +169,7 @@ export default function Collections() {
 
             {/* Category Filter */}
             <div className="space-y-3">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+              <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
                 <Tag className="w-3.5 h-3.5 mr-1" />
                 <span>Categories</span>
               </span>
@@ -190,7 +196,7 @@ export default function Collections() {
 
             {/* Price Filter */}
             <div className="space-y-3">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+              <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
                 <IndianRupee className="w-3.5 h-3.5 mr-1" />
                 <span>Budget Tier</span>
               </span>
@@ -231,7 +237,7 @@ export default function Collections() {
             </div>
 
             {isLoading ? (
-              <div className="py-20 flex justify-center">
+              <div className="py-14 flex justify-center">
                 <Loader className="w-6 h-6 text-slate-400 animate-spin" />
               </div>
             ) : (
@@ -242,7 +248,7 @@ export default function Collections() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="col-span-full py-20 text-center space-y-3"
+                      className="col-span-full py-14 text-center space-y-3"
                     >
                       <Gift className="w-10 h-10 text-slate-300 mx-auto" />
                       <p className="text-sm font-semibold text-slate-600">No curations match these filters.</p>

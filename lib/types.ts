@@ -153,3 +153,56 @@ export interface CatalogueLead {
   subtotal: number;
   status: "browsing" | "shared";
 }
+
+export interface CustomFieldDef {
+  key: string;
+  label: string;
+  type: "text" | "dropdown";
+  options?: string[];
+  required: boolean;
+}
+
+export type CampaignType = "single" | "choice";
+
+export interface CampaignRow {
+  id: string;
+  created_at: string;
+  name: string;
+  logo_url: string | null;
+  campaign_type: CampaignType;
+  num_hampers: number;
+  custom_fields: CustomFieldDef[];
+  is_active: boolean;
+}
+
+export interface CampaignProductRow {
+  id: string;
+  created_at: string;
+  campaign_id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  display_order: number;
+}
+
+export type FulfillmentStatus = "pending" | "shipped";
+
+export interface CampaignCodeRow {
+  code: string;
+  created_at: string;
+  campaign_id: string;
+  is_redeemed: boolean;
+  redeemed_at: string | null;
+  selected_product_id: string | null;
+  recipient_name: string | null;
+  recipient_phone: string | null;
+  recipient_email: string | null;
+  shipping_address: Record<string, string> | null;
+  custom_field_answers: Record<string, string>;
+  fulfillment_status: FulfillmentStatus;
+}
+
+export interface CampaignDetail extends CampaignRow {
+  products: CampaignProductRow[];
+  codes: CampaignCodeRow[];
+}

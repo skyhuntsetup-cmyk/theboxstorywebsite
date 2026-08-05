@@ -10,8 +10,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem, CategoryRow, ProductWithCategories, BlogPostRow } from "../../lib/types";
 import type { SiteContentField } from "../../lib/siteContent";
+import CampaignsTab from "./CampaignsTab";
 
-type AdminTab = "orders" | "inquiries" | "products" | "categories" | "blog" | "bazaar" | "inventory" | "portfolio" | "catalog" | "content";
+type AdminTab = "orders" | "inquiries" | "products" | "categories" | "blog" | "bazaar" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
@@ -795,7 +796,7 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-10 text-left">
+    <div className="max-w-6xl mx-auto px-6 py-8 space-y-8 text-left">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-teal-deep/10 pb-6">
         <div>
@@ -831,7 +832,7 @@ export default function AdminDashboard() {
           </div>
           <div>
             <span className="text-xs font-bold block">Shareable Gift Catalogue</span>
-            <span className="text-[11px] text-white/60">Drop this link on WhatsApp — customers browse, add to cart, and send their order back to you.</span>
+            <span className="text-[13px] text-white/60">Drop this link on WhatsApp — customers browse, add to cart, and send their order back to you.</span>
           </div>
         </div>
         <button
@@ -852,63 +853,63 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-center text-teal-deep/50 mb-3">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Total Sales</span>
+            <span className="text-[12px] uppercase font-bold tracking-wider">Total Sales</span>
             <BarChart3 className="w-4 h-4 text-rani-pink" />
           </div>
           <p className="font-heading text-2xl font-black text-teal-deep">₹{stats.totalRevenue}</p>
-          <span className="text-[10px] text-teal-deep/40">From orders database</span>
+          <span className="text-[12px] text-teal-deep/40">From orders database</span>
         </div>
 
         <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-center text-teal-deep/50 mb-3">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Paid Orders</span>
+            <span className="text-[12px] uppercase font-bold tracking-wider">Paid Orders</span>
             <ShoppingBag className="w-4 h-4 text-saffron" />
           </div>
           <p className="font-heading text-2xl font-black text-teal-deep">{stats.paidOrders}</p>
-          <span className="text-[10px] text-teal-deep/40">Awaiting dispatch</span>
+          <span className="text-[12px] text-teal-deep/40">Awaiting dispatch</span>
         </div>
 
         <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-center text-teal-deep/50 mb-3">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Claimed Gifts</span>
+            <span className="text-[12px] uppercase font-bold tracking-wider">Claimed Gifts</span>
             <CheckCircle className="w-4 h-4 text-emerald-500" />
           </div>
           <p className="font-heading text-2xl font-black text-teal-deep">{stats.claimedGifts}</p>
-          <span className="text-[10px] text-teal-deep/40">Addresses filled by recipient</span>
+          <span className="text-[12px] text-teal-deep/40">Addresses filled by recipient</span>
         </div>
 
         <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-center text-teal-deep/50 mb-3">
-            <span className="text-[10px] uppercase font-bold tracking-wider">B2B Inquiries</span>
+            <span className="text-[12px] uppercase font-bold tracking-wider">B2B Inquiries</span>
             <MessageSquare className="w-4 h-4 text-teal-deep" />
           </div>
           <p className="font-heading text-2xl font-black text-teal-deep">{stats.totalInquiries}</p>
-          <span className="text-[10px] text-teal-deep/40">Corporate submissions</span>
+          <span className="text-[12px] text-teal-deep/40">Corporate submissions</span>
         </div>
 
         <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-center text-teal-deep/50 mb-3">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Inventory Value</span>
+            <span className="text-[12px] uppercase font-bold tracking-wider">Inventory Value</span>
             <Tag className="w-4 h-4 text-saffron" />
           </div>
           <p className="font-heading text-2xl font-black text-teal-deep">₹{stats.totalInventoryValue}</p>
-          <span className="text-[10px] text-teal-deep/40">Total cost of offline stock</span>
+          <span className="text-[12px] text-teal-deep/40">Total cost of offline stock</span>
         </div>
 
         <div className="bg-white border border-teal-deep/5 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-center text-teal-deep/50 mb-3">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Total SKUs</span>
+            <span className="text-[12px] uppercase font-bold tracking-wider">Total SKUs</span>
             <Package className="w-4 h-4 text-rani-pink" />
           </div>
           <p className="font-heading text-2xl font-black text-teal-deep">{stats.totalSKUs}</p>
-          <span className="text-[10px] text-teal-deep/40">Offline product codes</span>
+          <span className="text-[12px] text-teal-deep/40">Offline product codes</span>
         </div>
       </div>
 
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "categories", "blog", "bazaar", "inventory", "portfolio", "catalog", "content"].map((tab) => (
+          {["orders", "inquiries", "products", "categories", "blog", "bazaar", "inventory", "campaigns", "portfolio", "catalog", "content"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -931,12 +932,14 @@ export default function AdminDashboard() {
                       ? "Catalog Sections"
                       : tab === "content"
                         ? "Site Content"
-                        : tab}
+                        : tab === "campaigns"
+                          ? "Corporate Campaigns"
+                          : tab}
             </button>
           ))}
         </div>
 
-        {activeTab !== "bazaar" && activeTab !== "categories" && activeTab !== "blog" && (
+        {activeTab !== "bazaar" && activeTab !== "categories" && activeTab !== "blog" && activeTab !== "campaigns" && (
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="w-4 h-4 text-teal-deep/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -952,7 +955,7 @@ export default function AdminDashboard() {
 
       {/* Database Content Area */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-16 space-y-4">
+        <div className="flex flex-col items-center justify-center py-12 space-y-4">
           <Loader className="w-8 h-8 text-saffron animate-spin" />
           <p className="text-xs text-teal-deep/60">Fetching table items from Supabase...</p>
         </div>
@@ -982,7 +985,7 @@ export default function AdminDashboard() {
                       <tr key={order.id} className="hover:bg-teal-deep/5 transition-colors">
                         <td className="p-4 font-semibold">
                           <span className="block truncate max-w-[120px] font-mono" title={order.id}>{order.id}</span>
-                          <span className="text-[10px] text-teal-deep/45 flex items-center mt-1">
+                          <span className="text-[12px] text-teal-deep/45 flex items-center mt-1">
                             <Calendar className="w-3 h-3 mr-1" />
                             {new Date(order.created_at).toLocaleDateString()}
                           </span>
@@ -991,17 +994,17 @@ export default function AdminDashboard() {
                           {order.delivery_mode === "physical" ? (
                             <div>
                               <span className="font-semibold block">{order.customer_name}</span>
-                              <span className="text-[10px] text-teal-deep/60">{order.customer_phone}</span>
+                              <span className="text-[12px] text-teal-deep/60">{order.customer_phone}</span>
                             </div>
                           ) : (
                             <div>
                               <span className="font-semibold block text-rani-pink">{order.magical_link_details?.recipientName} (Recipient)</span>
-                              <span className="text-[10px] text-teal-deep/60">{order.magical_link_details?.recipientContact}</span>
+                              <span className="text-[12px] text-teal-deep/60">{order.magical_link_details?.recipientContact}</span>
                             </div>
                           )}
                         </td>
                         <td className="p-4">
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase inline-block mb-1 ${
+                          <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold uppercase inline-block mb-1 ${
                             order.delivery_mode === "magical" ? "bg-rani-pink/10 text-rani-pink" : "bg-teal-deep/10 text-teal-deep"
                           }`}>
                             {order.delivery_mode}
@@ -1011,14 +1014,14 @@ export default function AdminDashboard() {
                         <td className="p-4">
                           <div className="flex flex-wrap gap-1 max-w-[200px]">
                             {order.items?.map((item: OrderItem, idx: number) => (
-                              <span key={idx} className="bg-teal-deep/5 px-2 py-0.5 rounded text-[10px] block">
+                              <span key={idx} className="bg-teal-deep/5 px-2 py-0.5 rounded text-[12px] block">
                                 {item.name} x{item.quantity}
                               </span>
                             ))}
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className={`px-2 py-1 rounded-full text-[10px] font-extrabold uppercase ${
+                          <span className={`px-2 py-1 rounded-full text-[12px] font-extrabold uppercase ${
                             order.status === "claimed" ? "bg-emerald-100 text-emerald-800" :
                             order.status === "shipped" ? "bg-blue-100 text-blue-800" :
                             "bg-amber-100 text-amber-800"
@@ -1030,7 +1033,7 @@ export default function AdminDashboard() {
                           {order.status === "paid" && (
                             <button
                               onClick={() => updateOrderStatus(order.id, "shipped")}
-                              className="px-2.5 py-1.5 bg-teal-deep text-white rounded-lg hover:bg-teal-deep/90 font-bold text-[10px] transition-colors"
+                              className="px-2.5 py-1.5 bg-teal-deep text-white rounded-lg hover:bg-teal-deep/90 font-bold text-[12px] transition-colors"
                             >
                               Ship Order
                             </button>
@@ -1038,7 +1041,7 @@ export default function AdminDashboard() {
                           {order.status === "claimed" && (
                             <button
                               onClick={() => updateOrderStatus(order.id, "shipped")}
-                              className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold text-[10px] transition-colors"
+                              className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold text-[12px] transition-colors"
                             >
                               Dispatch Gift
                             </button>
@@ -1074,17 +1077,17 @@ export default function AdminDashboard() {
                       <tr key={inq.id} className="hover:bg-teal-deep/5 transition-colors">
                         <td className="p-4 font-semibold">
                           <span className="font-heading text-sm text-teal-deep block">{inq.company}</span>
-                          <span className="text-[10px] text-teal-deep/45">
+                          <span className="text-[12px] text-teal-deep/45">
                             {new Date(inq.created_at).toLocaleDateString()}
                           </span>
                         </td>
                         <td className="p-4 space-y-1">
                           <span className="font-semibold block">{inq.name}</span>
-                          <span className="text-[10px] text-teal-deep/65 flex items-center">
+                          <span className="text-[12px] text-teal-deep/65 flex items-center">
                             <Mail className="w-3 h-3 mr-1" />
                             {inq.email}
                           </span>
-                          <span className="text-[10px] text-teal-deep/65 flex items-center">
+                          <span className="text-[12px] text-teal-deep/65 flex items-center">
                             <Phone className="w-3 h-3 mr-1" />
                             {inq.phone}
                           </span>
@@ -1126,45 +1129,45 @@ export default function AdminDashboard() {
                 <form onSubmit={addProduct} className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Product ID (unique, e.g. &quot;cur-11&quot;)</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Product ID (unique, e.g. &quot;cur-11&quot;)</label>
                       <input type="text" required value={newProduct.id} onChange={(e) => setNewProduct({ ...newProduct, id: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Name</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Name</label>
                       <input type="text" required value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Price (INR)</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Price (INR)</label>
                       <input type="number" required value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Badge (optional)</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Badge (optional)</label>
                       <input type="text" placeholder="Best Seller" value={newProduct.badge} onChange={(e) => setNewProduct({ ...newProduct, badge: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Stock Quantity (leave blank for unlimited/not tracked; 0 hides &quot;Add to Bag&quot; and shows Sold Out)</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Stock Quantity (leave blank for unlimited/not tracked; 0 hides &quot;Add to Bag&quot; and shows Sold Out)</label>
                     <input type="number" min={0} placeholder="e.g. 12" value={newProduct.stock_quantity} onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Image URL</label>
                     <input type="text" placeholder="https://..." value={newProduct.image} onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Description</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Description</label>
                     <textarea rows={2} value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none resize-none" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Categories — tag into any number; it&apos;ll show on every one automatically</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Categories — tag into any number; it&apos;ll show on every one automatically</label>
                     <div className="flex flex-wrap gap-2">
                       {categories.map((cat) => {
                         const checked = newProduct.categoryIds.includes(cat.id);
@@ -1176,7 +1179,7 @@ export default function AdminDashboard() {
                               ...newProduct,
                               categoryIds: checked ? newProduct.categoryIds.filter(id => id !== cat.id) : [...newProduct.categoryIds, cat.id],
                             })}
-                            className={`text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all ${
+                            className={`text-[13px] font-bold px-3 py-1.5 rounded-full border transition-all ${
                               checked ? "bg-teal-deep text-white border-teal-deep" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
                             }`}
                           >
@@ -1222,7 +1225,7 @@ export default function AdminDashboard() {
                             </div>
                             <div>
                               <span className="font-semibold block">{prod.name}</span>
-                              <span className="text-[10px] text-teal-deep/45 font-mono">{prod.id}</span>
+                              <span className="text-[12px] text-teal-deep/45 font-mono">{prod.id}</span>
                             </div>
                           </td>
                           <td className="p-4">
@@ -1230,14 +1233,14 @@ export default function AdminDashboard() {
                               {prod.categoryIds.map(cid => {
                                 const cat = categories.find(c => c.id === cid);
                                 return cat ? (
-                                  <span key={cid} className="text-[9px] font-bold bg-teal-deep/5 text-teal-deep/70 px-2 py-0.5 rounded-full">{cat.name}</span>
+                                  <span key={cid} className="text-[11px] font-bold bg-teal-deep/5 text-teal-deep/70 px-2 py-0.5 rounded-full">{cat.name}</span>
                                 ) : null;
                               })}
                             </div>
                           </td>
                           <td className="p-4">
                             {prod.badge ? (
-                              <span className="bg-saffron/10 border border-saffron/20 text-saffron font-bold px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide">
+                              <span className="bg-saffron/10 border border-saffron/20 text-saffron font-bold px-2 py-0.5 rounded-full text-[11px] uppercase tracking-wide">
                                 {prod.badge}
                               </span>
                             ) : (
@@ -1271,38 +1274,38 @@ export default function AdminDashboard() {
                               <form onSubmit={updateProduct} className="space-y-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                                   <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-teal-deep/60">Name</label>
+                                    <label className="text-[12px] font-bold text-teal-deep/60">Name</label>
                                     <input type="text" value={editingProduct.name} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
                                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                   </div>
                                   <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-teal-deep/60">Price</label>
+                                    <label className="text-[12px] font-bold text-teal-deep/60">Price</label>
                                     <input type="number" value={editingProduct.price} onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
                                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                   </div>
                                   <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-teal-deep/60">Badge</label>
+                                    <label className="text-[12px] font-bold text-teal-deep/60">Badge</label>
                                     <input type="text" value={editingProduct.badge || ""} onChange={(e) => setEditingProduct({ ...editingProduct, badge: e.target.value })}
                                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                   </div>
                                   <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-teal-deep/60">Stock (blank = unlimited)</label>
+                                    <label className="text-[12px] font-bold text-teal-deep/60">Stock (blank = unlimited)</label>
                                     <input type="number" min={0} value={editingProduct.stock_quantity ?? ""} onChange={(e) => setEditingProduct({ ...editingProduct, stock_quantity: e.target.value === "" ? null : Number(e.target.value) })}
                                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                   </div>
                                 </div>
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
+                                  <label className="text-[12px] font-bold text-teal-deep/60">Image URL</label>
                                   <input type="text" value={editingProduct.image || ""} onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
                                     className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                 </div>
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-teal-deep/60">Description</label>
+                                  <label className="text-[12px] font-bold text-teal-deep/60">Description</label>
                                   <textarea rows={2} value={editingProduct.description || ""} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
                                     className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none resize-none" />
                                 </div>
                                 <div className="space-y-2">
-                                  <label className="text-[10px] font-bold text-teal-deep/60">Categories</label>
+                                  <label className="text-[12px] font-bold text-teal-deep/60">Categories</label>
                                   <div className="flex flex-wrap gap-2">
                                     {categories.map((cat) => {
                                       const checked = editingProduct.categoryIds.includes(cat.id);
@@ -1314,7 +1317,7 @@ export default function AdminDashboard() {
                                             ...editingProduct,
                                             categoryIds: checked ? editingProduct.categoryIds.filter(id => id !== cat.id) : [...editingProduct.categoryIds, cat.id],
                                           })}
-                                          className={`text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all ${
+                                          className={`text-[13px] font-bold px-3 py-1.5 rounded-full border transition-all ${
                                             checked ? "bg-teal-deep text-white border-teal-deep" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
                                           }`}
                                         >
@@ -1350,13 +1353,13 @@ export default function AdminDashboard() {
             <div className="p-6 space-y-6">
               <form onSubmit={addCategory} className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
                 <div className="space-y-1 sm:col-span-1">
-                  <label className="text-[10px] font-bold text-teal-deep/60">New Category Name</label>
+                  <label className="text-[12px] font-bold text-teal-deep/60">New Category Name</label>
                   <input type="text" required placeholder="e.g. Housewarming" value={newCategory.name}
                     onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
                     className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                 </div>
                 <div className="space-y-1 sm:col-span-2">
-                  <label className="text-[10px] font-bold text-teal-deep/60">Description (optional)</label>
+                  <label className="text-[12px] font-bold text-teal-deep/60">Description (optional)</label>
                   <input type="text" value={newCategory.description}
                     onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
                     className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
@@ -1381,8 +1384,8 @@ export default function AdminDashboard() {
                           <input type="text" placeholder="Description" value={editingCategory.description || ""} onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
                             className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                           <div className="flex space-x-2">
-                            <button type="submit" disabled={isSavingCategory} className="px-3 py-1.5 bg-teal-deep text-white rounded-lg font-bold text-[10px] uppercase disabled:opacity-60">Save</button>
-                            <button type="button" onClick={() => { setEditingCategoryId(null); setEditingCategory(null); }} className="px-3 py-1.5 border border-teal-deep/15 text-teal-deep rounded-lg font-bold text-[10px] uppercase">Cancel</button>
+                            <button type="submit" disabled={isSavingCategory} className="px-3 py-1.5 bg-teal-deep text-white rounded-lg font-bold text-[12px] uppercase disabled:opacity-60">Save</button>
+                            <button type="button" onClick={() => { setEditingCategoryId(null); setEditingCategory(null); }} className="px-3 py-1.5 border border-teal-deep/15 text-teal-deep rounded-lg font-bold text-[12px] uppercase">Cancel</button>
                           </div>
                         </form>
                       ) : (
@@ -1390,10 +1393,10 @@ export default function AdminDashboard() {
                           <div className="flex justify-between items-start">
                             <div>
                               <h4 className="font-heading text-sm font-bold text-teal-deep">{cat.name}</h4>
-                              <span className="text-[10px] text-teal-deep/50">/{cat.slug} · {count} product{count === 1 ? "" : "s"}</span>
+                              <span className="text-[12px] text-teal-deep/50">/{cat.slug} · {count} product{count === 1 ? "" : "s"}</span>
                             </div>
                             {!cat.is_active && (
-                              <span className="text-[9px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded-full uppercase">Hidden</span>
+                              <span className="text-[11px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded-full uppercase">Hidden</span>
                             )}
                           </div>
                           {cat.description && <p className="text-xs text-teal-deep/60">{cat.description}</p>}
@@ -1436,33 +1439,33 @@ export default function AdminDashboard() {
               {showAddBlog && (
                 <form onSubmit={addBlogPost} className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 space-y-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Title</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Title</label>
                     <input type="text" required value={newBlogPost.title} onChange={(e) => setNewBlogPost({ ...newBlogPost, title: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Excerpt</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Excerpt</label>
                     <input type="text" value={newBlogPost.excerpt} onChange={(e) => setNewBlogPost({ ...newBlogPost, excerpt: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Content — use # / ## for headings, * or - for bullets, **bold**, {'>'} for a quote block, one blank line between paragraphs</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Content — use # / ## for headings, * or - for bullets, **bold**, {'>'} for a quote block, one blank line between paragraphs</label>
                     <textarea rows={8} required value={newBlogPost.content} onChange={(e) => setNewBlogPost({ ...newBlogPost, content: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none resize-y font-mono" />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Category</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Category</label>
                       <input type="text" placeholder="Diwali" value={newBlogPost.category} onChange={(e) => setNewBlogPost({ ...newBlogPost, category: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Image URL</label>
                       <input type="text" value={newBlogPost.image} onChange={(e) => setNewBlogPost({ ...newBlogPost, image: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Tags (comma separated)</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Tags (comma separated)</label>
                       <input type="text" placeholder="gifting, diwali" value={newBlogPost.tags} onChange={(e) => setNewBlogPost({ ...newBlogPost, tags: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
@@ -1518,9 +1521,9 @@ export default function AdminDashboard() {
                           <div className="space-y-1">
                             <div className="flex items-center space-x-2">
                               <h4 className="font-heading text-sm font-bold text-teal-deep">{post.title}</h4>
-                              {!post.is_published && <span className="text-[9px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded-full uppercase">Draft</span>}
+                              {!post.is_published && <span className="text-[11px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded-full uppercase">Draft</span>}
                             </div>
-                            <p className="text-[10px] text-teal-deep/50">/{post.slug} · {post.category || "Uncategorized"} · {post.read_time}</p>
+                            <p className="text-[12px] text-teal-deep/50">/{post.slug} · {post.category || "Uncategorized"} · {post.read_time}</p>
                             {post.excerpt && <p className="text-xs text-teal-deep/60 line-clamp-2">{post.excerpt}</p>}
                           </div>
                           <div className="flex items-center space-x-2 flex-shrink-0">
@@ -1544,12 +1547,12 @@ export default function AdminDashboard() {
 
           {/* TAB 4: BAZAAR & PACKAGING (NEW) */}
           {activeTab === "bazaar" && (
-            <div className="p-6 space-y-12">
+            <div className="p-6 space-y-10">
               {/* Part A: Bazaar items configuration */}
               <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
                   <h3 className="font-heading text-lg font-bold text-teal-deep">1. Hamper Studio treats</h3>
-                  <span className="text-[10px] text-teal-deep/50">Configure treats selectable by user in Build-a-Box studio.</span>
+                  <span className="text-[12px] text-teal-deep/50">Configure treats selectable by user in Build-a-Box studio.</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -1561,7 +1564,7 @@ export default function AdminDashboard() {
                     </h4>
                     
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Treat Name</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Treat Name</label>
                       <input
                         type="text"
                         required
@@ -1574,7 +1577,7 @@ export default function AdminDashboard() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Price (INR)</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Price (INR)</label>
                         <input
                           type="number"
                           required
@@ -1585,7 +1588,7 @@ export default function AdminDashboard() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Category</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Category</label>
                         <select
                           value={newBazaar.category}
                           onChange={(e) => setNewBazaar({ ...newBazaar, category: e.target.value })}
@@ -1600,7 +1603,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Image URL</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Image URL</label>
                       <input
                         type="text"
                         required
@@ -1643,7 +1646,7 @@ export default function AdminDashboard() {
                             <td className="p-3">
                               <button
                                 onClick={() => toggleBazaarActive(item.id, item.is_active)}
-                                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full font-bold text-[10px] transition-colors ${
+                                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full font-bold text-[12px] transition-colors ${
                                   item.is_active 
                                     ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200" 
                                     : "bg-red-100 text-red-800 hover:bg-red-200"
@@ -1674,7 +1677,7 @@ export default function AdminDashboard() {
               <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
                   <h3 className="font-heading text-lg font-bold text-teal-deep">2. Rigid Packaging Styles</h3>
-                  <span className="text-[10px] text-teal-deep/50">Manage the rigid boxes offered in Hamper customizer.</span>
+                  <span className="text-[12px] text-teal-deep/50">Manage the rigid boxes offered in Hamper customizer.</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -1686,7 +1689,7 @@ export default function AdminDashboard() {
                     </h4>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Box Name</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Box Name</label>
                       <input
                         type="text"
                         required
@@ -1698,7 +1701,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Tailwind Color Gradient Style</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Tailwind Color Gradient Style</label>
                       <input
                         type="text"
                         required
@@ -1707,7 +1710,7 @@ export default function AdminDashboard() {
                         onChange={(e) => setNewBox({ ...newBox, color: e.target.value })}
                         className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono"
                       />
-                      <span className="text-[9px] text-teal-deep/50 block">Tailwind gradient class settings.</span>
+                      <span className="text-[11px] text-teal-deep/50 block">Tailwind gradient class settings.</span>
                     </div>
 
                     <button
@@ -1738,7 +1741,7 @@ export default function AdminDashboard() {
                             <td className="p-3">
                               <button
                                 onClick={() => toggleBoxActive(box.id, box.is_active)}
-                                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full font-bold text-[10px] transition-colors ${
+                                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full font-bold text-[12px] transition-colors ${
                                   box.is_active 
                                     ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200" 
                                     : "bg-red-100 text-red-800 hover:bg-red-200"
@@ -1773,7 +1776,7 @@ export default function AdminDashboard() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
                 <div>
                   <h3 className="font-heading text-lg font-bold text-teal-deep">Offline Store Inventory</h3>
-                  <p className="text-[10px] text-teal-deep/50">Manage local stock parameters, margins, vendor listings, and publish directly to the website.</p>
+                  <p className="text-[12px] text-teal-deep/50">Manage local stock parameters, margins, vendor listings, and publish directly to the website.</p>
                 </div>
               </div>
 
@@ -1788,7 +1791,7 @@ export default function AdminDashboard() {
                       </h4>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Product Name *</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Product Name *</label>
                         <input
                           type="text"
                           required
@@ -1799,7 +1802,7 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Vendor Name *</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Vendor Name *</label>
                         <input
                           type="text"
                           required
@@ -1811,7 +1814,7 @@ export default function AdminDashboard() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Purchase Cost *</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Purchase Cost *</label>
                           <input
                             type="number"
                             required
@@ -1821,7 +1824,7 @@ export default function AdminDashboard() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Retail Price *</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Retail Price *</label>
                           <input
                             type="number"
                             required
@@ -1834,7 +1837,7 @@ export default function AdminDashboard() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Stock Count *</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Stock Count *</label>
                           <input
                             type="number"
                             required
@@ -1844,7 +1847,7 @@ export default function AdminDashboard() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Markup Margin</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Markup Margin</label>
                           <div className="w-full bg-teal-deep/5 border border-teal-deep/10 text-teal-deep font-bold rounded-lg px-3 py-2 text-xs">
                             {editingInventory.selling_price && editingInventory.purchase_price
                               ? `${(((Number(editingInventory.selling_price) - Number(editingInventory.purchase_price)) / Number(editingInventory.purchase_price)) * 100).toFixed(0)}%`
@@ -1854,7 +1857,7 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Drive Photos Link</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Drive Photos Link</label>
                         <input
                           type="url"
                           placeholder="https://drive.google.com/..."
@@ -1891,7 +1894,7 @@ export default function AdminDashboard() {
                       </h4>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Product Code / SKU *</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Product Code / SKU *</label>
                         <input
                           type="text"
                           required
@@ -1903,7 +1906,7 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Product Name *</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Product Name *</label>
                         <input
                           type="text"
                           required
@@ -1915,7 +1918,7 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Vendor Name *</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Vendor Name *</label>
                         <input
                           type="text"
                           required
@@ -1928,7 +1931,7 @@ export default function AdminDashboard() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Purchase Cost *</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Purchase Cost *</label>
                           <input
                             type="number"
                             required
@@ -1939,7 +1942,7 @@ export default function AdminDashboard() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Retail Price *</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Retail Price *</label>
                           <input
                             type="number"
                             required
@@ -1953,7 +1956,7 @@ export default function AdminDashboard() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Stock Qty *</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Stock Qty *</label>
                           <input
                             type="number"
                             required
@@ -1964,7 +1967,7 @@ export default function AdminDashboard() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60">Expected Margin</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60">Expected Margin</label>
                           <div className="w-full bg-teal-deep/5 border border-teal-deep/10 text-teal-deep font-bold rounded-lg px-3 py-2 text-xs">
                             {newInventory.selling_price && newInventory.purchase_price
                               ? `${(((Number(newInventory.selling_price) - Number(newInventory.purchase_price)) / Number(newInventory.purchase_price)) * 100).toFixed(0)}%`
@@ -1974,7 +1977,7 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Google Drive Photos Link</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Google Drive Photos Link</label>
                         <input
                           type="url"
                           placeholder="https://drive.google.com/..."
@@ -2021,13 +2024,13 @@ export default function AdminDashboard() {
                           <tr key={item.product_code} className="hover:bg-teal-deep/5 transition-colors">
                             <td className="p-3">
                               <span className="font-semibold block text-teal-deep">{item.name}</span>
-                              <span className="text-[10px] text-teal-deep/45 font-mono uppercase">{item.product_code}</span>
+                              <span className="text-[12px] text-teal-deep/45 font-mono uppercase">{item.product_code}</span>
                             </td>
                             <td className="p-3 text-teal-deep/75 font-medium">{item.vendor_name}</td>
                             <td className="p-3 text-right text-teal-deep/60">₹{item.purchase_price}</td>
                             <td className="p-3 text-right font-bold text-teal-deep">₹{item.selling_price}</td>
                             <td className="p-3 text-center">
-                              <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                              <span className={`px-2 py-0.5 rounded-full font-bold text-[12px] ${
                                 item.stock_quantity <= 3
                                   ? "bg-red-100 text-red-800"
                                   : "bg-teal-deep/5 text-teal-deep"
@@ -2047,17 +2050,17 @@ export default function AdminDashboard() {
                                   <ExternalLink className="w-3.5 h-3.5" />
                                 </a>
                               ) : (
-                                <span className="text-[10px] text-teal-deep/30">-</span>
+                                <span className="text-[12px] text-teal-deep/30">-</span>
                               )}
                             </td>
                             <td className="p-3 text-center">
                               {item.is_synced ? (
-                                <span className="inline-flex items-center space-x-0.5 bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[9px] uppercase">
+                                <span className="inline-flex items-center space-x-0.5 bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[11px] uppercase">
                                   <Globe className="w-2.5 h-2.5" />
                                   <span>{item.synced_type === "curated" ? "Curated" : "Bazaar"}</span>
                                 </span>
                               ) : (
-                                <span className="inline-block bg-teal-deep/5 text-teal-deep/50 px-2 py-0.5 rounded-full text-[9px]">
+                                <span className="inline-block bg-teal-deep/5 text-teal-deep/50 px-2 py-0.5 rounded-full text-[11px]">
                                   Offline only
                                 </span>
                               )}
@@ -2104,12 +2107,18 @@ export default function AdminDashboard() {
           )}
 
           {/* TAB 6: PAST PROJECTS EDITOR */}
+          {activeTab === "campaigns" && (
+            <div className="p-6">
+              <CampaignsTab />
+            </div>
+          )}
+
           {activeTab === "portfolio" && portfolioConfig && (
             <div className="p-6 space-y-8">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
                 <div>
                   <h3 className="font-heading text-lg font-bold text-teal-deep">Past Gifting Projects Portfolio</h3>
-                  <p className="text-[10px] text-teal-deep/50">Edit the B2B case studies, upload client product photos, and reorder card placements.</p>
+                  <p className="text-[12px] text-teal-deep/50">Edit the B2B case studies, upload client product photos, and reorder card placements.</p>
                 </div>
                 <button
                   type="button"
@@ -2135,7 +2144,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Projects List */}
-              <div className="space-y-12">
+              <div className="space-y-10">
                 {portfolioConfig.projects.map((project, idx) => (
                   <div key={idx} className="bg-slate-50/50 border border-teal-deep/5 rounded-3xl p-6 md:p-8 space-y-6 relative group">
                     {/* Controls Row */}
@@ -2192,7 +2201,7 @@ export default function AdminDashboard() {
                       <div className="space-y-4 text-left">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Client Name</label>
+                            <label className="text-[12px] font-bold text-teal-deep/60 uppercase">Client Name</label>
                             <input
                               type="text"
                               value={project.company}
@@ -2205,7 +2214,7 @@ export default function AdminDashboard() {
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Category Badge</label>
+                            <label className="text-[12px] font-bold text-teal-deep/60 uppercase">Category Badge</label>
                             <input
                               type="text"
                               value={project.badge}
@@ -2220,7 +2229,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Showcase Title</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60 uppercase">Showcase Title</label>
                           <input
                             type="text"
                             value={project.title}
@@ -2234,7 +2243,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Context Description</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60 uppercase">Context Description</label>
                           <textarea
                             rows={2}
                             value={project.context}
@@ -2248,7 +2257,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Project Outcome</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60 uppercase">Project Outcome</label>
                           <input
                             type="text"
                             value={project.outcome}
@@ -2273,10 +2282,10 @@ export default function AdminDashboard() {
                       {/* Right: Images List & Uploader */}
                       <div className="space-y-4 text-left">
                         <div className="flex items-center justify-between">
-                          <label className="text-[10px] font-bold text-teal-deep/60 uppercase">Gallery Photos</label>
+                          <label className="text-[12px] font-bold text-teal-deep/60 uppercase">Gallery Photos</label>
                           
                           {/* File Upload Button */}
-                          <label className="cursor-pointer px-3 py-1.5 bg-teal-deep/5 hover:bg-teal-deep/10 border border-teal-deep/10 text-teal-deep rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center space-x-1 transition-all">
+                          <label className="cursor-pointer px-3 py-1.5 bg-teal-deep/5 hover:bg-teal-deep/10 border border-teal-deep/10 text-teal-deep rounded-lg font-bold text-[12px] uppercase tracking-wider flex items-center space-x-1 transition-all">
                             <Plus className="w-3.5 h-3.5" />
                             <span>Upload Photo</span>
                             <input
@@ -2337,7 +2346,7 @@ export default function AdminDashboard() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
                 <div>
                   <h3 className="font-heading text-lg font-bold text-teal-deep">Diwali Catalog Sections Index</h3>
-                  <p className="text-[10px] text-teal-deep/50">Edit page counts, section page ranges, and visual description tags.</p>
+                  <p className="text-[12px] text-teal-deep/50">Edit page counts, section page ranges, and visual description tags.</p>
                 </div>
                 <button
                   type="button"
@@ -2363,7 +2372,7 @@ export default function AdminDashboard() {
               <div className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 max-w-xl">
                 <div className="space-y-1">
                   <h4 className="font-heading text-sm font-bold text-teal-deep">Total Catalog Pages</h4>
-                  <p className="text-[10px] text-teal-deep/50">Adjusting this updates the number of page PNGs rendered in the catalog scroll view.</p>
+                  <p className="text-[12px] text-teal-deep/50">Adjusting this updates the number of page PNGs rendered in the catalog scroll view.</p>
                 </div>
                 <div className="flex items-center space-x-3 shrink-0">
                   <input
@@ -2518,7 +2527,7 @@ export default function AdminDashboard() {
             <div className="p-6 space-y-6 text-left">
               <div className="border-b border-teal-deep/5 pb-4">
                 <h3 className="font-heading text-lg font-bold text-teal-deep">Site Text & Images</h3>
-                <p className="text-[10px] text-teal-deep/50">
+                <p className="text-[12px] text-teal-deep/50">
                   Edit copy and swap images used across the homepage, About page, and sitewide contact info.
                   Changes save to the site&apos;s content file — in local dev they show up immediately; once
                   deployed, they take effect on the next deploy (this writes to disk, not a live database).
@@ -2528,7 +2537,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {siteContentConfig.fields.map((field) => (
                   <div key={field.key} className="bg-slate-50/50 p-5 rounded-2xl border border-teal-deep/5 space-y-2">
-                    <label className="text-[10px] font-bold text-teal-deep/60 uppercase tracking-wider block">
+                    <label className="text-[12px] font-bold text-teal-deep/60 uppercase tracking-wider block">
                       {field.label}
                     </label>
 
@@ -2560,7 +2569,7 @@ export default function AdminDashboard() {
                             className="w-full h-32 object-cover rounded-xl border border-teal-deep/10"
                           />
                         )}
-                        <label className="flex items-center justify-center space-x-1.5 text-[10px] font-bold px-3 py-2 border border-teal-deep/15 rounded-lg text-teal-deep hover:bg-teal-deep/5 cursor-pointer transition-all">
+                        <label className="flex items-center justify-center space-x-1.5 text-[12px] font-bold px-3 py-2 border border-teal-deep/15 rounded-lg text-teal-deep hover:bg-teal-deep/5 cursor-pointer transition-all">
                           <ExternalLink className="w-3.5 h-3.5" />
                           <span>{isUploading ? "Uploading..." : "Replace Image"}</span>
                           <input
@@ -2610,9 +2619,9 @@ export default function AdminDashboard() {
               className="bg-white border border-teal-deep/10 w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative z-10 text-left"
             >
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-saffron uppercase tracking-widest">Publish to Website</span>
+                <span className="text-[12px] font-bold text-saffron uppercase tracking-widest">Publish to Website</span>
                 <h3 className="font-heading text-xl font-bold text-teal-deep">List &quot;{syncingItem.name}&quot;</h3>
-                <p className="text-[10px] text-teal-deep/50 font-mono uppercase">SKU: {syncingItem.product_code}</p>
+                <p className="text-[12px] text-teal-deep/50 font-mono uppercase">SKU: {syncingItem.product_code}</p>
               </div>
 
               <div className="space-y-4">
@@ -2622,10 +2631,10 @@ export default function AdminDashboard() {
                     <ShoppingBag className="w-4 h-4 text-rani-pink" />
                     <span>Option 1: Sync as Pre-curated Box</span>
                   </h4>
-                  <p className="text-[10px] text-teal-deep/70">Will list this item directly inside the collections catalogue at `/collections` under a chosen theme category.</p>
+                  <p className="text-[12px] text-teal-deep/70">Will list this item directly inside the collections catalogue at `/collections` under a chosen theme category.</p>
                   
                   <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-teal-deep/50 uppercase">Category Tag</label>
+                    <label className="text-[11px] font-bold text-teal-deep/50 uppercase">Category Tag</label>
                     <select
                       value={syncCategory}
                       onChange={(e) => setSyncCategory(e.target.value)}
@@ -2654,10 +2663,10 @@ export default function AdminDashboard() {
                     <Tag className="w-4 h-4 text-saffron" />
                     <span>Option 2: Sync as Hamper Studio Treat</span>
                   </h4>
-                  <p className="text-[10px] text-teal-deep/70">Will register this treat inside the Build-a-Box configurator studio database. Users can choose it as a sub-item in custom gift baskets.</p>
+                  <p className="text-[12px] text-teal-deep/70">Will register this treat inside the Build-a-Box configurator studio database. Users can choose it as a sub-item in custom gift baskets.</p>
 
                   <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-teal-deep/50 uppercase">Bazaar Section</label>
+                    <label className="text-[11px] font-bold text-teal-deep/50 uppercase">Bazaar Section</label>
                     <select
                       value={syncBazaarCategory}
                       onChange={(e) => setSyncBazaarCategory(e.target.value as "Sweets" | "Decor" | "Wellness" | "Gourmet")}

@@ -184,7 +184,7 @@ export default function CataloguePage() {
 
   if (step === "info") {
     return (
-      <div className="min-h-[85vh] flex items-center justify-center px-6 py-16">
+      <div className="min-h-[85vh] flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-[32px] p-8 shadow-sm space-y-6 text-center">
           <div className="w-14 h-14 bg-teal-deep/5 rounded-2xl flex items-center justify-center mx-auto text-teal-deep">
             <Gift className="w-7 h-7" />
@@ -195,7 +195,7 @@ export default function CataloguePage() {
           </div>
           <form onSubmit={handleStartBrowsing} className="space-y-4 text-left">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-teal-deep/60 uppercase tracking-wider">Your Name</label>
+              <label className="text-[12px] font-bold text-teal-deep/60 uppercase tracking-wider">Your Name</label>
               <input
                 type="text" required value={name} onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Priya Sharma"
@@ -203,7 +203,7 @@ export default function CataloguePage() {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-teal-deep/60 uppercase tracking-wider">WhatsApp Number</label>
+              <label className="text-[12px] font-bold text-teal-deep/60 uppercase tracking-wider">WhatsApp Number</label>
               <input
                 type="tel" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}
                 placeholder="+91 98765 43210"
@@ -221,7 +221,7 @@ export default function CataloguePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-10 px-6 pb-32">
+    <div className="min-h-screen bg-background text-slate-800 py-8 px-6 pb-32">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -241,7 +241,7 @@ export default function CataloguePage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedCategoryId("All")}
-            className={`text-[11px] font-bold px-4 py-2 rounded-full border transition-all ${
+            className={`text-[13px] font-bold px-4 py-2 rounded-full border transition-all ${
               selectedCategoryId === "All" ? "bg-teal-deep text-white border-teal-deep" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
             }`}
           >
@@ -251,7 +251,7 @@ export default function CataloguePage() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategoryId(cat.id)}
-              className={`text-[11px] font-bold px-4 py-2 rounded-full border transition-all ${
+              className={`text-[13px] font-bold px-4 py-2 rounded-full border transition-all ${
                 selectedCategoryId === cat.id ? "bg-teal-deep text-white border-teal-deep" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
               }`}
             >
@@ -262,11 +262,11 @@ export default function CataloguePage() {
 
         {/* Product grid */}
         {isLoadingCatalogue ? (
-          <div className="py-20 flex justify-center">
+          <div className="py-14 flex justify-center">
             <Loader className="w-6 h-6 text-slate-400 animate-spin" />
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="py-20 text-center space-y-3">
+          <div className="py-14 text-center space-y-3">
             <Gift className="w-10 h-10 text-slate-300 mx-auto" />
             <p className="text-sm font-semibold text-slate-600">Nothing here yet.</p>
           </div>
@@ -285,7 +285,7 @@ export default function CataloguePage() {
                       className={`w-full h-full object-cover ${isOutOfStock ? "grayscale opacity-60" : ""}`}
                     />
                     {isOutOfStock && (
-                      <span className="absolute top-3 left-3 bg-slate-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                      <span className="absolute top-3 left-3 bg-slate-800 text-white text-[12px] font-bold px-2.5 py-1 rounded-full">
                         Sold Out
                       </span>
                     )}
@@ -298,7 +298,7 @@ export default function CataloguePage() {
                     <div className="flex items-center justify-between">
                       <span className="font-heading text-base font-extrabold text-teal-deep">₹{product.price}</span>
                       {isOutOfStock ? (
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Unavailable</span>
+                        <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Unavailable</span>
                       ) : inCart ? (
                         <div className="flex items-center space-x-2 bg-teal-deep/5 rounded-full px-1">
                           <button onClick={() => updateQuantity(product.id, -1)} className="p-1.5 text-teal-deep hover:text-rani-pink"><Minus className="w-3.5 h-3.5" /></button>
@@ -308,7 +308,7 @@ export default function CataloguePage() {
                       ) : (
                         <button
                           onClick={() => addToCart(product)}
-                          className="text-[11px] font-bold px-3 py-2 bg-teal-deep hover:bg-rani-pink text-white rounded-full transition-colors"
+                          className="text-[13px] font-bold px-3 py-2 bg-teal-deep hover:bg-rani-pink text-white rounded-full transition-colors"
                         >
                           Add
                         </button>
@@ -333,7 +333,7 @@ export default function CataloguePage() {
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {cart.length === 0 ? (
-                <p className="text-xs text-slate-400 text-center py-10">Your list is empty — add a few gifts to get started.</p>
+                <p className="text-xs text-slate-400 text-center py-8">Your list is empty — add a few gifts to get started.</p>
               ) : (
                 cart.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3">
@@ -343,7 +343,7 @@ export default function CataloguePage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-teal-deep truncate">{item.name}</p>
-                      <p className="text-[11px] text-teal-deep/50">₹{item.price} x {item.quantity}</p>
+                      <p className="text-[13px] text-teal-deep/50">₹{item.price} x {item.quantity}</p>
                     </div>
                     <div className="flex items-center space-x-1.5">
                       <button onClick={() => updateQuantity(item.id, -1)} className="p-1 text-teal-deep/60 hover:text-teal-deep"><Minus className="w-3.5 h-3.5" /></button>
@@ -372,7 +372,7 @@ export default function CataloguePage() {
                   </>
                 )}
               </button>
-              <p className="text-[10px] text-teal-deep/40 text-center">Downloads your order as a PDF, then opens WhatsApp — attach the PDF there to send it to us.</p>
+              <p className="text-[12px] text-teal-deep/40 text-center">Downloads your order as a PDF, then opens WhatsApp — attach the PDF there to send it to us.</p>
             </div>
           </div>
         </div>

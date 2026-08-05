@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 import { ProductCard } from "../../../components/ProductCard";
 import { Gift, Loader, ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 import type { CategoryRow, ProductWithCategories } from "../../../lib/types";
 
 export default function CategoryPage() {
@@ -79,17 +80,22 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-10 px-6">
-      <div className="max-w-6xl mx-auto space-y-10">
+    <div className="min-h-screen bg-background text-slate-800 py-8 px-6">
+      <div className="max-w-6xl mx-auto space-y-8">
         <Link href="/collections" className="inline-flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-teal-deep transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>All Collections</span>
         </Link>
 
-        <section className="relative rounded-[32px] overflow-hidden bg-white border border-slate-200/60 p-8 md:p-14 shadow-sm text-left">
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative rounded-[32px] overflow-hidden bg-white border border-slate-200/60 p-8 md:p-14 shadow-sm text-left"
+        >
           <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100 rounded-full blur-3xl -z-10" />
           <div className="space-y-4 max-w-xl">
-            <span className="text-[10px] tracking-widest font-black uppercase text-slate-400 block">Collection</span>
+            <span className="text-[12px] tracking-widest font-black uppercase text-slate-400 block">Collection</span>
             <h1 className="font-heading text-4xl sm:text-5xl font-light text-slate-900 tracking-tight leading-tight">
               {category.name}
             </h1>
@@ -98,10 +104,10 @@ export default function CategoryPage() {
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm">{category.description}</p>
             )}
           </div>
-        </section>
+        </motion.section>
 
         {products.length === 0 ? (
-          <div className="py-20 text-center space-y-3">
+          <div className="py-14 text-center space-y-3">
             <Gift className="w-10 h-10 text-slate-300 mx-auto" />
             <p className="text-sm font-semibold text-slate-600">No products tagged into this collection yet.</p>
           </div>

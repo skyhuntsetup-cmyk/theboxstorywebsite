@@ -176,7 +176,7 @@ export const Navbar = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.4, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                  className="absolute -top-1.5 -right-1.5 bg-rani-pink text-[#FAF4E8] text-[10px] font-bold rounded-full w-5.5 h-5.5 flex items-center justify-center border-2 border-[#FAF4E8]"
+                  className="absolute -top-1.5 -right-1.5 bg-rani-pink text-[#FAF4E8] text-[12px] font-bold rounded-full w-5.5 h-5.5 flex items-center justify-center border-2 border-[#FAF4E8]"
                 >
                   {totalItems}
                 </motion.span>
@@ -207,7 +207,7 @@ export const Navbar = () => {
           >
             {navGroups.map((group) => (
               <div key={group.label} className="border-b border-[#042F2E]/5 last:border-0">
-                <span className="block px-5 pt-4 pb-1 text-[10px] font-black uppercase tracking-widest text-teal-deep/40">
+                <span className="block px-5 pt-4 pb-1 text-[12px] font-black uppercase tracking-widest text-teal-deep/40">
                   {group.label}
                 </span>
                 {group.items.map((item) => (
@@ -225,7 +225,7 @@ export const Navbar = () => {
               </div>
             ))}
             <div className="border-b border-[#042F2E]/5 last:border-0">
-              <span className="block px-5 pt-4 pb-1 text-[10px] font-black uppercase tracking-widest text-teal-deep/40">
+              <span className="block px-5 pt-4 pb-1 text-[12px] font-black uppercase tracking-widest text-teal-deep/40">
                 More
               </span>
               {[...singleLinks, { href: "/gift-genie", label: "AI Gift Genie" }].map((link) => (

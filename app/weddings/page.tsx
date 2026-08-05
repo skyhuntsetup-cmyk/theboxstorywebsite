@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Sparkles, Heart, CheckCircle2, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { revealProps, staggerContainer, staggerItem } from "../../lib/motion";
 
 export default function WeddingGifting() {
   const [formData, setFormData] = useState({
@@ -64,15 +65,20 @@ export default function WeddingGifting() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-12 px-6 relative overflow-hidden text-left">
+    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-10 px-6 relative overflow-hidden text-left">
       {/* Background floral mandala shadows */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-amber-100 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-rose-50 rounded-full blur-3xl -z-10" />
 
-      <div className="max-w-6xl mx-auto space-y-24">
+      <div className="max-w-6xl mx-auto space-y-16">
         
         {/* Banner Section: Royal Maharaja Cream-Gold Theme */}
-        <section className="relative rounded-[40px] overflow-hidden bg-gradient-to-br from-amber-50 via-background to-rose-50 p-8 md:p-20 shadow-sm border border-amber-200">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="relative rounded-[40px] overflow-hidden bg-gradient-to-br from-amber-50 via-background to-rose-50 p-8 md:p-20 shadow-sm border border-amber-200"
+        >
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-100 rounded-full blur-3xl -z-10" />
           
           <div className="max-w-2xl space-y-6 relative z-10">
@@ -98,21 +104,29 @@ export default function WeddingGifting() {
               </a>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Favors Showcase Grid */}
-        <section className="space-y-12">
-          <div className="space-y-3 text-center">
+        <section className="space-y-10">
+          <motion.div {...revealProps} className="space-y-3 text-center">
             <h2 className="font-heading text-3xl font-black text-amber-950">Exclusive Ceremonial Favors</h2>
             <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
               Every package is crafted to honor traditional heritage while delivering modern tactile unboxing sensations.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
             {favors.map((f, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                variants={staggerItem}
+                whileHover={{ y: -5 }}
                 className="bg-white border border-slate-205 rounded-3xl overflow-hidden shadow-sm flex flex-col h-full hover:border-amber-300 transition-all"
               >
                 <div className="aspect-[16/10] bg-slate-50 overflow-hidden relative">
@@ -129,13 +143,14 @@ export default function WeddingGifting() {
                     <ChevronRight className="w-3.5 h-3.5" />
                   </a>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* Wedding Brief Form */}
-        <section
+        <motion.section
+          {...revealProps}
           id="wedding-form"
           className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start bg-white p-8 md:p-12 rounded-[40px] border border-amber-200 shadow-sm relative overflow-hidden"
         >
@@ -300,7 +315,7 @@ export default function WeddingGifting() {
               )}
             </AnimatePresence>
           </div>
-        </section>
+        </motion.section>
       </div>
     </div>
   );

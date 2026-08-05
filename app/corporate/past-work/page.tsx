@@ -5,6 +5,8 @@ import Link from "next/link";
 import {
   CheckCircle2, Award, ArrowRight, X, ChevronLeft, ChevronRight, Eye
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { revealProps, staggerContainer, staggerItem } from "../../../lib/motion";
 
 import pastWorkConfig from "../../../data/past-work-config.json";
 
@@ -38,8 +40,8 @@ export default function PastWorkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-16 px-6 cultural-pattern">
-      <div className="max-w-6xl mx-auto space-y-16 text-left">
+    <div className="min-h-screen bg-background text-slate-800 py-12 px-6 cultural-pattern">
+      <div className="max-w-6xl mx-auto space-y-12 text-left">
         
         {/* Breadcrumbs */}
         <div className="text-xs space-x-2 text-slate-400">
@@ -51,7 +53,12 @@ export default function PastWorkPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="space-y-6">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="space-y-6"
+        >
           <div className="inline-flex items-center space-x-1.5 bg-saffron/10 border border-saffron/20 px-3 py-1 rounded-full text-xs font-bold text-saffron uppercase">
             <Award className="w-3.5 h-3.5" />
             <span>Editorial Case Studies</span>
@@ -63,21 +70,28 @@ export default function PastWorkPage() {
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl font-light">
             Explore our curated history of branding partnerships. Below are real photo galleries showing completed orders for tech companies, startups, and luxury celebrations.
           </p>
-        </section>
+        </motion.section>
 
         {/* Case Studies Lists */}
-        <section className="space-y-16">
+        <motion.section
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="space-y-12"
+        >
           {projects.map((project, projectIdx) => (
-            <div 
-              key={projectIdx} 
-              className="bg-[#FCFAF2]/80 backdrop-blur-sm border border-teal-deep/5 rounded-[40px] p-8 md:p-10 shadow-sm space-y-8 animate-fade-in"
+            <motion.div
+              key={projectIdx}
+              variants={staggerItem}
+              className="bg-[#FCFAF2]/80 backdrop-blur-sm border border-teal-deep/5 rounded-[40px] p-8 md:p-10 shadow-sm space-y-8"
             >
               {/* Header Info */}
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 border-b border-teal-deep/5 pb-6">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-3">
                     <span className="text-xs font-black text-rani-pink uppercase tracking-widest block">{project.company}</span>
-                    <span className="bg-saffron text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
+                    <span className="bg-saffron text-white text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
                       {project.badge}
                     </span>
                   </div>
@@ -89,7 +103,7 @@ export default function PastWorkPage() {
                 <div className="flex items-start space-x-2 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50 max-w-md shrink-0">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                   <div className="space-y-0.5">
-                    <span className="text-[9px] font-black text-emerald-800 uppercase tracking-widest block">Project Outcome</span>
+                    <span className="text-[11px] font-black text-emerald-800 uppercase tracking-widest block">Project Outcome</span>
                     <span className="text-xs text-emerald-850 font-bold leading-relaxed">{project.outcome}</span>
                   </div>
                 </div>
@@ -98,10 +112,10 @@ export default function PastWorkPage() {
               {/* Photo Gallery Horizontal Scroll Row */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-teal-deep/55 uppercase tracking-wider block">
+                  <span className="text-[12px] font-black text-teal-deep/55 uppercase tracking-wider block">
                     Project Gallery ({project.images.length} Photos)
                   </span>
-                  <span className="text-[9px] text-slate-400 font-medium hidden sm:inline">
+                  <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
                     Scroll horizontally or click to zoom 🔍
                   </span>
                 </div>
@@ -123,19 +137,19 @@ export default function PastWorkPage() {
                       <div className="absolute inset-0 bg-teal-deep/0 group-hover:bg-teal-deep/10 transition-colors flex items-center justify-center">
                         <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
                       </div>
-                      <span className="absolute bottom-2.5 right-2.5 bg-black/40 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
+                      <span className="absolute bottom-2.5 right-2.5 bg-black/40 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
                         {imgIdx + 1}/{project.images.length}
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </section>
+        </motion.section>
 
         {/* CTA Back to corporate Brief */}
-        <section className="bg-gradient-to-br from-amber-50 via-background to-rose-50 border border-amber-200 rounded-[40px] p-8 md:p-12 text-center space-y-6">
+        <motion.section {...revealProps} className="bg-gradient-to-br from-amber-50 via-background to-rose-50 border border-amber-200 rounded-[40px] p-8 md:p-12 text-center space-y-6">
           <h3 className="font-heading text-2xl font-black text-teal-deep">
             Scale your unboxing journey with us
           </h3>
@@ -151,14 +165,18 @@ export default function PastWorkPage() {
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-        </section>
+        </motion.section>
 
       </div>
 
       {/* Lightbox / Enlarged Image Modal */}
+      <AnimatePresence>
       {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-350"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setSelectedImage(null)}
         >
           {/* Close button */}
@@ -203,8 +221,9 @@ export default function PastWorkPage() {
               <p className="text-xs text-white/60">Photo {activeImageIdx + 1} of {projects[activeProjectIdx].images.length}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }

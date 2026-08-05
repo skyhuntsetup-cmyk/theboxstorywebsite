@@ -287,7 +287,7 @@ function ClaimGiftContent() {
           >
             {/* Header card with note */}
             <div className="bg-white border border-slate-200/80 p-6 sm:p-8 rounded-[32px] space-y-4 text-center shadow-sm">
-              <span className="text-[10px] bg-saffron/10 border border-saffron/20 text-saffron font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[12px] bg-saffron/10 border border-saffron/20 text-saffron font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                 Handwritten Note from {senderName}
               </span>
               <p className="font-heading text-lg sm:text-xl italic text-teal-deep leading-relaxed max-w-lg mx-auto">
@@ -304,7 +304,7 @@ function ClaimGiftContent() {
               <div className="space-y-4 bg-white border border-slate-200 p-6 rounded-3xl shadow-sm text-left">
                 <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                   <div className="text-left">
-                    <span className="text-[10px] font-bold text-saffron uppercase block">Customize Your Box</span>
+                    <span className="text-[12px] font-bold text-saffron uppercase block">Customize Your Box</span>
                     <h3 className="font-heading text-base font-bold text-slate-800">Choose Up to {maxItems} Treats</h3>
                   </div>
                   <span className="text-xs bg-saffron/15 border border-saffron/25 text-saffron font-bold px-3 py-1 rounded-full">
@@ -331,7 +331,7 @@ function ClaimGiftContent() {
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-lg border border-slate-200" />
                           <div className="text-left space-y-0.5">
                             <span className="text-xs font-semibold text-slate-800 block leading-tight">{item.name}</span>
-                            <span className="text-[10px] text-slate-400">{item.category}</span>
+                            <span className="text-[12px] text-slate-400">{item.category}</span>
                           </div>
                         </div>
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
@@ -369,7 +369,7 @@ function ClaimGiftContent() {
                           {item.name}
                         </span>
                         {"isCustomBox" in item && item.isCustomBox && (
-                          <span className="text-[9px] text-gold font-bold">Custom Build</span>
+                          <span className="text-[11px] text-gold font-bold">Custom Build</span>
                         )}
                       </div>
                     </div>
@@ -377,7 +377,7 @@ function ClaimGiftContent() {
                 </div>
                 {boxItems.some((item) => "giftMessage" in item && item.giftMessage) && (
                   <div className="bg-white border border-gold/20 p-5 rounded-2xl text-left space-y-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Greeting Card</span>
+                    <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Greeting Card</span>
                     {boxItems
                       .filter((item): item is OrderItem => "giftMessage" in item && Boolean(item.giftMessage))
                       .map((item, idx) => (
@@ -400,7 +400,7 @@ function ClaimGiftContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-teal-deep/60">Full Name</label>
+                  <label className="text-[12px] font-bold text-teal-deep/60">Full Name</label>
                   <input
                     type="text"
                     required
@@ -411,7 +411,7 @@ function ClaimGiftContent() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-teal-deep/60">Contact Number</label>
+                  <label className="text-[12px] font-bold text-teal-deep/60">Contact Number</label>
                   <input
                     type="tel"
                     required
@@ -424,7 +424,7 @@ function ClaimGiftContent() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-teal-deep/60">Delivery Address</label>
+                <label className="text-[12px] font-bold text-teal-deep/60">Delivery Address</label>
                 <input
                   type="text"
                   required
@@ -437,7 +437,7 @@ function ClaimGiftContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-teal-deep/60">City</label>
+                  <label className="text-[12px] font-bold text-teal-deep/60">City</label>
                   <input
                     type="text"
                     required
@@ -448,7 +448,7 @@ function ClaimGiftContent() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-teal-deep/60">State</label>
+                  <label className="text-[12px] font-bold text-teal-deep/60">State</label>
                   <input
                     type="text"
                     required
@@ -459,7 +459,7 @@ function ClaimGiftContent() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-teal-deep/60">ZIP / PIN Code</label>
+                  <label className="text-[12px] font-bold text-teal-deep/60">ZIP / PIN Code</label>
                   <input
                     type="text"
                     required
@@ -502,7 +502,7 @@ function ClaimGiftContent() {
             </div>
 
             <div className="space-y-2">
-              <span className="text-[10px] bg-[#D1126A]/10 border border-rani-pink/20 text-rani-pink font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[12px] bg-[#D1126A]/10 border border-rani-pink/20 text-rani-pink font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                 Success
               </span>
               <h2 className="font-heading text-3xl font-black">Gift is Registered!</h2>
@@ -514,17 +514,17 @@ function ClaimGiftContent() {
 
             {/* Display final selected items to recipient */}
             <div className="space-y-2 max-w-sm mx-auto bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <span className="text-[10px] font-bold text-slate-450 uppercase block mb-1">Your Custom Selection</span>
+              <span className="text-[12px] font-bold text-slate-450 uppercase block mb-1">Your Custom Selection</span>
               <div className="flex flex-wrap gap-1 justify-center">
                 {boxItems.map((item: OrderItem | SelectableItem, idx: number) => (
-                  <span key={idx} className="bg-teal-deep/10 text-teal-deep px-2 py-0.5 rounded text-[10px] font-semibold">
+                  <span key={idx} className="bg-teal-deep/10 text-teal-deep px-2 py-0.5 rounded text-[12px] font-semibold">
                     {item.name}
                   </span>
                 ))}
               </div>
             </div>
 
-            <div className="pt-2 flex items-center justify-center space-x-2 text-[10px] text-slate-400">
+            <div className="pt-2 flex items-center justify-center space-x-2 text-[12px] text-slate-400">
               <Truck className="w-3.5 h-3.5 animate-pulse" />
               <span>ETA: 3 to 4 business days. Delivery tracking details will be sent via SMS.</span>
             </div>
@@ -537,7 +537,7 @@ function ClaimGiftContent() {
 
 export default function ClaimGift() {
   return (
-    <div className="min-h-[90vh] bg-[#FAF9F5] text-slate-800 flex items-center justify-center px-6 py-12 relative overflow-hidden">
+    <div className="min-h-[90vh] bg-[#FAF9F5] text-slate-800 flex items-center justify-center px-6 py-10 relative overflow-hidden">
       <div className="absolute top-20 left-10 w-[200px] h-[200px] bg-saffron/5 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-10 w-[300px] h-[300px] bg-rani-pink/5 rounded-full blur-3xl" />
       

@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { getContent } from "../../lib/siteContent";
+import { revealProps, staggerContainer, staggerItem } from "../../lib/motion";
 
 export default function About() {
   const heroBadge = getContent("about.hero.badge", "OUR MISSION & VALUES");
@@ -69,16 +70,16 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-12 px-6">
-      <div className="max-w-5xl mx-auto space-y-24">
+    <div className="min-h-screen bg-background text-slate-800 py-10 px-6">
+      <div className="max-w-5xl mx-auto space-y-16">
         
         {/* Editorial Hero Header */}
-        <section className="relative rounded-[40px] overflow-hidden bg-white border border-slate-200 p-8 md:p-20 shadow-sm text-left">
+        <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative rounded-[40px] overflow-hidden bg-white border border-slate-200 p-8 md:p-20 shadow-sm text-left">
           <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100/50 rounded-full blur-3xl -z-10 animate-pulse" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#FAF4E8]/60 rounded-full blur-3xl -z-10" />
 
           <div className="max-w-2xl space-y-6 relative z-10">
-            <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 border border-saffron/15 px-3 py-1.5 rounded-full inline-block">
+            <span className="text-[12px] tracking-widest font-black uppercase text-saffron bg-saffron/10 border border-saffron/15 px-3 py-1.5 rounded-full inline-block">
               {heroBadge}
             </span>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-light text-slate-900 leading-tight">
@@ -90,12 +91,12 @@ export default function About() {
               {heroBody}
             </p>
           </div>
-        </section>
+        </motion.section>
 
         {/* What We Are / Our Story */}
-        <section className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+        <motion.section {...revealProps} className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-7 space-y-6 text-left">
-            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block border border-rani-pink/10">
+            <span className="text-[12px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block border border-rani-pink/10">
               The Box Story Genesis
             </span>
             <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
@@ -117,24 +118,32 @@ export default function About() {
               className="w-full h-full object-cover"
             />
           </div>
-        </section>
+        </motion.section>
 
         {/* Core Pillars / What We Believe In */}
-        <section className="space-y-12">
-          <div className="text-center space-y-3">
-            <span className="text-[10px] font-bold text-teal-deep uppercase tracking-widest bg-teal-deep/5 px-2.5 py-1 rounded-full inline-block">
+        <section className="space-y-10">
+          <motion.div {...revealProps} className="text-center space-y-3">
+            <span className="text-[12px] font-bold text-teal-deep uppercase tracking-widest bg-teal-deep/5 px-2.5 py-1 rounded-full inline-block">
               OUR PILLARS
             </span>
             <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">How We Do Gifting Differently</h2>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
               Our philosophy is anchored in four core values that ensure every box leaves a lasting impression.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left"
+          >
             {pillars.map((pillar, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                variants={staggerItem}
+                whileHover={{ y: -4 }}
                 className="bg-white border border-slate-200 rounded-[32px] p-8 space-y-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
               >
                 <div className="w-12 h-12 bg-slate-50 text-slate-700 border border-slate-200/60 rounded-2xl flex items-center justify-center group-hover:bg-teal-deep group-hover:text-white group-hover:border-teal-deep transition-all">
@@ -142,27 +151,34 @@ export default function About() {
                 </div>
                 <h3 className="font-heading text-lg font-bold text-slate-900">{pillar.title}</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">{pillar.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* Our Services / What We Offer */}
-        <section className="space-y-12 bg-white border border-slate-250/50 rounded-[40px] p-8 md:p-14 shadow-sm">
-          <div className="text-center space-y-3">
-            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block">
+        <section className="space-y-10 bg-white border border-slate-250/50 rounded-[40px] p-8 md:p-14 shadow-sm">
+          <motion.div {...revealProps} className="text-center space-y-3">
+            <span className="text-[12px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 px-2.5 py-1 rounded-full inline-block">
               SERVICES
             </span>
             <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">Our Curated Services</h2>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
               Whether you are planning a corporate campaign, a wedding invite, or a personal birthday gesture, we have you covered.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left"
+          >
             {services.map((service, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                variants={staggerItem}
                 className="border-b border-slate-100 last:border-b-0 md:border-b-0 pb-6 md:pb-0 space-y-4 flex flex-col justify-between"
               >
                 <div className="space-y-3">
@@ -181,16 +197,16 @@ export default function About() {
                     <ArrowRight className="w-3.5 h-3.5 ml-1 transform group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* High-end CTA Section */}
-        <section className="rounded-[40px] bg-teal-deep text-white p-8 md:p-16 text-center space-y-6 relative overflow-hidden shadow-lg">
+        <motion.section {...revealProps} className="rounded-[40px] bg-teal-deep text-white p-8 md:p-16 text-center space-y-6 relative overflow-hidden shadow-lg">
           <div className="absolute top-0 right-0 w-80 h-80 bg-saffron/10 rounded-full blur-3xl -z-10" />
           <div className="max-w-2xl mx-auto space-y-6">
-            <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 px-3.5 py-1.5 rounded-full inline-block border border-saffron/20">
+            <span className="text-[12px] tracking-widest font-black uppercase text-saffron bg-saffron/10 px-3.5 py-1.5 rounded-full inline-block border border-saffron/20">
               CREATE A MEMORY
             </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-light leading-tight">
@@ -215,7 +231,7 @@ export default function About() {
               </Link>
             </div>
           </div>
-        </section>
+        </motion.section>
       </div>
     </div>
   );

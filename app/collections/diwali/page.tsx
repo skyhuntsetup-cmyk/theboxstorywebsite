@@ -581,15 +581,15 @@ export default function DiwaliCollection() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf4e7] py-16 px-6 text-slate-800">
-      <div className="max-w-6xl mx-auto space-y-16">
+    <div className="min-h-screen bg-[#faf4e7] py-12 px-6 text-slate-800">
+      <div className="max-w-6xl mx-auto space-y-12">
         
         {/* Banner Section */}
         <section className="relative rounded-[40px] overflow-hidden bg-white border border-teal-deep/5 p-8 md:p-16 shadow-lg text-left">
           <div className="absolute top-0 right-0 w-72 h-72 bg-saffron/5 rounded-full blur-3xl -z-10" />
           
           <div className="max-w-2xl space-y-6">
-            <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 px-3.5 py-1.5 rounded-full inline-block border border-saffron/20">
+            <span className="text-[12px] tracking-widest font-black uppercase text-saffron bg-saffron/10 px-3.5 py-1.5 rounded-full inline-block border border-saffron/20">
               Seasonal Releases 2026
             </span>
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-teal-deep leading-tight">
@@ -645,20 +645,20 @@ export default function DiwaliCollection() {
                 {/* Details info */}
                 <div className="p-6 space-y-3 flex-1 flex flex-col justify-between text-left">
                   <div className="space-y-1">
-                    <span className="text-[9px] font-black text-saffron uppercase tracking-widest font-mono">Starts at</span>
+                    <span className="text-[11px] font-black text-saffron uppercase tracking-widest font-mono">Starts at</span>
                     <div className="flex justify-between items-center">
                       <h3 className="font-heading text-lg font-black text-teal-deep group-hover:text-rani-pink transition-colors">
                         {p.name}
                       </h3>
                       <span className="font-heading font-black text-teal-deep font-mono">₹{p.price}</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 italic font-light line-clamp-2">
+                    <p className="text-[13px] text-slate-500 italic font-light line-clamp-2">
                       {p.tagline}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between pt-3 border-t border-teal-deep/5 mt-auto">
-                    <span className="text-[9px] font-bold text-teal-deep/40 uppercase">{p.photoPages.length} Photo Plates</span>
+                    <span className="text-[11px] font-bold text-teal-deep/40 uppercase">{p.photoPages.length} Photo Plates</span>
                     <ChevronRight className="w-4 h-4 text-teal-deep/40 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -721,7 +721,7 @@ export default function DiwaliCollection() {
                       </>
                     )}
 
-                    <div className="absolute bottom-3 right-3 bg-teal-deep/70 backdrop-blur-sm text-[8px] font-mono text-white px-2.5 py-1 rounded-md">
+                    <div className="absolute bottom-3 right-3 bg-teal-deep/70 backdrop-blur-sm text-[10px] font-mono text-white px-2.5 py-1 rounded-md">
                       Photo Plate {selectedProduct.photoPages[activePhotoIdx]} of 85
                     </div>
                   </div>
@@ -747,7 +747,7 @@ export default function DiwaliCollection() {
                   <div className="space-y-6">
                     {/* Native Header */}
                     <div className="space-y-2">
-                      <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 px-3 py-1 rounded-full inline-block border border-saffron/20 font-mono">
+                      <span className="text-[12px] tracking-widest font-black uppercase text-saffron bg-saffron/10 px-3 py-1 rounded-full inline-block border border-saffron/20 font-mono">
                         Spec Sheet • Page {selectedProduct.detailPage}
                       </span>
                       <h2 className="font-heading text-3xl font-black text-teal-deep leading-none">{selectedProduct.name}</h2>
@@ -756,7 +756,7 @@ export default function DiwaliCollection() {
 
                     {/* Extracted Description / Story */}
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black text-teal-deep/45 uppercase tracking-widest">Story & Details</span>
+                      <span className="text-[11px] font-black text-teal-deep/45 uppercase tracking-widest">Story & Details</span>
                       <p className="text-xs text-slate-650 leading-relaxed font-light">
                         {selectedProduct.description}
                       </p>
@@ -764,7 +764,7 @@ export default function DiwaliCollection() {
 
                     {/* Extracted Inclusions */}
                     <div className="space-y-2.5">
-                      <span className="text-[9px] font-black text-teal-deep/45 uppercase tracking-widest">Hamper Inclusions</span>
+                      <span className="text-[11px] font-black text-teal-deep/45 uppercase tracking-widest">Hamper Inclusions</span>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white/70 border border-teal-deep/5 p-4 rounded-2xl">
                         {selectedProduct.inclusions.map((inc: string, i: number) => (
                           <div key={i} className="flex items-start space-x-1.5 text-xs text-teal-deep/80 font-medium">
@@ -777,7 +777,7 @@ export default function DiwaliCollection() {
 
                     {/* Extracted Price Tiers & Weights */}
                     <div className="space-y-2">
-                      <span className="text-[9px] font-black text-teal-deep/45 uppercase tracking-widest">Pricing & Weights</span>
+                      <span className="text-[11px] font-black text-teal-deep/45 uppercase tracking-widest">Pricing & Weights</span>
                       <div className="space-y-2 bg-[#FCFAF2]/60 border border-teal-deep/5 p-4 rounded-xl">
                         {selectedProduct.variants.map((v: ProductVariant, idx: number) => (
                           <div key={idx} className="flex justify-between items-center text-xs border-b border-teal-deep/5 pb-1.5 last:border-b-0 last:pb-0">
@@ -790,7 +790,7 @@ export default function DiwaliCollection() {
 
                     {/* Quick Inquiry Form */}
                     <div className="border-t border-teal-deep/5 pt-6 space-y-4">
-                      <span className="text-[10px] font-black text-saffron uppercase tracking-widest block">Quick Bulk Inquiry</span>
+                      <span className="text-[12px] font-black text-saffron uppercase tracking-widest block">Quick Bulk Inquiry</span>
                       
                       <AnimatePresence mode="wait">
                         {!isSubmitted ? (
@@ -832,7 +832,7 @@ export default function DiwaliCollection() {
                               />
                             </div>
                             <div className="grid grid-cols-2 gap-3 items-center">
-                              <label className="text-[10px] font-bold text-teal-deep/60">Estimated Qty:</label>
+                              <label className="text-[12px] font-bold text-teal-deep/60">Estimated Qty:</label>
                               <select 
                                 value={formData.quantity}
                                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
@@ -862,7 +862,7 @@ export default function DiwaliCollection() {
                         ) : (
                           <div className="text-center py-4 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-2">
                             <span className="font-bold text-xs text-emerald-800 block">Inquiry Submitted!</span>
-                            <span className="text-[10px] text-emerald-700 leading-relaxed block max-w-xs mx-auto px-4">
+                            <span className="text-[12px] text-emerald-700 leading-relaxed block max-w-xs mx-auto px-4">
                               We have registered your request for &quot;{selectedProduct.name}&quot;. Our Diwali consultant will WhatsApp you shortly!
                             </span>
                           </div>
@@ -872,7 +872,7 @@ export default function DiwaliCollection() {
                   </div>
 
                   {/* Modal Footer */}
-                  <div className="pt-6 border-t border-teal-deep/5 flex justify-between items-center text-[10px] text-teal-deep/45">
+                  <div className="pt-6 border-t border-teal-deep/5 flex justify-between items-center text-[12px] text-teal-deep/45">
                     <span>GST & Shipping extra</span>
                     <button 
                       type="button" 

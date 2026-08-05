@@ -7,6 +7,7 @@ import {
   Globe, Laptop, Star, ArrowRight, ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { revealProps, staggerContainer, staggerItem } from "../../lib/motion";
 
 export default function CorporateGifting() {
   const [formData, setFormData] = useState({
@@ -114,11 +115,16 @@ export default function CorporateGifting() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-12 px-6">
-      <div className="max-w-6xl mx-auto space-y-24">
+    <div className="min-h-screen bg-background text-slate-800 py-10 px-6">
+      <div className="max-w-6xl mx-auto space-y-16">
         
         {/* Banner Section: Sleek B2B Layout (Light Theme) */}
-        <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-amber-50 via-background to-rose-50 text-slate-800 p-8 md:p-20 shadow-sm border border-slate-200 text-left">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-amber-50 via-background to-rose-50 text-slate-800 p-8 md:p-20 shadow-sm border border-slate-200 text-left"
+        >
           <div className="max-w-2xl space-y-6">
             <span className="text-xs font-extrabold uppercase tracking-widest text-slate-500 bg-background border border-slate-200 px-3 py-1.5 rounded-full inline-block">
               Corporate Bulk Services
@@ -140,11 +146,11 @@ export default function CorporateGifting() {
               </a>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Client Logos ticker */}
         <section className="space-y-4 text-center">
-          <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Trusted by fast-growing startups & enterprises</span>
+          <span className="text-[12px] uppercase font-bold tracking-widest text-slate-400">Trusted by fast-growing startups & enterprises</span>
           <div className="flex flex-wrap gap-8 justify-center items-center py-4 opacity-55">
             {clientLogos.map((logo, idx) => (
               <span key={idx} className="font-heading text-xl font-extrabold tracking-tight text-slate-600 uppercase">
@@ -155,21 +161,27 @@ export default function CorporateGifting() {
         </section>
 
         {/* Stats Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.section
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
           {stats.map((s, idx) => (
-            <div key={idx} className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm text-left space-y-2">
+            <motion.div key={idx} variants={staggerItem} whileHover={{ y: -4 }} className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm text-left space-y-2">
               <span className="text-3xl font-black text-slate-900 block tracking-tight">{s.number}</span>
               <span className="text-xs text-slate-500 uppercase font-bold tracking-wider">{s.label}</span>
-            </div>
+            </motion.div>
           ))}
-        </section>
+        </motion.section>
 
         {/* Corporate Gifting Profile & Why Choose Us */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-white border border-slate-200 p-8 md:p-12 rounded-[40px] shadow-sm text-left animate-fade-in">
+        <motion.section {...revealProps} className="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-white border border-slate-200 p-8 md:p-12 rounded-[40px] shadow-sm text-left">
           {/* Left Column: Corporate Gifting Profile Summary */}
           <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
             <div className="space-y-6">
-              <span className="text-[10px] tracking-widest font-black uppercase text-saffron bg-saffron/10 border border-saffron/15 px-3 py-1.5 rounded-full inline-block">
+              <span className="text-[12px] tracking-widest font-black uppercase text-saffron bg-saffron/10 border border-saffron/15 px-3 py-1.5 rounded-full inline-block">
                 Corporate Gifting Partner
               </span>
               <h2 className="font-heading text-3xl font-black text-slate-900 leading-tight">
@@ -185,8 +197,8 @@ export default function CorporateGifting() {
 
             <div className="space-y-4 pt-6 border-t border-slate-100">
               <div className="bg-[#FAF4E8]/50 border border-[#E2BA5F]/20 rounded-2xl p-4 space-y-3">
-                <span className="text-[9px] font-bold text-saffron uppercase tracking-widest block">Corporate Deck & Profile</span>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
+                <span className="text-[11px] font-bold text-saffron uppercase tracking-widest block">Corporate Deck & Profile</span>
+                <p className="text-[13px] text-slate-500 leading-relaxed">
                   Access our 37-page corporate profile detailing bulk catalogs, collaborations, and past works.
                 </p>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
@@ -217,7 +229,7 @@ export default function CorporateGifting() {
               <h3 className="font-heading text-lg font-black text-slate-900">
                 Explore Our Gifting Blueprint
               </h3>
-              <p className="text-[11px] text-slate-550 leading-normal">
+              <p className="text-[13px] text-slate-550 leading-normal">
                 Click on the tabs below to read about our capabilities, branding details, and strategic B2B advantages.
               </p>
             </div>
@@ -233,7 +245,7 @@ export default function CorporateGifting() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveProfileTab(tab.id as any)}
-                  className={`text-[10px] font-black uppercase tracking-wider px-3.5 py-2.5 rounded-xl border transition-all flex items-center space-x-1.5 ${
+                  className={`text-[12px] font-black uppercase tracking-wider px-3.5 py-2.5 rounded-xl border transition-all flex items-center space-x-1.5 ${
                     activeProfileTab === tab.id
                       ? "bg-slate-900 border-slate-900 text-white shadow-sm"
                       : "bg-[#FCFAF2]/30 border-slate-150 text-slate-650 hover:bg-slate-100"
@@ -259,25 +271,25 @@ export default function CorporateGifting() {
                   >
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Diverse Product Selection</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         We source premium gourmet treats, custom chocolate brittles, luxury home decor, and cutting-edge tech gadgets from trusted brands like Portronics and Noise.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Premium Packaging Formats</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Packaging options are as important as the gift. Select reusable pine wood sliding chests, rigid gold-foiled dresser boxes, or customizable eco-friendly trays.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Streamlined Distribution</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Leave logistics to us. We support bulk single-point shipping as well as individual home drop-shipping to remote employees across multiple global addresses.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Diwali & Festive Specialities</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Add traditional auspicious additions like hand-painted clay diyas, brass urli bowls, dry fruits jars, and heritage Pichwai floral sleeves.
                       </p>
                     </div>
@@ -295,25 +307,25 @@ export default function CorporateGifting() {
                   >
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Logo Embossing & Foiling</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Print your company logo on the exterior of the box with gold foil stamping or screen-printing to elevate the perceived brand value.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Laser Monogram Engraving</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Personalize premium metal pens, vacuum-insulated bottles, and wood notebook covers with individual employee/client names.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Color-Coordinated Design</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Match tissue paper fills, satin ribbons, custom sleeves, and packaging designs directly with your corporate brand guidelines.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Calligraphed Message Cards</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Ditch generic cards. Provide customized cursive hand-written calligraphy greeting tags or premium custom-printed brand cards.
                       </p>
                     </div>
@@ -331,25 +343,25 @@ export default function CorporateGifting() {
                   >
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Relationship Strengthening</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Acts as a gesture of goodwill, building stronger connections and encouraging long-term loyalty with partners and team members.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Enhanced Brand Exposure</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Branded utility keepsakes keep your company name on recipients&apos; desks and in their thoughts daily in a non-intrusive way.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Increased Client Retention</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Thoughtful thank-you gestures differentiate your service, elevating B2B client satisfaction and reducing churn.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Positive Corporate Image</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Highlights your commitment to employee appreciation and corporate social responsibility (CSR) with sustainable gift options.
                       </p>
                     </div>
@@ -367,25 +379,25 @@ export default function CorporateGifting() {
                   >
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Step 1: Choose Your Base Box</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Select a box matching your styling budget—wooden sliding chests, sleek rigid drawers, or open display baskets.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Step 2: Curate Product Inclusions</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Select from gourmet treats, dry fruits jars, desktop office supplies, tech charging pads, or coffee accessories.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Step 3: Personalize and Brand</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Add your brand logo, name monograms, custom tissue fillers, and coordinate color palettes with ribbon selections.
                       </p>
                     </div>
                     <div className="space-y-1.5">
                       <h4 className="text-xs font-black text-slate-900">Step 4: Confirm and Deliver</h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed font-light">
+                      <p className="text-[13px] text-slate-500 leading-relaxed font-light">
                         Confirm quantities and upload destination addresses. Our logistics team handles assembly and timely shipment.
                       </p>
                     </div>
@@ -394,12 +406,12 @@ export default function CorporateGifting() {
               </AnimatePresence>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Exploratory Subpages: Client Panel & Past Work */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <motion.section {...revealProps} className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white border border-slate-200 rounded-3xl p-8 text-left space-y-4 hover:shadow-md transition-shadow relative overflow-hidden group">
-            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+            <span className="text-[12px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
               Client Portal
             </span>
             <h3 className="font-heading text-xl font-black text-slate-900 group-hover:text-rani-pink transition-colors">
@@ -418,7 +430,7 @@ export default function CorporateGifting() {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-3xl p-8 text-left space-y-4 hover:shadow-md transition-shadow relative overflow-hidden group">
-            <span className="text-[10px] font-bold text-saffron uppercase tracking-widest bg-saffron/5 border border-saffron/15 px-2.5 py-1 rounded-full inline-block">
+            <span className="text-[12px] font-bold text-saffron uppercase tracking-widest bg-saffron/5 border border-saffron/15 px-2.5 py-1 rounded-full inline-block">
               Portfolio
             </span>
             <h3 className="font-heading text-xl font-black text-slate-900 group-hover:text-rani-pink transition-colors">
@@ -435,34 +447,40 @@ export default function CorporateGifting() {
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-        </section>
+        </motion.section>
 
         {/* Services & Capabilities */}
-        <section className="space-y-12">
-          <div className="space-y-3 text-center">
+        <section className="space-y-10">
+          <motion.div {...revealProps} className="space-y-3 text-center">
             <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">Custom Corporate Solutions</h2>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
               We leverage modern technology platforms to make shipping swag and kits completely painless for HR & admin managers.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
             {features.map((f, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow text-left space-y-4">
+              <motion.div key={idx} variants={staggerItem} whileHover={{ y: -4 }} className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow text-left space-y-4">
                 <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-900">
                   <f.icon className="w-5 h-5" />
                 </div>
                 <h3 className="font-heading text-base font-bold text-slate-900">{f.title}</h3>
                 <p className="text-xs text-slate-650 leading-relaxed">{f.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* Products We Deal In / Catalogues Download */}
-        <section className="space-y-12 animate-fade-in">
+        <motion.section {...revealProps} className="space-y-10">
           <div className="space-y-3 text-center">
-            <span className="text-[10px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
+            <span className="text-[12px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
               Corporate Catalogues
             </span>
             <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">Products We Deal In</h2>
@@ -489,7 +507,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=BAG CATALOGUE 2025-26.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Standard Bag Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -497,7 +515,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=EXECUTIVE BAG CATALOGUE 2025-26.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Executive Bag Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -522,7 +540,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=NOTEBOOK CATALOGUE 2025-26.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Notebook Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -547,7 +565,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=PEN & KEYCHAIN CATALOGUE 2025-26.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Pens & Keychains Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -572,7 +590,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=WALLET CATALOGUE 2025-26.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Wallets Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -597,7 +615,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=MEYVIN CATALOGUE 2025-26.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Meyvin Flasks Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -622,7 +640,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=LIFESTYLE PRODUCT CATALOGUE 2025-26.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Lifestyle Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -647,7 +665,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=1.Portronics_PPT_July.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Portronics PPT</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -672,7 +690,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=13.Wacaco Presentation 2023.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Wacaco Presentation</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -697,7 +715,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=7.Aquaminder July 2026.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Aquaminder Brochure</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -722,7 +740,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=CORPORATE GIFTS.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Corporate Gifts Proposal</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -747,7 +765,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=NOISE ELECTRONICS.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Noise Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -772,7 +790,7 @@ export default function CorporateGifting() {
                 <a
                   href="/corporate/catalog?file=DRINKWARE.pdf"
                   target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[11px] font-bold text-teal-deep hover:text-saffron transition-colors"
+                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
                 >
                   <span>Download Drinkware Catalog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -798,7 +816,7 @@ export default function CorporateGifting() {
                   <a
                     href="/corporate/catalog?file=Flynn Premium Tee Catalogue-1.pdf"
                     target="_blank"
-                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >
                     <span>Flynn Tees</span>
                     <ArrowRight className="w-2.5 h-2.5" />
@@ -806,7 +824,7 @@ export default function CorporateGifting() {
                   <a
                     href="/corporate/catalog?file=golfer premium polo.pdf"
                     target="_blank"
-                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >
                     <span>Golfer Polos</span>
                     <ArrowRight className="w-2.5 h-2.5" />
@@ -814,7 +832,7 @@ export default function CorporateGifting() {
                   <a
                     href="/corporate/catalog?file=solid polo.pdf"
                     target="_blank"
-                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >
                     <span>Solid Polos</span>
                     <ArrowRight className="w-2.5 h-2.5" />
@@ -822,7 +840,7 @@ export default function CorporateGifting() {
                   <a
                     href="/corporate/catalog?file=green polo.pdf"
                     target="_blank"
-                    className="flex items-center justify-between text-[11px] text-teal-deep font-bold hover:text-saffron transition-colors"
+                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
                   >
                     <span>Green Polos</span>
                     <ArrowRight className="w-2.5 h-2.5" />
@@ -832,10 +850,10 @@ export default function CorporateGifting() {
             </div>
 
           </div>
-        </section>
+        </motion.section>
 
         {/* Inquiries Form Section */}
-        <section id="brief-form" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm text-left">
+        <motion.section {...revealProps} id="brief-form" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm text-left">
           <div className="lg:col-span-5 space-y-6">
             <span className="text-xs font-bold text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase tracking-wider">
               Project Brief
@@ -991,12 +1009,12 @@ export default function CorporateGifting() {
               )}
             </AnimatePresence>
           </div>
-        </section>
+        </motion.section>
 
         {/* Testimonials Segment: What Our Corporate Clients Say */}
-        <section className="space-y-10 text-center">
+        <section className="space-y-8 text-center">
           <div className="space-y-2">
-            <span className="text-[10px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
+            <span className="text-[12px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
               Reviews & Validation
             </span>
             <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">
@@ -1020,7 +1038,7 @@ export default function CorporateGifting() {
                 <div className="border-t border-slate-100 pt-4 flex justify-between items-center mt-auto">
                   <div className="flex flex-col">
                     <span className="text-xs font-bold text-slate-800">{t.author}</span>
-                    <span className="text-[10px] text-slate-500 font-semibold">{t.role}</span>
+                    <span className="text-[12px] text-slate-500 font-semibold">{t.role}</span>
                   </div>
                   <Building className="w-4 h-4 text-teal-deep/30" />
                 </div>

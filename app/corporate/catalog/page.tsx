@@ -191,14 +191,14 @@ function CatalogReaderContent() {
           </Link>
           <div className="text-left">
             <h1 className="font-heading text-base sm:text-lg font-black text-teal-deep">Digital Catalog Showcase</h1>
-            <p className="text-[9px] text-teal-deep/50 uppercase tracking-widest font-black flex items-center space-x-1">
+            <p className="text-[11px] text-teal-deep/50 uppercase tracking-widest font-black flex items-center space-x-1">
               <span>View Brochures Live on Site</span>
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
-          <span className="hidden md:inline-block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <span className="hidden md:inline-block text-[12px] font-bold text-slate-400 uppercase tracking-widest">
             Active: {selectedCatalog.category}
           </span>
           <a 
@@ -219,7 +219,7 @@ function CatalogReaderContent() {
         <aside className="hidden md:flex flex-col w-80 bg-white border-r border-teal-deep/5 overflow-y-auto shrink-0 text-left p-6 space-y-6">
           {/* Sidebar Search */}
           <div className="space-y-2">
-            <span className="text-[10px] font-black text-teal-deep/40 uppercase tracking-widest block">Filter Collections</span>
+            <span className="text-[12px] font-black text-teal-deep/40 uppercase tracking-widest block">Filter Collections</span>
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-teal-deep/30 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input 
@@ -234,7 +234,7 @@ function CatalogReaderContent() {
 
           {/* Catalog Selection List */}
           <div className="space-y-4 flex-1">
-            <span className="text-[10px] font-black text-teal-deep/40 uppercase tracking-widest block">Available Catalogues</span>
+            <span className="text-[12px] font-black text-teal-deep/40 uppercase tracking-widest block">Available Catalogues</span>
             <div className="space-y-2">
               {filteredCatalogs.map((item, idx) => {
                 const isSelected = selectedCatalog.file === item.file;
@@ -254,7 +254,7 @@ function CatalogReaderContent() {
                     </div>
                     <div className="space-y-0.5 min-w-0">
                       <span className="text-xs block font-bold leading-snug truncate">{item.title}</span>
-                      <span className={`text-[9px] block leading-relaxed truncate ${isSelected ? "text-white/70" : "text-teal-deep/50"}`}>
+                      <span className={`text-[11px] block leading-relaxed truncate ${isSelected ? "text-white/70" : "text-teal-deep/50"}`}>
                         {item.description}
                       </span>
                     </div>
@@ -302,7 +302,7 @@ function CatalogReaderContent() {
           </div>
 
           {/* Desktop/Tablet Footer Status */}
-          <div className="hidden sm:flex justify-between items-center text-[10px] text-slate-400 mt-3 px-2 shrink-0">
+          <div className="hidden sm:flex justify-between items-center text-[12px] text-slate-400 mt-3 px-2 shrink-0">
             <span>You are viewing: <strong>{selectedCatalog.title}</strong></span>
             <span>Pre-curated collections are updated seasonal.</span>
           </div>

@@ -132,7 +132,7 @@ export const CartDrawer = () => {
                             {item.boxItems.map((boxItem, idx) => (
                               <span
                                 key={idx}
-                                className="text-[10px] bg-teal-deep/5 text-teal-deep border border-teal-deep/10 px-2 py-0.5 rounded-full"
+                                className="text-[12px] bg-teal-deep/5 text-teal-deep border border-teal-deep/10 px-2 py-0.5 rounded-full"
                               >
                                 {boxItem.name}
                               </span>
@@ -141,7 +141,7 @@ export const CartDrawer = () => {
                         )}
 
                         {item.giftMessage && (
-                          <p className="text-[10px] italic text-rani-pink/80 mb-3 line-clamp-1">
+                          <p className="text-[12px] italic text-rani-pink/80 mb-3 line-clamp-1">
                             &quot;{item.giftMessage}&quot;
                           </p>
                         )}
@@ -205,7 +205,7 @@ export const CartDrawer = () => {
                   <span>Proceed to Checkout</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <p className="text-[10px] text-center text-teal-deep/50 mt-2">
+                <p className="text-[12px] text-center text-teal-deep/50 mt-2">
                   Tax included. Discount codes can be applied in checkout.
                 </p>
               </div>

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Sparkles, Send, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { staggerContainer, staggerItem } from "../../lib/motion";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -47,9 +48,14 @@ export default function Contact() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-16 text-left">
+    <div className="max-w-6xl mx-auto px-6 py-8 space-y-12 text-left">
       {/* Page Header */}
-      <section className="text-center max-w-2xl mx-auto space-y-4">
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-center max-w-2xl mx-auto space-y-4"
+      >
         <div className="inline-flex items-center space-x-1.5 bg-saffron/10 border border-saffron/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-saffron uppercase">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Connect with Us</span>
@@ -60,14 +66,22 @@ export default function Contact() {
         <p className="text-xs sm:text-sm text-teal-deep/75 leading-relaxed">
           Need support with a claim link, bulk ordering for weddings, or custom corporate branding? Our design specialist team is here to assist.
         </p>
-      </section>
+      </motion.section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         {/* Left Side: Contact Information Cards */}
-        <div className="lg:col-span-5 space-y-6">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="lg:col-span-5 space-y-6"
+        >
           {contactOptions.map((opt, idx) => (
-            <div
+            <motion.div
               key={idx}
+              variants={staggerItem}
+              whileHover={{ x: 4 }}
               className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex space-x-4 items-start"
             >
               <div className="p-3 bg-teal-deep/5 rounded-xl text-teal-deep">
@@ -80,12 +94,18 @@ export default function Contact() {
                 <p className="text-sm font-bold text-teal-deep">{opt.value}</p>
                 <p className="text-xs text-teal-deep/60">{opt.desc}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Right Side: Message Form */}
-        <div className="lg:col-span-7 bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 shadow-sm">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="lg:col-span-7 bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 shadow-sm"
+        >
           <AnimatePresence mode="wait">
             {!isSubmitted ? (
               <motion.form
@@ -185,7 +205,7 @@ export default function Contact() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

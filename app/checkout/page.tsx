@@ -125,7 +125,7 @@ export default function Checkout() {
 
   if (paymentSuccess) {
     return (
-      <div className="max-w-xl mx-auto px-6 py-12 text-left">
+      <div className="max-w-xl mx-auto px-6 py-10 text-left">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -136,7 +136,7 @@ export default function Checkout() {
           </div>
 
           <div className="space-y-3">
-            <span className="text-[10px] uppercase font-bold tracking-widest text-[#9D174D] bg-[#9D174D]/10 px-3.5 py-1.5 rounded-full">
+            <span className="text-[12px] uppercase font-bold tracking-widest text-[#9D174D] bg-[#9D174D]/10 px-3.5 py-1.5 rounded-full">
               Order Placed Successfully
             </span>
             <h1 className="font-heading text-3xl font-black text-teal-deep">
@@ -154,7 +154,7 @@ export default function Checkout() {
 
           {placedGiftMessages.length > 0 && (
             <div className="bg-[#042F2E]/5 border border-teal-deep/5 p-4 rounded-2xl text-left space-y-3">
-              <span className="text-[10px] font-bold text-teal-deep/50 uppercase">Greeting Card{placedGiftMessages.length > 1 ? "s" : ""}</span>
+              <span className="text-[12px] font-bold text-teal-deep/50 uppercase">Greeting Card{placedGiftMessages.length > 1 ? "s" : ""}</span>
               {placedGiftMessages.map((msg, idx) => (
                 <p key={idx} className="font-heading italic text-sm text-teal-deep/80 leading-relaxed">&quot;{msg}&quot;</p>
               ))}
@@ -163,7 +163,7 @@ export default function Checkout() {
 
           {deliveryMode === "magical" && (
             <div className="bg-[#042F2E]/5 border border-teal-deep/5 p-4 rounded-2xl text-left space-y-2">
-              <span className="text-[10px] font-bold text-teal-deep/50 uppercase">Your Magical Link</span>
+              <span className="text-[12px] font-bold text-teal-deep/50 uppercase">Your Magical Link</span>
               <div className="flex items-center justify-between bg-white border border-teal-deep/10 px-4 py-2.5 rounded-xl">
                 <code className="text-xs text-rani-pink font-semibold truncate select-all pr-4">
                   {typeof window !== "undefined" ? `${window.location.origin}/claim-gift?id=${createdOrderId}` : `https://theboxstory.co.in/claim-gift?id=${createdOrderId}`}
@@ -240,7 +240,7 @@ export default function Checkout() {
                   <MapPin className="w-5 h-5 text-teal-deep" />
                   <div className="space-y-0.5">
                     <span className="text-xs font-bold text-teal-deep block">Ship to Address</span>
-                    <span className="text-[10px] text-teal-deep/50">Standard courier delivery</span>
+                    <span className="text-[12px] text-teal-deep/50">Standard courier delivery</span>
                   </div>
                 </button>
 
@@ -256,7 +256,7 @@ export default function Checkout() {
                   <Send className="w-5 h-5 text-rani-pink" />
                   <div className="space-y-0.5">
                     <span className="text-xs font-bold text-teal-deep block">Send via Magical Link</span>
-                    <span className="text-[10px] text-teal-deep/50">Recipient fills their own address</span>
+                    <span className="text-[12px] text-teal-deep/50">Recipient fills their own address</span>
                   </div>
                 </button>
               </div>
@@ -363,7 +363,7 @@ export default function Checkout() {
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Recipient Name</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Recipient Name</label>
                       <input
                         type="text"
                         required
@@ -374,7 +374,7 @@ export default function Checkout() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-teal-deep/60">Recipient WhatsApp or Email</label>
+                      <label className="text-[12px] font-bold text-teal-deep/60">Recipient WhatsApp or Email</label>
                       <input
                         type="text"
                         required
@@ -387,7 +387,7 @@ export default function Checkout() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-teal-deep/60">Handwritten Note (Cursive Render)</label>
+                    <label className="text-[12px] font-bold text-teal-deep/60">Handwritten Note (Cursive Render)</label>
                     <textarea
                       rows={4}
                       placeholder="Write a message. It will render in a beautiful handwriting font on their claim page..."
@@ -411,7 +411,7 @@ export default function Checkout() {
 
                     {recipientSelects && (
                       <div className="space-y-1.5 p-4 bg-saffron/5 rounded-2xl border border-saffron/10">
-                        <label className="text-[10px] font-bold text-teal-deep/60">Choose Gift Box Budget Tier</label>
+                        <label className="text-[12px] font-bold text-teal-deep/60">Choose Gift Box Budget Tier</label>
                         <select
                           value={budgetTier}
                           onChange={(e) => setBudgetTier(Number(e.target.value))}
@@ -421,7 +421,7 @@ export default function Checkout() {
                           <option value={2500}>Silver Tier - ₹2,500 budget (choose up to 4 items)</option>
                           <option value={4000}>Gold Tier - ₹4,000 budget (choose up to 5 items)</option>
                         </select>
-                        <span className="text-[10px] text-teal-deep/50 block">Your recipient will customize their hamper inside this budget limit.</span>
+                        <span className="text-[12px] text-teal-deep/50 block">Your recipient will customize their hamper inside this budget limit.</span>
                       </div>
                     )}
                   </div>
@@ -451,7 +451,7 @@ export default function Checkout() {
                 </div>
               ) : (
                 <div className="text-xs p-4 bg-white/5 rounded-2xl border border-white/5 space-y-1.5">
-                  <span className="text-[10px] font-bold text-saffron uppercase block mb-1">Bespoke Option Active</span>
+                  <span className="text-[12px] font-bold text-saffron uppercase block mb-1">Bespoke Option Active</span>
                   <span className="font-semibold text-white/90">Recipient Selects Hamper Treats</span>
                   <span className="text-white/50 block">No pre-selected box contents will be shipped. Recipient picks items.</span>
                 </div>
@@ -498,7 +498,7 @@ export default function Checkout() {
                 <span>Confirm &amp; Place Order</span>
               </button>
 
-              <div className="flex items-center justify-center space-x-1.5 text-[10px] text-white/50">
+              <div className="flex items-center justify-center space-x-1.5 text-[12px] text-white/50">
                 <CreditCard className="w-3.5 h-3.5" />
                 <span>We&apos;ll call or WhatsApp you to confirm payment</span>
               </div>

@@ -6,6 +6,8 @@ import {
   Laptop, CheckCircle2,
   ArrowRight, Sparkles, Send, Database, BarChart3
 } from "lucide-react";
+import { motion } from "framer-motion";
+import { revealProps, staggerContainer, staggerItem } from "../../../lib/motion";
 
 export default function ClientPanelPage() {
   const steps = [
@@ -40,8 +42,8 @@ export default function ClientPanelPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 py-16 px-6">
-      <div className="max-w-4xl mx-auto space-y-16 text-left">
+    <div className="min-h-screen bg-background text-slate-800 py-12 px-6">
+      <div className="max-w-4xl mx-auto space-y-12 text-left">
         
         {/* Breadcrumbs */}
         <div className="text-xs space-x-2 text-slate-400">
@@ -53,7 +55,12 @@ export default function ClientPanelPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="space-y-6">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="space-y-6"
+        >
           <div className="inline-flex items-center space-x-1.5 bg-saffron/10 border border-saffron/20 px-3 py-1 rounded-full text-xs font-bold text-saffron uppercase">
             <Laptop className="w-3.5 h-3.5" />
             <span>Digital Claiming Solutions</span>
@@ -65,26 +72,32 @@ export default function ClientPanelPage() {
           <p className="text-sm sm:text-base text-slate-650 leading-relaxed max-w-2xl font-light">
             Remove the logistical headache from B2B gifting. Our client panels allow employee claiming, address validations, and sizing collections without spreadsheets.
           </p>
-        </section>
+        </motion.section>
 
         {/* How It Works Step Grid */}
-        <section className="space-y-10">
-          <h2 className="font-heading text-2xl font-black text-teal-deep">The Portal Workflow</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <section className="space-y-8">
+          <motion.h2 {...revealProps} className="font-heading text-2xl font-black text-teal-deep">The Portal Workflow</motion.h2>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-8"
+          >
             {steps.map((step, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 p-8 rounded-3xl space-y-4 hover:shadow-sm transition-all">
+              <motion.div key={idx} variants={staggerItem} whileHover={{ y: -4 }} className="bg-white border border-slate-200 p-8 rounded-3xl space-y-4 hover:shadow-sm transition-all">
                 <div className="w-10 h-10 bg-teal-deep/5 rounded-xl flex items-center justify-center text-teal-deep">
                   <step.icon className="w-5 h-5" />
                 </div>
                 <h3 className="font-heading text-base font-bold text-teal-deep">{step.title}</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">{step.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* Branded Features Visual Block */}
-        <section className="bg-white border border-slate-200 p-8 md:p-12 rounded-[40px] shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        <motion.section {...revealProps} className="bg-white border border-slate-200 p-8 md:p-12 rounded-[40px] shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-7 space-y-6">
             <h2 className="font-heading text-2xl font-black text-teal-deep leading-tight">
               Branded Claims Simulator
@@ -112,22 +125,22 @@ export default function ClientPanelPage() {
             </div>
           </div>
           <div className="md:col-span-5 bg-background border border-slate-200 p-6 rounded-3xl space-y-4">
-            <span className="text-[9px] font-bold text-teal-deep/45 uppercase tracking-widest block border-b border-teal-deep/5 pb-2">Panel Preview</span>
+            <span className="text-[11px] font-bold text-teal-deep/45 uppercase tracking-widest block border-b border-teal-deep/5 pb-2">Panel Preview</span>
             <div className="space-y-2 text-xs">
               <div className="h-6 w-24 bg-teal-deep/10 rounded" />
               <div className="h-8 w-full bg-teal-deep/5 rounded" />
-              <div className="h-20 w-full border border-dashed border-teal-deep/15 rounded flex items-center justify-center text-[10px] text-teal-deep/40 font-semibold">
+              <div className="h-20 w-full border border-dashed border-teal-deep/15 rounded flex items-center justify-center text-[12px] text-teal-deep/40 font-semibold">
                 [ CEO Message Greeting ]
               </div>
-              <div className="h-8 w-full bg-rani-pink rounded-xl text-white font-bold flex items-center justify-center text-[10px] uppercase shadow-sm">
+              <div className="h-8 w-full bg-rani-pink rounded-xl text-white font-bold flex items-center justify-center text-[12px] uppercase shadow-sm">
                 Unbox Custom Hamper
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Admin Dashboard / Analytics section */}
-        <section className="space-y-6">
+        <motion.section {...revealProps} className="space-y-6">
           <div className="flex items-center space-x-2.5">
             <div className="p-2 bg-saffron/10 rounded-xl text-saffron">
               <BarChart3 className="w-5 h-5" />
@@ -145,10 +158,10 @@ export default function ClientPanelPage() {
               </li>
             ))}
           </ul>
-        </section>
+        </motion.section>
 
         {/* CTA section */}
-        <section className="bg-gradient-to-br from-amber-50 via-background to-rose-50 border border-amber-200 rounded-[40px] p-8 md:p-12 text-center space-y-6">
+        <motion.section {...revealProps} className="bg-gradient-to-br from-amber-50 via-background to-rose-50 border border-amber-200 rounded-[40px] p-8 md:p-12 text-center space-y-6">
           <h3 className="font-heading text-2xl font-black text-teal-deep">
             Ready to set up your Claimant Portal?
           </h3>
@@ -170,7 +183,7 @@ export default function ClientPanelPage() {
               <span>Test claim-token Flow</span>
             </Link>
           </div>
-        </section>
+        </motion.section>
 
       </div>
     </div>

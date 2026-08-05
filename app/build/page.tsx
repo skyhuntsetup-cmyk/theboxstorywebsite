@@ -2,9 +2,25 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { useGift, BoxItem } from "../context/GiftContext";
 import { Sparkles, Trash2, Box, ShoppingBag, Plus, Minus, Check, ArrowLeft, ArrowRight, MessageSquareHeart } from "lucide-react";
 import { supabase } from "../../lib/supabase";
+
+const stepVariants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 32 : -32 }),
+  center: { opacity: 1, x: 0 },
+  exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -32 : 32 }),
+};
+
+const gridContainer = {
+  animate: { transition: { staggerChildren: 0.05 } },
+};
+
+const gridItem = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+};
 
 interface BazaarListItem {
   id: string;
@@ -40,6 +56,7 @@ export default function BuildBox() {
   } = useGift();
 
   const [step, setStep] = useState<StepKey>("packaging");
+  const [direction, setDirection] = useState(1);
   const [selectedBoxStyle, setSelectedBoxStyle] = useState<string>("Classic Royal Gold");
   const [selectedRibbonStyle, setSelectedRibbonStyle] = useState<string>("Premium Gold Satin");
   const [giftMessage, setGiftMessage] = useState<string>("");
@@ -124,11 +141,11 @@ export default function BuildBox() {
   const goNext = () => {
     if (step === "products" && !canLeaveProducts) return;
     const next = STEPS[stepIndex + 1];
-    if (next) setStep(next.key);
+    if (next) { setDirection(1); setStep(next.key); }
   };
   const goBack = () => {
     const prev = STEPS[stepIndex - 1];
-    if (prev) setStep(prev.key);
+    if (prev) { setDirection(-1); setStep(prev.key); }
   };
 
   const handleCheckout = () => {
@@ -137,12 +154,12 @@ export default function BuildBox() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-10 px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[#FAF9F5] text-slate-800 py-8 px-6 relative overflow-hidden">
       {/* Decorative light ambient glows */}
       <div className="absolute top-10 left-10 w-96 h-96 bg-purple-100 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-teal-50 rounded-full blur-3xl -z-10" />
 
-      <div className="max-w-5xl mx-auto space-y-10">
+      <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <section className="text-center max-w-2xl mx-auto space-y-4">
           <div className="inline-flex items-center space-x-1.5 bg-teal-deep/5 border border-teal-deep/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-deep uppercase tracking-widest">
@@ -165,11 +182,18 @@ export default function BuildBox() {
             return (
               <React.Fragment key={s.key}>
                 <button
-                  onClick={() => (idx <= stepIndex || (idx === stepIndex + 1 && canLeaveProducts)) && setStep(s.key)}
+                  onClick={() => {
+                    if (idx <= stepIndex || (idx === stepIndex + 1 && canLeaveProducts)) {
+                      setDirection(idx > stepIndex ? 1 : -1);
+                      setStep(s.key);
+                    }
+                  }}
                   className="flex items-center gap-2 group"
                 >
-                  <span
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 transition-colors ${
+                  <motion.span
+                    animate={isActive ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0 transition-colors ${
                       isActive
                         ? "bg-teal-deep text-white"
                         : isDone
@@ -178,8 +202,8 @@ export default function BuildBox() {
                     }`}
                   >
                     {isDone ? <Check className="w-3.5 h-3.5" /> : idx + 1}
-                  </span>
-                  <span className={`hidden sm:inline text-[11px] font-bold uppercase tracking-wider ${isActive ? "text-teal-deep" : "text-slate-400"}`}>
+                  </motion.span>
+                  <span className={`hidden sm:inline text-[13px] font-bold uppercase tracking-wider ${isActive ? "text-teal-deep" : "text-slate-400"}`}>
                     {s.label}
                   </span>
                 </button>
@@ -192,8 +216,9 @@ export default function BuildBox() {
         {/* Step panels */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-7 space-y-6 text-left">
+            <AnimatePresence mode="wait" custom={direction}>
             {step === "packaging" && (
-              <>
+              <motion.div key="packaging" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="space-y-6">
                 <div className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-4 shadow-sm">
                   <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-500 flex items-center space-x-2">
                     <Box className="w-4.5 h-4.5 text-teal-deep" />
@@ -218,7 +243,7 @@ export default function BuildBox() {
                             <span className="text-xs font-bold text-teal-deep">{bstyle.name}</span>
                             {isSelected && <Check className="w-3.5 h-3.5 text-teal-deep" />}
                           </div>
-                          <span className="text-[10px] text-slate-500 block mt-1">Lidded rigid board box</span>
+                          <span className="text-[12px] text-slate-500 block mt-1">Lidded rigid board box</span>
                         </button>
                       );
                     })}
@@ -253,11 +278,11 @@ export default function BuildBox() {
                     })}
                   </div>
                 </div>
-              </>
+              </motion.div>
             )}
 
             {step === "products" && (
-              <div className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-6 shadow-sm">
+              <motion.div key="products" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-6 shadow-sm">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
                   <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-500 flex items-center space-x-2">
                     <ShoppingBag className="w-4.5 h-4.5 text-teal-deep" />
@@ -268,7 +293,7 @@ export default function BuildBox() {
                       <button
                         key={cat}
                         onClick={() => setBazaarFilter(cat)}
-                        className={`text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors ${
+                        className={`text-[12px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors ${
                           bazaarFilter === cat
                             ? "bg-teal-deep text-white font-black shadow-sm"
                             : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
@@ -283,12 +308,14 @@ export default function BuildBox() {
                 {isLoading ? (
                   <p className="text-xs text-slate-400 text-center py-8">Loading treats...</p>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[440px] overflow-y-auto pr-1">
+                  <motion.div variants={gridContainer} initial="initial" animate="animate" className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[440px] overflow-y-auto pr-1">
                     {filteredBazaar.map((item) => {
                       const currentQty = buildABoxItems.filter((x) => x.id === item.id).length;
                       return (
-                        <div
+                        <motion.div
                           key={item.id}
+                          variants={gridItem}
+                          whileHover={{ y: -2 }}
                           className="bg-slate-50 border border-slate-200/70 rounded-2xl p-4 flex items-center justify-between space-x-4 hover:border-slate-350 transition-colors"
                         >
                           <div className="flex items-center space-x-3 text-left">
@@ -296,7 +323,7 @@ export default function BuildBox() {
                             <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-xl border border-slate-200" />
                             <div>
                               <span className="text-xs font-bold text-slate-800 block leading-tight">{item.name}</span>
-                              <span className="text-[10px] text-teal-deep font-bold block mt-0.5">₹{item.price}</span>
+                              <span className="text-[12px] text-teal-deep font-bold block mt-0.5">₹{item.price}</span>
                             </div>
                           </div>
 
@@ -328,19 +355,19 @@ export default function BuildBox() {
                               </button>
                             )}
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 )}
                 {!canLeaveProducts && (
-                  <p className="text-[10px] text-rani-pink font-semibold">Add at least one treat to continue.</p>
+                  <p className="text-[12px] text-rani-pink font-semibold">Add at least one treat to continue.</p>
                 )}
-              </div>
+              </motion.div>
             )}
 
             {step === "message" && (
-              <div className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-4 shadow-sm">
+              <motion.div key="message" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-4 shadow-sm">
                 <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-500 flex items-center space-x-2">
                   <MessageSquareHeart className="w-4.5 h-4.5 text-rani-pink" />
                   <span>Greeting Card Message</span>
@@ -354,21 +381,21 @@ export default function BuildBox() {
                   placeholder="e.g. Happy Diwali! Wishing you a year full of light and laughter. With love, Aastha."
                   className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm italic font-medium focus:outline-none focus:border-rani-pink/40 resize-none font-heading text-teal-deep/90"
                 />
-                <span className="text-[10px] text-slate-400 block text-right">{giftMessage.length}/400</span>
+                <span className="text-[12px] text-slate-400 block text-right">{giftMessage.length}/400</span>
 
                 {giftMessage.trim() && (
                   <div className="border-t border-slate-100 pt-4">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Card Preview</span>
+                    <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Card Preview</span>
                     <div className="bg-[#FAF4E8] border border-gold/20 rounded-2xl p-6 text-center">
                       <p className="font-heading italic text-sm text-teal-deep/90 leading-relaxed whitespace-pre-wrap">{giftMessage}</p>
                     </div>
                   </div>
                 )}
-              </div>
+              </motion.div>
             )}
 
             {step === "review" && (
-              <div className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-5 shadow-sm">
+              <motion.div key="review" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-5 shadow-sm">
                 <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-500">Review Your Box</h3>
 
                 <div className="space-y-1 text-xs">
@@ -377,7 +404,7 @@ export default function BuildBox() {
                 </div>
 
                 <div className="border-t border-slate-100 pt-4 space-y-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Treats ({buildABoxItems.length})</span>
+                  <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider block">Treats ({buildABoxItems.length})</span>
                   {buildABoxItems.map((item, idx) => (
                     <div key={idx} className="flex justify-between text-xs text-slate-600">
                       <span>{item.name}</span>
@@ -387,15 +414,16 @@ export default function BuildBox() {
                 </div>
 
                 <div className="border-t border-slate-100 pt-4">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Greeting Card</span>
+                  <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Greeting Card</span>
                   {giftMessage.trim() ? (
                     <p className="font-heading italic text-xs text-teal-deep/80 leading-relaxed">&quot;{giftMessage}&quot;</p>
                   ) : (
                     <p className="text-xs text-slate-400">No card message added.</p>
                   )}
                 </div>
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
 
             {/* Step navigation */}
             <div className="flex items-center justify-between pt-2">
@@ -437,11 +465,11 @@ export default function BuildBox() {
               <div className="flex justify-between items-center border-b border-slate-100 pb-4 text-left">
                 <div>
                   <h3 className="font-heading text-lg font-bold text-teal-deep">Your Box Preview</h3>
-                  <span className="text-[10px] text-slate-500">Ribbon: {selectedRibbonStyle}</span>
+                  <span className="text-[12px] text-slate-500">Ribbon: {selectedRibbonStyle}</span>
                 </div>
                 <button
                   onClick={clearBox}
-                  className="text-[10px] font-bold uppercase tracking-wider text-rani-pink hover:underline"
+                  className="text-[12px] font-bold uppercase tracking-wider text-rani-pink hover:underline"
                 >
                   Reset
                 </button>
@@ -453,25 +481,32 @@ export default function BuildBox() {
                   <span>{buildABoxItems.length} / {boxCapacity} Items</span>
                 </div>
                 <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden relative border border-slate-200">
-                  <div
-                    className="h-full bg-gradient-to-r from-teal-deep to-saffron transition-all duration-300"
-                    style={{ width: `${(buildABoxItems.length / boxCapacity) * 100}%` }}
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-teal-deep to-saffron"
+                    animate={{ width: `${(buildABoxItems.length / boxCapacity) * 100}%` }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
                   />
                 </div>
-                <span className="text-[9px] text-slate-400 block leading-normal">Limit up to 5 items to guarantee premium styling and fit.</span>
+                <span className="text-[11px] text-slate-400 block leading-normal">Limit up to 5 items to guarantee premium styling and fit.</span>
               </div>
 
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1 text-left">
                 {buildABoxItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 border border-dashed border-slate-200 rounded-2xl text-slate-400 space-y-2">
                     <Box className="w-8 h-8 text-slate-300" />
-                    <span className="text-[11px]">No treats placed in the box yet.</span>
+                    <span className="text-[13px]">No treats placed in the box yet.</span>
                   </div>
                 ) : (
-                  buildABoxItems.map((item: BoxItem, idx: number) => (
-                    <div
+                  <AnimatePresence initial={false}>
+                  {buildABoxItems.map((item: BoxItem, idx: number) => (
+                    <motion.div
                       key={idx}
-                      className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center justify-between"
+                      layout
+                      initial={{ opacity: 0, x: 12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 12, height: 0, marginBottom: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center justify-between overflow-hidden mb-2"
                     >
                       <div className="flex items-center space-x-2.5">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -484,8 +519,9 @@ export default function BuildBox() {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
-                    </div>
-                  ))
+                    </motion.div>
+                  ))}
+                  </AnimatePresence>
                 )}
               </div>
 
