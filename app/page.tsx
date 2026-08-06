@@ -568,40 +568,97 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* 5. GIFTS THAT STAND OUT - BESTSELLERS SECTION */}
-      <section className="max-w-6xl mx-auto px-6 space-y-10">
+      {/* 5. GIFTS THAT STAND OUT SECTION */}
+      <section className="max-w-6xl mx-auto px-6 space-y-12">
         <motion.div {...revealProps} className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-3 text-left">
             <span className="text-[12px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
               Curated Masterpieces
             </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-extrabold text-teal-deep">
+            <h2 className="font-heading text-3xl md:text-4xl font-black text-teal-deep leading-tight">
               Gifts That Stand Out
             </h2>
-            <p className="text-sm text-teal-deep/70 max-w-lg">
-              Explore our bestseller list of celebratory sets, chosen by thousands of corporate managers and families for premium presentation.
+            <p className="text-sm text-teal-deep/70 max-w-lg font-light">
+              Explore our handpicked curation of luxury celebration hampers, bespoke B2B swag, and wellness cases designed to make an impact.
             </p>
           </div>
           <Link
             href="/collections"
             className="flex items-center space-x-2 text-xs font-bold text-teal-deep hover:text-rani-pink transition-colors border-b-2 border-teal-deep/15 pb-1 hover:border-rani-pink/40"
           >
-            <span>View All Bestsellers</span>
+            <span>Explore All Collections</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {bestsellers.map((product) => (
-            <ProductCard key={product.id} product={{
-              id: product.id,
-              name: product.name,
-              price: product.price,
-              image: product.image || "",
-              description: product.description || "",
-              badge: product.badge || undefined,
-              stock_quantity: product.stock_quantity,
-            }} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {[
+            {
+              name: "The Maharaja Gold Chest",
+              desc: "Premium double-decker gold rigid drawer chest filled with organic saffron honey, handmade dry fruit sweets, and clay diyas.",
+              img: "/images/standout/standout_1.png",
+              badge: "Royal Traditional",
+              link: "/collections"
+            },
+            {
+              name: "Jaipur Royal Relic Crate",
+              desc: "Crafted pine wood sliding chest containing royal heritage brass bowls, Mysore sandalwood cones, and gourmet hazelnut clusters.",
+              img: "/images/standout/standout_2.png",
+              badge: "Heritage Crate",
+              link: "/collections"
+            },
+            {
+              name: "Saffron & Honey Wellness Box",
+              desc: "Elegant wellness hamper featuring organic chamomile infusion teas, pure acacia honeys, brass infusers, and a soy wax candle.",
+              img: "/images/standout/standout_3.png",
+              badge: "Pure Wellness",
+              link: "/collections"
+            },
+            {
+              name: "The Executive Swag Case",
+              desc: "Bespoke corporate onboarding case with name-engraved thermal insulated flask, smart notebook, key ring, and gourmet snacks.",
+              img: "/images/standout/standout_4.png",
+              badge: "Elite Corporate",
+              link: "/corporate"
+            }
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.3 }}
+              className="bg-[#FCFAF2]/80 border border-gold/15 rounded-[36px] overflow-hidden shadow-sm hover:shadow-lg transition-all group flex flex-col md:flex-row h-full"
+            >
+              {/* Image Section */}
+              <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto md:h-72 overflow-hidden bg-slate-100 shrink-0">
+                <img
+                  src={item.img}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <span className="absolute top-4 left-4 bg-teal-deep text-[#FAF4E8] text-[9px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md">
+                  {item.badge}
+                </span>
+              </div>
+
+              {/* Text Info Section */}
+              <div className="p-8 flex flex-col justify-between items-start text-left flex-1 h-full min-h-[220px]">
+                <div className="space-y-3">
+                  <h3 className="font-heading text-xl font-bold text-teal-deep leading-tight group-hover:text-rani-pink transition-colors">
+                    {item.name}
+                  </h3>
+                  <p className="text-xs text-teal-deep/75 leading-relaxed font-light">
+                    {item.desc}
+                  </p>
+                </div>
+                <Link
+                  href={item.link}
+                  className="inline-flex items-center space-x-1 text-xs font-bold text-teal-deep hover:text-rani-pink transition-colors group-hover:translate-x-1 transition-transform pt-4"
+                >
+                  <span>Select Curation</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </motion.div>
           ))}
         </div>
       </section>
