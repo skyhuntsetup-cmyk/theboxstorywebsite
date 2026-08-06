@@ -1,5 +1,5 @@
 -- 1. Create Products Table
-CREATE TABLE public.products (
+CREATE TABLE IF NOT EXISTS public.products (
     id TEXT PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL,
@@ -14,18 +14,20 @@ CREATE TABLE public.products (
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
 -- Create Policy to Allow Public Read Access
+DROP POLICY IF EXISTS "Allow public read access on products" ON public.products;
 CREATE POLICY "Allow public read access on products" 
 ON public.products FOR SELECT 
 USING (true);
 
 -- Create Policy to Allow Admin Insert/Update/Delete (Use service role or authenticated admin role)
+DROP POLICY IF EXISTS "Allow authenticated full access on products" ON public.products;
 CREATE POLICY "Allow authenticated full access on products" 
 ON public.products FOR ALL 
 USING (auth.role() = 'authenticated');
 
 
 -- 2. Create Orders Table
-CREATE TABLE public.orders (
+CREATE TABLE IF NOT EXISTS public.orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     delivery_mode TEXT NOT NULL CHECK (delivery_mode IN ('physical', 'magical')),
@@ -43,23 +45,26 @@ CREATE TABLE public.orders (
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 
 -- Allow Public Insert (for checkout transactions)
+DROP POLICY IF EXISTS "Allow public inserts on orders" ON public.orders;
 CREATE POLICY "Allow public inserts on orders" 
 ON public.orders FOR INSERT 
 WITH CHECK (true);
 
 -- Allow Public Select ONLY by ID (so recipients can view order contents on claim-gift page)
+DROP POLICY IF EXISTS "Allow public select by id on orders" ON public.orders;
 CREATE POLICY "Allow public select by id on orders" 
 ON public.orders FOR SELECT 
 USING (true);
 
 -- Allow Authenticated (Admins) full access
+DROP POLICY IF EXISTS "Allow authenticated full access on orders" ON public.orders;
 CREATE POLICY "Allow authenticated full access on orders" 
 ON public.orders FOR ALL 
 USING (auth.role() = 'authenticated');
 
 
 -- 3. Create Inquiries Table (For B2B Corporate Gifting form)
-CREATE TABLE public.inquiries (
+CREATE TABLE IF NOT EXISTS public.inquiries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL,
@@ -75,11 +80,13 @@ CREATE TABLE public.inquiries (
 ALTER TABLE public.inquiries ENABLE ROW LEVEL SECURITY;
 
 -- Allow Public Insert (for B2B submissions)
+DROP POLICY IF EXISTS "Allow public inserts on inquiries" ON public.inquiries;
 CREATE POLICY "Allow public inserts on inquiries" 
 ON public.inquiries FOR INSERT 
 WITH CHECK (true);
 
 -- Allow Authenticated (Admins) full access
+DROP POLICY IF EXISTS "Allow authenticated full access on inquiries" ON public.inquiries;
 CREATE POLICY "Allow authenticated full access on inquiries" 
 ON public.inquiries FOR ALL 
 USING (auth.role() = 'authenticated');
@@ -101,7 +108,7 @@ ON CONFLICT (id) DO NOTHING;
 
 
 -- 5. Create Bazaar Items Table (For Build-a-Box Studio treats catalog)
-CREATE TABLE public.bazaar_items (
+CREATE TABLE IF NOT EXISTS public.bazaar_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL,
@@ -115,18 +122,20 @@ CREATE TABLE public.bazaar_items (
 ALTER TABLE public.bazaar_items ENABLE ROW LEVEL SECURITY;
 
 -- Allow Public Read Access
+DROP POLICY IF EXISTS "Allow public read access on bazaar_items" ON public.bazaar_items;
 CREATE POLICY "Allow public read access on bazaar_items" 
 ON public.bazaar_items FOR SELECT 
 USING (true);
 
 -- Allow Authenticated (Admins) Full Access
+DROP POLICY IF EXISTS "Allow authenticated full access on bazaar_items" ON public.bazaar_items;
 CREATE POLICY "Allow authenticated full access on bazaar_items" 
 ON public.bazaar_items FOR ALL 
 USING (auth.role() = 'authenticated');
 
 
 -- 6. Create Box Styles Table (For Build-a-Box packaging types)
-CREATE TABLE public.box_styles (
+CREATE TABLE IF NOT EXISTS public.box_styles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL,
@@ -138,18 +147,24 @@ CREATE TABLE public.box_styles (
 ALTER TABLE public.box_styles ENABLE ROW LEVEL SECURITY;
 
 -- Allow Public Read Access
+DROP POLICY IF EXISTS "Allow public read access on box_styles" ON public.box_styles;
 CREATE POLICY "Allow public read access on box_styles" 
 ON public.box_styles FOR SELECT 
 USING (true);
 
 -- Allow Authenticated (Admins) Full Access
+DROP POLICY IF EXISTS "Allow authenticated full access on box_styles" ON public.box_styles;
 CREATE POLICY "Allow authenticated full access on box_styles" 
 ON public.box_styles FOR ALL 
 USING (auth.role() = 'authenticated');
 
 
 -- Seed Bazaar Items
-INSERT INTO public.bazaar_items (name, price, image, category, is_active) VALUES
+-- Guarded with "only if the table is still empty" since bazaar_items/
+-- box_styles have no unique column to key an ON CONFLICT off of — without
+-- this, re-running the file would duplicate every seed row each time.
+INSERT INTO public.bazaar_items (name, price, image, category, is_active)
+SELECT * FROM (VALUES
 ('Artisanal Kaju Katli (250g)', 450, 'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=300&auto=format&fit=crop&q=80', 'Sweets', true),
 ('Handcrafted Brass Diya (Pair)', 600, 'https://images.unsplash.com/photo-1605884768395-5cb5dbfb21be?w=300&auto=format&fit=crop&q=80', 'Decor', true),
 ('Organic Lavender Soy Candle', 350, 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80', 'Wellness', true),
@@ -158,20 +173,25 @@ INSERT INTO public.bazaar_items (name, price, image, category, is_active) VALUES
 ('Rose Water Facial Mist', 320, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80', 'Wellness', true),
 ('Stanley Steel Insulated Cup', 850, '/images/imported/Stanley Sets/8cba5ebdf761b8e27b6e23f8c3019ecb.jpg', 'Gourmet', true),
 ('Laser Engraved Acrylic Tag', 190, '/images/imported/Acrlytic Stand Along Gifts/02ca82a0a07f3026aba3f6f3e1b1b132.jpg', 'Decor', true),
-('Sleek Black Flask Bottle', 590, '/images/imported/Drop Shipping STuff/bdcee014bb020d160f6ba54bb74dd638.webp', 'Gourmet', true);
+('Sleek Black Flask Bottle', 590, '/images/imported/Drop Shipping STuff/bdcee014bb020d160f6ba54bb74dd638.webp', 'Gourmet', true)
+) AS v(name, price, image, category, is_active)
+WHERE NOT EXISTS (SELECT 1 FROM public.bazaar_items);
 
--- Seed Box Styles
-INSERT INTO public.box_styles (name, color, is_active) VALUES
+-- Seed Box Styles (same empty-table guard as above)
+INSERT INTO public.box_styles (name, color, is_active)
+SELECT * FROM (VALUES
 ('Classic Royal Gold', 'from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30', true),
 ('Blossom Rani Pink', 'from-[#D1126A]/20 to-purple-500/20 border-rani-pink/20', true),
-('Midnight Teal Elegance', 'from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30', true);
+('Midnight Teal Elegance', 'from-[#042F2E]/20 to-blue-900/20 border-teal-deep/30', true)
+) AS v(name, color, is_active)
+WHERE NOT EXISTS (SELECT 1 FROM public.box_styles);
 
 
 -- 7.1 Create Categories Table (For Him, For Her, Anniversary, Birthday, Unique
 -- Gifts, plus the legacy single-category values below). A product can belong
 -- to any number of categories via product_categories, and shows up on every
 -- category page it's tagged into.
-CREATE TABLE public.categories (
+CREATE TABLE IF NOT EXISTS public.categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL UNIQUE,
@@ -184,10 +204,12 @@ CREATE TABLE public.categories (
 
 ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access on categories" ON public.categories;
 CREATE POLICY "Allow public read access on categories"
 ON public.categories FOR SELECT
 USING (true);
 
+DROP POLICY IF EXISTS "Allow authenticated full access on categories" ON public.categories;
 CREATE POLICY "Allow authenticated full access on categories"
 ON public.categories FOR ALL
 USING (auth.role() = 'authenticated');
@@ -207,7 +229,7 @@ ON CONFLICT (slug) DO NOTHING;
 
 -- 7.2 Product <-> Category tagging (many-to-many). Tagging a product into a
 -- category here is what makes it appear on that category's page.
-CREATE TABLE public.product_categories (
+CREATE TABLE IF NOT EXISTS public.product_categories (
     product_id TEXT NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
     category_id UUID NOT NULL REFERENCES public.categories(id) ON DELETE CASCADE,
     PRIMARY KEY (product_id, category_id)
@@ -215,10 +237,12 @@ CREATE TABLE public.product_categories (
 
 ALTER TABLE public.product_categories ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access on product_categories" ON public.product_categories;
 CREATE POLICY "Allow public read access on product_categories"
 ON public.product_categories FOR SELECT
 USING (true);
 
+DROP POLICY IF EXISTS "Allow authenticated full access on product_categories" ON public.product_categories;
 CREATE POLICY "Allow authenticated full access on product_categories"
 ON public.product_categories FOR ALL
 USING (auth.role() = 'authenticated');
@@ -234,7 +258,7 @@ ON CONFLICT DO NOTHING;
 
 -- 7.3 Create Blog Posts Table (self-service add/edit, replaces the static
 -- data/blogs.ts file as the source of truth for new and edited posts)
-CREATE TABLE public.blog_posts (
+CREATE TABLE IF NOT EXISTS public.blog_posts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
@@ -252,10 +276,12 @@ CREATE TABLE public.blog_posts (
 
 ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access on published blog_posts" ON public.blog_posts;
 CREATE POLICY "Allow public read access on published blog_posts"
 ON public.blog_posts FOR SELECT
 USING (is_published = true);
 
+DROP POLICY IF EXISTS "Allow authenticated full access on blog_posts" ON public.blog_posts;
 CREATE POLICY "Allow authenticated full access on blog_posts"
 ON public.blog_posts FOR ALL
 USING (auth.role() = 'authenticated');
@@ -263,7 +289,7 @@ USING (auth.role() = 'authenticated');
 
 -- 7.4 Create Catalogue Leads Table (name + WhatsApp captured on the
 -- shareable catalogue link, plus a snapshot of their cart at share-out time)
-CREATE TABLE public.catalogue_leads (
+CREATE TABLE IF NOT EXISTS public.catalogue_leads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL,
@@ -275,17 +301,19 @@ CREATE TABLE public.catalogue_leads (
 
 ALTER TABLE public.catalogue_leads ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public inserts on catalogue_leads" ON public.catalogue_leads;
 CREATE POLICY "Allow public inserts on catalogue_leads"
 ON public.catalogue_leads FOR INSERT
 WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow authenticated full access on catalogue_leads" ON public.catalogue_leads;
 CREATE POLICY "Allow authenticated full access on catalogue_leads"
 ON public.catalogue_leads FOR ALL
 USING (auth.role() = 'authenticated');
 
 
 -- 7. Create Offline Inventory Table
-CREATE TABLE public.offline_inventory (
+CREATE TABLE IF NOT EXISTS public.offline_inventory (
     product_code TEXT PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL,
@@ -302,6 +330,7 @@ CREATE TABLE public.offline_inventory (
 ALTER TABLE public.offline_inventory ENABLE ROW LEVEL SECURITY;
 
 -- Allow Authenticated (Admins) Full Access
+DROP POLICY IF EXISTS "Allow authenticated full access on offline_inventory" ON public.offline_inventory;
 CREATE POLICY "Allow authenticated full access on offline_inventory"
 ON public.offline_inventory FOR ALL
 USING (auth.role() = 'authenticated');
@@ -324,7 +353,7 @@ ALTER TABLE public.products ADD COLUMN IF NOT EXISTS stock_quantity INTEGER;
 -- the service-role client, so codes can never be listed/enumerated
 -- client-side (same treatment as offline_inventory above).
 
-CREATE TABLE public.corporate_campaigns (
+CREATE TABLE IF NOT EXISTS public.corporate_campaigns (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     name TEXT NOT NULL,
@@ -336,12 +365,13 @@ CREATE TABLE public.corporate_campaigns (
 );
 
 ALTER TABLE public.corporate_campaigns ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow authenticated full access on corporate_campaigns" ON public.corporate_campaigns;
 CREATE POLICY "Allow authenticated full access on corporate_campaigns"
 ON public.corporate_campaigns FOR ALL
 USING (auth.role() = 'authenticated');
 
 
-CREATE TABLE public.campaign_products (
+CREATE TABLE IF NOT EXISTS public.campaign_products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     campaign_id UUID NOT NULL REFERENCES public.corporate_campaigns(id) ON DELETE CASCADE,
@@ -352,12 +382,13 @@ CREATE TABLE public.campaign_products (
 );
 
 ALTER TABLE public.campaign_products ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow authenticated full access on campaign_products" ON public.campaign_products;
 CREATE POLICY "Allow authenticated full access on campaign_products"
 ON public.campaign_products FOR ALL
 USING (auth.role() = 'authenticated');
 
 
-CREATE TABLE public.campaign_codes (
+CREATE TABLE IF NOT EXISTS public.campaign_codes (
     code TEXT PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     campaign_id UUID NOT NULL REFERENCES public.corporate_campaigns(id) ON DELETE CASCADE,
@@ -373,6 +404,7 @@ CREATE TABLE public.campaign_codes (
 );
 
 ALTER TABLE public.campaign_codes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow authenticated full access on campaign_codes" ON public.campaign_codes;
 CREATE POLICY "Allow authenticated full access on campaign_codes"
 ON public.campaign_codes FOR ALL
 USING (auth.role() = 'authenticated');
@@ -385,7 +417,109 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('campaign-assets', 'campaign-assets', true)
 ON CONFLICT (id) DO NOTHING;
 
+DROP POLICY IF EXISTS "Allow public read on campaign-assets" ON storage.objects;
 CREATE POLICY "Allow public read on campaign-assets"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'campaign-assets');
+
+
+-- 11. Stores: the five customer-facing shopping destinations (Pre-Curated
+-- Collections, Build Your Own Box, Quirky Stuff Store, Divine Store, Custom
+-- Gifts). Separate dimension from `categories` (occasion/recipient tags) —
+-- a product picks its store(s) via product_stores AND keeps its category
+-- tags, so e.g. "Divine Store -> For Her -> under 2000" works as a filter.
+CREATE TABLE IF NOT EXISTS public.stores (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    name TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL UNIQUE,
+    tagline TEXT,
+    description TEXT,
+    hero_image TEXT,
+    display_order INTEGER NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+ALTER TABLE public.stores ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read access on stores" ON public.stores;
+CREATE POLICY "Allow public read access on stores"
+ON public.stores FOR SELECT
+USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated full access on stores" ON public.stores;
+CREATE POLICY "Allow authenticated full access on stores"
+ON public.stores FOR ALL
+USING (auth.role() = 'authenticated');
+
+INSERT INTO public.stores (name, slug, tagline, display_order) VALUES
+('Pre-Curated Collections', 'pre-curated-collections', 'Ready-made hampers, styled and ready to ship', 1),
+('Build Your Own Box', 'build-your-own-box', 'Pick your packaging, pick your treats', 2),
+('Quirky Stuff Store', 'quirky-stuff', 'Fun, offbeat gifts with personality', 3),
+('Divine Store', 'divine-store', 'Sacred and spiritual gifting essentials', 4),
+('Custom Gifts', 'custom-gifts', 'Personalized and engraved keepsakes', 5)
+ON CONFLICT (slug) DO NOTHING;
+
+
+-- 11.1 Product <-> Store tagging (many-to-many, same pattern as
+-- product_categories). Tagging a product into a store is what makes it show
+-- up on that store's page.
+CREATE TABLE IF NOT EXISTS public.product_stores (
+    product_id TEXT NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+    PRIMARY KEY (product_id, store_id)
+);
+
+ALTER TABLE public.product_stores ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read access on product_stores" ON public.product_stores;
+CREATE POLICY "Allow public read access on product_stores"
+ON public.product_stores FOR SELECT
+USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated full access on product_stores" ON public.product_stores;
+CREATE POLICY "Allow authenticated full access on product_stores"
+ON public.product_stores FOR ALL
+USING (auth.role() = 'authenticated');
+
+-- Backfill: every existing product goes into Pre-Curated Collections by
+-- default, so nothing disappears from /collections after this migration.
+-- Re-tag anything that actually belongs in Quirky/Divine/Custom Gifts from
+-- the admin afterward.
+INSERT INTO public.product_stores (product_id, store_id)
+SELECT p.id, s.id
+FROM public.products p, public.stores s
+WHERE s.slug = 'pre-curated-collections'
+ON CONFLICT DO NOTHING;
+
+
+-- 11.2 Personalization: for Custom Gifts products that need engraving text,
+-- a name, a photo upload, etc. before they can be added to the bag. Same
+-- {key, label, type, options?, required} shape as corporate_campaigns'
+-- custom_fields, reused rather than reinvented. Empty array (the default)
+-- means the product behaves like every other product today.
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS personalization_fields JSONB NOT NULL DEFAULT '[]';
+
+
+-- 11.3 Retire bazaar_items as a separate admin surface: fold every existing
+-- treat into products, tagged into the Build Your Own Box store. The
+-- bazaar_items table itself is left in place (unused) as a rollback safety
+-- net rather than dropped outright.
+INSERT INTO public.products (id, name, price, image, description, badge, stock_quantity)
+SELECT
+    'bz-' || b.id::text,
+    b.name,
+    b.price,
+    b.image,
+    b.category || ' treat from the Hamper Studio bazaar.',
+    NULL,
+    CASE WHEN b.is_active THEN NULL ELSE 0 END
+FROM public.bazaar_items b
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.product_stores (product_id, store_id)
+SELECT 'bz-' || b.id::text, s.id
+FROM public.bazaar_items b, public.stores s
+WHERE s.slug = 'build-your-own-box'
+ON CONFLICT DO NOTHING;
 

@@ -61,6 +61,8 @@ export default function Home() {
   const [bestsellers, setBestsellers] = useState<ProductRow[]>([]);
   const [activeTab, setActiveTab] = useState<"occasion" | "recipient">("occasion");
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [heroSlide, setHeroSlide] = useState(0);
+  const [isHeroPaused, setIsHeroPaused] = useState(false);
 
   useEffect(() => {
     supabase
@@ -70,6 +72,60 @@ export default function Home() {
       .limit(4)
       .then(({ data }) => { if (data) setBestsellers(data); });
   }, []);
+
+  const homepageSlides = [
+    {
+      id: "slide-1",
+      name: "Royal Saffron & Sweet Hamper",
+      badge: "Auspicious",
+      price: "2,450",
+      image: "/images/homepage/slide_1.jpg"
+    },
+    {
+      id: "slide-2",
+      name: "The Classic Groom & Wedding favour",
+      badge: "Wedding Elite",
+      price: "3,200",
+      image: "/images/homepage/slide_2.jpg"
+    },
+    {
+      id: "slide-3",
+      name: "Jaipur Heritage Brass Crate",
+      badge: "Heritage Crate",
+      price: "4,500",
+      image: "/images/homepage/slide_3.jpg"
+    },
+    {
+      id: "slide-4",
+      name: "Curated Gourmet Tea & Nut Case",
+      badge: "Gourmet Box",
+      price: "1,850",
+      image: "/images/homepage/slide_4.jpg"
+    },
+    {
+      id: "slide-5",
+      name: "Milestone Celebration Tray",
+      badge: "Anniversary Gold",
+      price: "2,990",
+      image: "/images/homepage/slide_5.jpg"
+    },
+    {
+      id: "slide-6",
+      name: "Luxury Velvet Onboarding Box",
+      badge: "Executive Swag",
+      price: "2,100",
+      image: "/images/homepage/slide_6.jpg"
+    }
+  ];
+
+  // Auto-advance the hero slideshow through homepageSlides; pauses on hover.
+  useEffect(() => {
+    if (isHeroPaused) return;
+    const timer = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % homepageSlides.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isHeroPaused]);
 
   // Bulk Gifting Form state
   const [formData, setFormData] = useState({
@@ -253,12 +309,13 @@ export default function Home() {
   return (
     <div className="space-y-28 pb-20">
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[85vh] flex items-center px-6 overflow-hidden">
+      <section className="relative min-h-[85vh] flex items-center px-6 overflow-hidden cultural-pattern">
         {/* Dynamic Warm Mesh Background */}
         <div className="absolute inset-0 -z-10 bg-background">
           <div className="absolute top-10 left-10 w-[300px] h-[300px] bg-saffron/15 rounded-full blur-3xl mix-blend-multiply filter animate-pulse" />
           <div className="absolute bottom-20 right-10 w-[400px] h-[400px] bg-rani-pink/10 rounded-full blur-3xl mix-blend-multiply filter animate-pulse" />
           <div className="absolute top-1/2 left-1/3 w-[250px] h-[250px] bg-teal-deep/5 rounded-full blur-3xl filter" />
+          <div className="absolute bottom-0 left-1/4 w-[200px] h-[200px] bg-gold/10 rounded-full blur-3xl filter" />
         </div>
 
         <div className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
@@ -295,65 +352,131 @@ export default function Home() {
                 <span>Explore Collections</span>
               </Link>
             </div>
+
+            {/* Trust row — fills the empty space under the CTAs with real, verifiable claims */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="flex flex-wrap items-center gap-x-8 gap-y-3 pt-6 border-t border-teal-deep/10"
+            >
+              <div className="flex items-center space-x-2">
+                <span className="font-heading text-xl font-black text-teal-deep">10,000+</span>
+                <span className="text-[11px] text-teal-deep/55 uppercase font-bold tracking-wide leading-tight">Hampers<br />Shipped</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="font-heading text-xl font-black text-teal-deep">30+</span>
+                <span className="text-[11px] text-teal-deep/55 uppercase font-bold tracking-wide leading-tight">Enterprise<br />Brands</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                <span className="text-[11px] text-teal-deep/55 uppercase font-bold tracking-wide leading-tight">Free Shipping<br />Pan-India</span>
+              </div>
+            </motion.div>
           </motion.div>
 
-          {/* Right Floating Visual */}
+          {/* Right Floating Visual — auto-advancing slideshow of live bestsellers */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
+            onMouseEnter={() => setIsHeroPaused(true)}
+            onMouseLeave={() => setIsHeroPaused(false)}
             className="md:col-span-5 flex justify-center"
           >
             <div className="relative w-72 h-72 sm:w-96 sm:h-96">
-              {/* Box Layer */}
-              <motion.div
-                animate={{ y: [0, -10, 0], rotate: [0, 2, 0] }}
-                transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                className="absolute top-4 left-6 w-full h-full border border-gold/30 rounded-3xl overflow-hidden shadow-[0_30px_60px_rgba(226,186,95,0.25)] flex flex-col p-8 justify-between z-20"
-                style={{
-                  backgroundImage: "linear-gradient(to top, rgba(13, 27, 23, 0.95) 0%, rgba(13, 27, 23, 0.4) 50%, rgba(13, 27, 23, 0.15) 100%), url('https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&auto=format&fit=crop&q=80')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center"
-                }}
-              >
-                <div className="flex justify-between items-start">
-                  <span className="text-[12px] uppercase font-bold tracking-widest text-[#FCFAF2] bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full">
-                    Satin Wrap & Rigid Box
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-gold animate-pulse" />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="w-12 h-1.5 bg-rani-pink rounded-full" />
-                  <h3 className="font-heading text-2xl font-black leading-tight text-white">
-                    The Royal Heritage Hamper
-                  </h3>
-                  <div className="flex space-x-2">
-                    <span className="text-[12px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Brass Diya</span>
-                    <span className="text-[12px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Mithai</span>
-                    <span className="text-[12px] bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Saffron</span>
-                  </div>
-                </div>
-              </motion.div>
-
               {/* Background Layer (Visual Stack) */}
-              <div 
-                className="absolute top-12 left-12 w-full h-full border border-slate-200/50 rounded-3xl shadow-md z-10 opacity-80" 
+              <div
+                className="absolute top-12 left-12 w-full h-full border border-slate-200/50 rounded-3xl shadow-md z-10 opacity-80"
                 style={{
-                  backgroundImage: "linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.65)), url('https://images.unsplash.com/photo-1512909006721-3d6018887383?w=800&auto=format&fit=crop&q=80')",
+                  backgroundImage: "linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.65)), url('/images/homepage/slide_1.jpg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center"
                 }}
               />
 
+              {/* Slideshow Layer */}
+              <div className="absolute top-4 left-6 w-full h-full z-20">
+                <AnimatePresence mode="wait">
+                  {homepageSlides.length > 0 ? (
+                    <motion.div
+                      key={homepageSlides[heroSlide % homepageSlides.length]?.id ?? heroSlide}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0, y: [0, -10, 0], rotate: [0, 2, 0] }}
+                      exit={{ opacity: 0, x: -24 }}
+                      transition={{
+                        opacity: { duration: 0.5 },
+                        x: { duration: 0.5 },
+                        y: { repeat: Infinity, duration: 6, ease: "easeInOut" },
+                        rotate: { repeat: Infinity, duration: 6, ease: "easeInOut" },
+                      }}
+                      className="absolute inset-0 border border-gold/30 rounded-3xl overflow-hidden shadow-[0_30px_60px_rgba(226,186,95,0.25)] flex flex-col p-8 justify-between"
+                      style={{
+                        backgroundImage: `linear-gradient(to top, rgba(13, 27, 23, 0.95) 0%, rgba(13, 27, 23, 0.45) 55%, rgba(13, 27, 23, 0.15) 100%), url('${homepageSlides[heroSlide % homepageSlides.length]?.image}')`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    >
+                      <div className="flex justify-between items-start">
+                        <span className="text-[12px] uppercase font-bold tracking-widest text-[#FCFAF2] bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full">
+                          {homepageSlides[heroSlide % homepageSlides.length]?.badge}
+                        </span>
+                        <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-gold animate-pulse" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="w-12 h-1.5 bg-rani-pink rounded-full" />
+                        <h3 className="font-heading text-2xl font-black leading-tight text-white line-clamp-2">
+                          {homepageSlides[heroSlide % homepageSlides.length]?.name}
+                        </h3>
+                        <span className="inline-block text-[13px] font-bold bg-white/10 text-[#FCFAF2] border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm">
+                          ₹{homepageSlides[heroSlide % homepageSlides.length]?.price}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 border border-gold/20 rounded-3xl bg-teal-deep/5 animate-pulse"
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Slide indicator dots */}
+              {homepageSlides.length > 1 && (
+                <div className="absolute -bottom-8 left-6 z-30 flex items-center space-x-1.5">
+                  {homepageSlides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setHeroSlide(idx)}
+                      aria-label={`Show slide ${idx + 1}`}
+                      className={`h-1.5 rounded-full transition-all ${
+                        idx === heroSlide % homepageSlides.length ? "w-6 bg-rani-pink" : "w-1.5 bg-teal-deep/20 hover:bg-teal-deep/40"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Floating trust badge */}
               <motion.div
-                animate={{ y: [-15, 15, -15] }}
-                transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-                className="absolute -bottom-6 -right-6 w-20 h-20 bg-rani-pink rounded-full blur-sm opacity-80 z-20 flex items-center justify-center shadow-lg"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: [-15, 15, -15] }}
+                transition={{ opacity: { duration: 0.6, delay: 0.6 }, y: { repeat: Infinity, duration: 8, ease: "easeInOut" } }}
+                className="absolute -top-5 -left-5 z-30 bg-white shadow-lg rounded-2xl px-4 py-2.5 flex items-center space-x-2 border border-slate-100"
               >
-                <Gift className="w-8 h-8 text-[#FAF4E8]" />
+                <div className="w-8 h-8 rounded-full bg-rani-pink/10 flex items-center justify-center flex-shrink-0">
+                  <Gift className="w-4 h-4 text-rani-pink" />
+                </div>
+                <div className="leading-tight">
+                  <span className="block text-[11px] font-black text-teal-deep">Free Shipping</span>
+                  <span className="block text-[10px] text-teal-deep/50">Across India</span>
+                </div>
               </motion.div>
             </div>
           </motion.div>

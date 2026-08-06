@@ -5,7 +5,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   try {
     const body = await req.json();
-    const { name, price, image, description, badge, stock_quantity, categoryIds } = body;
+    const { name, price, image, description, badge, stock_quantity, categoryIds, storeIds, personalization_fields } = body;
     const supabase = getSupabaseAdmin();
 
     const update: Record<string, unknown> = {};
@@ -15,6 +15,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (description !== undefined) update.description = description || null;
     if (badge !== undefined) update.badge = badge || null;
     if (stock_quantity !== undefined) update.stock_quantity = stock_quantity === "" || stock_quantity === null ? null : Number(stock_quantity);
+    if (personalization_fields !== undefined) update.personalization_fields = personalization_fields;
 
     if (Object.keys(update).length > 0) {
       const { error: updateError } = await supabase.from("products").update(update).eq("id", id);
@@ -31,6 +32,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         .from("product_categories")
         .insert(categoryIds.map((categoryId: string) => ({ product_id: id, category_id: categoryId })));
       if (tagError) return NextResponse.json({ success: false, error: tagError.message }, { status: 400 });
+    }
+
+    if (Array.isArray(storeIds)) {
+      if (storeIds.length === 0) {
+        return NextResponse.json({ success: false, error: "Select at least one store." }, { status: 400 });
+      }
+      const { error: deleteError } = await supabase.from("product_stores").delete().eq("product_id", id);
+      if (deleteError) return NextResponse.json({ success: false, error: deleteError.message }, { status: 400 });
+      const { error: storeError } = await supabase
+        .from("product_stores")
+        .insert(storeIds.map((storeId: string) => ({ product_id: id, store_id: storeId })));
+      if (storeError) return NextResponse.json({ success: false, error: storeError.message }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });

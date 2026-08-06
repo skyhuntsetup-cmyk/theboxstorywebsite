@@ -12,6 +12,7 @@ export interface CartItem {
   isCustomBox?: boolean;
   boxItems?: { id: string; name: string; price: number; image: string }[];
   giftMessage?: string;
+  personalization?: Record<string, string>;
 }
 
 export interface BoxItem {

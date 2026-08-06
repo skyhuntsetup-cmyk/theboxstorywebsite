@@ -93,6 +93,7 @@ export default function Checkout() {
         isCustomBox: item.isCustomBox || false,
         boxItems: item.boxItems || null,
         giftMessage: item.giftMessage || undefined,
+        personalization: item.personalization || undefined,
       })),
     };
 

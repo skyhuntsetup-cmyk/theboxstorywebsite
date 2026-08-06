@@ -6,12 +6,19 @@ export async function GET() {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from("products")
-      .select("*, product_categories(category_id)")
+      .select("*, product_categories(category_id), product_stores(store_id)")
       .order("name");
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     const products = (data || []).map((p) => {
-      const { product_categories, ...rest } = p as typeof p & { product_categories: { category_id: string }[] };
-      return { ...rest, categoryIds: (product_categories || []).map((pc: { category_id: string }) => pc.category_id) };
+      const { product_categories, product_stores, ...rest } = p as typeof p & {
+        product_categories: { category_id: string }[];
+        product_stores: { store_id: string }[];
+      };
+      return {
+        ...rest,
+        categoryIds: (product_categories || []).map((pc: { category_id: string }) => pc.category_id),
+        storeIds: (product_stores || []).map((ps: { store_id: string }) => ps.store_id),
+      };
     });
     return NextResponse.json({ success: true, products });
   } catch (err) {
@@ -25,12 +32,15 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, name, price, image, description, badge, stock_quantity, categoryIds } = body;
+    const { id, name, price, image, description, badge, stock_quantity, categoryIds, storeIds, personalization_fields } = body;
     if (!id || !name || price == null) {
       return NextResponse.json({ success: false, error: "id, name, and price are required." }, { status: 400 });
     }
     if (!Array.isArray(categoryIds) || categoryIds.length === 0) {
       return NextResponse.json({ success: false, error: "Select at least one category." }, { status: 400 });
+    }
+    if (!Array.isArray(storeIds) || storeIds.length === 0) {
+      return NextResponse.json({ success: false, error: "Select at least one store." }, { status: 400 });
     }
 
     const supabase = getSupabaseAdmin();
@@ -44,6 +54,7 @@ export async function POST(req: NextRequest) {
         description: description || null,
         badge: badge || null,
         stock_quantity: stock_quantity === "" || stock_quantity == null ? null : Number(stock_quantity),
+        personalization_fields: personalization_fields || [],
       }]);
     if (insertError) return NextResponse.json({ success: false, error: insertError.message }, { status: 400 });
 
@@ -51,6 +62,11 @@ export async function POST(req: NextRequest) {
       .from("product_categories")
       .insert(categoryIds.map((categoryId: string) => ({ product_id: id, category_id: categoryId })));
     if (tagError) return NextResponse.json({ success: false, error: tagError.message }, { status: 400 });
+
+    const { error: storeError } = await supabase
+      .from("product_stores")
+      .insert(storeIds.map((storeId: string) => ({ product_id: id, store_id: storeId })));
+    if (storeError) return NextResponse.json({ success: false, error: storeError.message }, { status: 400 });
 
     return NextResponse.json({ success: true });
   } catch (err) {

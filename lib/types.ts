@@ -9,6 +9,7 @@ export interface OrderItem {
   isCustomBox?: boolean;
   boxItems?: { id: string; name: string; price: number; image: string }[];
   giftMessage?: string;
+  personalization?: Record<string, string>;
 }
 
 export interface ShippingAddress {
@@ -113,11 +114,25 @@ export interface ProductRow {
   category: string;
   badge: string | null;
   stock_quantity: number | null;
+  personalization_fields: CustomFieldDef[];
 }
 
-/** A product joined with the full list of categories it's tagged into. */
+export interface StoreRow {
+  id: string;
+  created_at: string;
+  name: string;
+  slug: string;
+  tagline: string | null;
+  description: string | null;
+  hero_image: string | null;
+  display_order: number;
+  is_active: boolean;
+}
+
+/** A product joined with the categories and stores it's tagged into. */
 export interface ProductWithCategories extends ProductRow {
   categoryIds: string[];
+  storeIds: string[];
 }
 
 export interface BlogPostRow {

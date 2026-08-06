@@ -24,9 +24,12 @@ const navGroups: NavGroup[] = [
   {
     label: "Shop",
     items: [
-      { href: "/collections", label: "All Collections" },
+      { href: "/collections", label: "Pre-Curated Collections" },
       { href: "/collections/diwali", label: "Diwali Collection" },
-      { href: "/build", label: "Build a Box" },
+      { href: "/build", label: "Build Your Own Box" },
+      { href: "/store/quirky-stuff", label: "Quirky Stuff Store" },
+      { href: "/store/divine-store", label: "Divine Store" },
+      { href: "/custom-gifts", label: "Custom Gifts" },
     ],
   },
   {
@@ -40,6 +43,7 @@ const navGroups: NavGroup[] = [
 ];
 
 const singleLinks: NavItem[] = [
+  { href: "/blogs", label: "Blog" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

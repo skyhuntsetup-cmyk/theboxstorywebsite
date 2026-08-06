@@ -27,7 +27,6 @@ interface BazaarListItem {
   name: string;
   price: number;
   image: string;
-  category: string;
 }
 
 interface BoxStyleListItem {
@@ -60,7 +59,6 @@ export default function BuildBox() {
   const [selectedBoxStyle, setSelectedBoxStyle] = useState<string>("Classic Royal Gold");
   const [selectedRibbonStyle, setSelectedRibbonStyle] = useState<string>("Premium Gold Satin");
   const [giftMessage, setGiftMessage] = useState<string>("");
-  const [bazaarFilter, setBazaarFilter] = useState<string>("All");
 
   const [bazaarList, setBazaarList] = useState<BazaarListItem[]>([]);
   const [boxStyleList, setBoxStyleList] = useState<BoxStyleListItem[]>([]);
@@ -69,26 +67,36 @@ export default function BuildBox() {
   useEffect(() => {
     const loadBazaar = async () => {
       try {
-        const { data: bData } = await supabase
-          .from("bazaar_items")
-          .select("*")
-          .eq("is_active", true);
+        const { data: storeRow } = await supabase
+          .from("stores")
+          .select("id")
+          .eq("slug", "build-your-own-box")
+          .maybeSingle();
+
+        const { data: bData } = storeRow
+          ? await supabase
+              .from("products")
+              .select("id, name, price, image, stock_quantity, product_stores!inner(store_id)")
+              .eq("product_stores.store_id", storeRow.id)
+              .order("name")
+          : { data: null };
+        const availableTreats = (bData || []).filter((item) => item.stock_quantity !== 0);
 
         const { data: bsData } = await supabase
           .from("box_styles")
           .select("*")
           .eq("is_active", true);
 
-        if (bData && bData.length > 0) {
-          setBazaarList(bData);
+        if (availableTreats.length > 0) {
+          setBazaarList(availableTreats);
         } else {
           setBazaarList([
-            { id: "bz-1", name: "Artisanal Kaju Katli (250g)", price: 450, image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=300&auto=format&fit=crop&q=80", category: "Sweets" },
-            { id: "bz-2", name: "Handcrafted Brass Diya (Pair)", price: 600, image: "https://images.unsplash.com/photo-1605884768395-5cb5dbfb21be?w=300&auto=format&fit=crop&q=80", category: "Decor" },
-            { id: "bz-3", name: "Organic Lavender Soy Candle", price: 350, image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80", category: "Wellness" },
-            { id: "bz-4", name: "Premium Kashmiri Saffron (1g)", price: 550, image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&auto=format&fit=crop&q=80", category: "Gourmet" },
-            { id: "bz-5", name: "Assorted Dry Fruits (200g)", price: 490, image: "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=300&auto=format&fit=crop&q=80", category: "Gourmet" },
-            { id: "bz-6", name: "Rose Water Facial Mist", price: 320, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80", category: "Wellness" }
+            { id: "bz-1", name: "Artisanal Kaju Katli (250g)", price: 450, image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=300&auto=format&fit=crop&q=80" },
+            { id: "bz-2", name: "Handcrafted Brass Diya (Pair)", price: 600, image: "https://images.unsplash.com/photo-1605884768395-5cb5dbfb21be?w=300&auto=format&fit=crop&q=80" },
+            { id: "bz-3", name: "Organic Lavender Soy Candle", price: 350, image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80" },
+            { id: "bz-4", name: "Premium Kashmiri Saffron (1g)", price: 550, image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&auto=format&fit=crop&q=80" },
+            { id: "bz-5", name: "Assorted Dry Fruits (200g)", price: 490, image: "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=300&auto=format&fit=crop&q=80" },
+            { id: "bz-6", name: "Rose Water Facial Mist", price: 320, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=80" }
           ]);
         }
 
@@ -119,12 +127,6 @@ export default function BuildBox() {
     { name: "Festive Rani Pink Silk", color: "bg-[#D1126A]" },
     { name: "Classic Saffron Bow", color: "bg-[#F97316]" },
   ];
-
-  const categories = ["All", "Sweets", "Decor", "Wellness", "Gourmet"];
-
-  const filteredBazaar = bazaarList.filter(
-    (item) => bazaarFilter === "All" || item.category === bazaarFilter
-  );
 
   const boxPrice = 250;
   const hamperItemsTotal = buildABoxItems.reduce((acc: number, item: BoxItem) => acc + item.price, 0);
@@ -283,33 +285,18 @@ export default function BuildBox() {
 
             {step === "products" && (
               <motion.div key="products" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="bg-white border border-slate-200/80 p-6 rounded-3xl space-y-6 shadow-sm">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
                   <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-500 flex items-center space-x-2">
                     <ShoppingBag className="w-4.5 h-4.5 text-teal-deep" />
                     <span>Treats Bazaar</span>
                   </h3>
-                  <div className="flex space-x-1.5 flex-wrap gap-1">
-                    {categories.map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => setBazaarFilter(cat)}
-                        className={`text-[12px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors ${
-                          bazaarFilter === cat
-                            ? "bg-teal-deep text-white font-black shadow-sm"
-                            : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 {isLoading ? (
                   <p className="text-xs text-slate-400 text-center py-8">Loading treats...</p>
                 ) : (
                   <motion.div variants={gridContainer} initial="initial" animate="animate" className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[440px] overflow-y-auto pr-1">
-                    {filteredBazaar.map((item) => {
+                    {bazaarList.map((item) => {
                       const currentQty = buildABoxItems.filter((x) => x.id === item.id).length;
                       return (
                         <motion.div

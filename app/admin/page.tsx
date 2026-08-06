@@ -8,11 +8,12 @@ import {
   Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X, LogOut, Copy, Link2, Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Order, Inquiry, BazaarItemRow, BoxStyleRow, OfflineInventoryItem, OrderItem, CategoryRow, ProductWithCategories, BlogPostRow } from "../../lib/types";
+import type { Order, Inquiry, BoxStyleRow, OfflineInventoryItem, OrderItem, CategoryRow, StoreRow, ProductWithCategories, BlogPostRow, CustomFieldDef } from "../../lib/types";
 import type { SiteContentField } from "../../lib/siteContent";
 import CampaignsTab from "./CampaignsTab";
+import StoresTab from "./StoresTab";
 
-type AdminTab = "orders" | "inquiries" | "products" | "categories" | "blog" | "bazaar" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns";
+type AdminTab = "orders" | "inquiries" | "products" | "categories" | "stores" | "blog" | "packaging" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
@@ -21,7 +22,7 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithCategories[]>([]);
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPostRow[]>([]);
-  const [bazaarItems, setBazaarItems] = useState<BazaarItemRow[]>([]);
+  const [stores, setStores] = useState<StoreRow[]>([]);
   const [boxStyles, setBoxStyles] = useState<BoxStyleRow[]>([]);
   const [offlineInventory, setOfflineInventory] = useState<OfflineInventoryItem[]>([]);
   
@@ -41,7 +42,6 @@ export default function AdminDashboard() {
   });
 
   // Creation forms
-  const [newBazaar, setNewBazaar] = useState({ name: "", price: "", image: "", category: "Sweets" });
   const [newBox, setNewBox] = useState({ name: "", color: "from-[#F97316]/20 to-[#E2BA5F]/30 border-gold/30" });
   const [newInventory, setNewInventory] = useState({
     product_code: "",
@@ -64,7 +64,12 @@ export default function AdminDashboard() {
   const [isSavingCategory, setIsSavingCategory] = useState(false);
 
   // Products tab state (full CRUD, multi-category tagging)
-  const emptyProductForm = { id: "", name: "", price: "", image: "", description: "", badge: "", stock_quantity: "", categoryIds: [] as string[] };
+  const emptyProductForm = {
+    id: "", name: "", price: "", image: "", description: "", badge: "", stock_quantity: "",
+    categoryIds: [] as string[],
+    storeIds: [] as string[],
+    personalization_fields: [] as CustomFieldDef[],
+  };
   const [newProduct, setNewProduct] = useState(emptyProductForm);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<(ProductWithCategories & { priceInput?: string }) | null>(null);
@@ -82,7 +87,6 @@ export default function AdminDashboard() {
   // Sync to website modal state
   const [syncingItem, setSyncingItem] = useState<OfflineInventoryItem | null>(null);
   const [syncCategory, setSyncCategory] = useState<string>("Diwali"); // Default for products
-  const [syncBazaarCategory, setSyncBazaarCategory] = useState<"Sweets" | "Decor" | "Wellness" | "Gourmet">("Sweets");
 
   // Website Content Config states
   const [catalogConfig, setCatalogConfig] = useState<{ totalPages: number; sections: any[] } | null>(null);
@@ -243,28 +247,29 @@ export default function AdminDashboard() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        // 2-6. Fetch Inquiries, Products (+tagged categories), Categories,
-        // Blog Posts, Bazaar Items, Box Styles, and Offline Inventory, all
-        // via service-role admin API routes. Inquiries and offline_inventory
-        // have no public-read RLS policy at all (anon reads returned nothing
-        // silently); products/categories/blog/bazaar/box_styles are publicly
-        // readable but also need admin writes here, which the anon-key
-        // client can't do against `auth.role() = 'authenticated'` policies
-        // without a real Supabase Auth session.
-        const [iRes, prodRes, catRes, blogRes, bRes, bsRes, invRes] = await Promise.all([
+        // 2-6. Fetch Inquiries, Products (+tagged categories/stores),
+        // Categories, Stores, Blog Posts, Box Styles, and Offline Inventory,
+        // all via service-role admin API routes. Inquiries and
+        // offline_inventory have no public-read RLS policy at all (anon
+        // reads returned nothing silently); products/categories/stores/blog/
+        // box_styles are publicly readable but also need admin writes here,
+        // which the anon-key client can't do against
+        // `auth.role() = 'authenticated'` policies without a real Supabase
+        // Auth session.
+        const [iRes, prodRes, catRes, storesRes, blogRes, bsRes, invRes] = await Promise.all([
           fetch("/api/admin/inquiries").then(r => r.json()).catch(() => null),
           fetch("/api/admin/products").then(r => r.json()).catch(() => null),
           fetch("/api/admin/categories").then(r => r.json()).catch(() => null),
+          fetch("/api/admin/stores").then(r => r.json()).catch(() => null),
           fetch("/api/admin/blog").then(r => r.json()).catch(() => null),
-          fetch("/api/admin/bazaar").then(r => r.json()).catch(() => null),
           fetch("/api/admin/box-styles").then(r => r.json()).catch(() => null),
           fetch("/api/admin/inventory").then(r => r.json()).catch(() => null),
         ]);
         const iData = iRes?.success ? iRes.inquiries : null;
         if (prodRes?.success) setProducts(prodRes.products);
         if (catRes?.success) setCategories(catRes.categories);
+        if (storesRes?.success) setStores(storesRes.stores);
         if (blogRes?.success) setBlogPosts(blogRes.posts);
-        const bData = bRes?.success ? bRes.items : null;
         const bsData = bsRes?.success ? bsRes.styles : null;
         const invData = invRes?.success ? invRes.items : null;
 
@@ -293,7 +298,6 @@ export default function AdminDashboard() {
         }
         
         if (iData) setInquiries(iData);
-        if (bData) setBazaarItems(bData);
         if (bsData) setBoxStyles(bsData);
         if (invData) setOfflineInventory(invData);
 
@@ -322,21 +326,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const toggleBazaarActive = async (itemId: string, currentStatus: boolean) => {
-    try {
-      const res = await fetch(`/api/admin/bazaar/${itemId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_active: !currentStatus }),
-      });
-      const data = await res.json();
-      if (data.success) setRefreshTrigger(prev => prev + 1);
-      else alert("Failed to toggle status: " + data.error);
-    } catch (err) {
-      alert("Error: " + (err instanceof Error ? err.message : String(err)));
-    }
-  };
-
   const toggleBoxActive = async (boxId: string, currentStatus: boolean) => {
     try {
       const res = await fetch(`/api/admin/box-styles/${boxId}`, {
@@ -347,30 +336,6 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (data.success) setRefreshTrigger(prev => prev + 1);
       else alert("Failed to toggle status: " + data.error);
-    } catch (err) {
-      alert("Error: " + (err instanceof Error ? err.message : String(err)));
-    }
-  };
-
-  const addBazaarItem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newBazaar.name || !newBazaar.price || !newBazaar.image) {
-      alert("Please fill in all fields.");
-      return;
-    }
-    try {
-      const res = await fetch("/api/admin/bazaar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newBazaar),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setNewBazaar({ name: "", price: "", image: "", category: "Sweets" });
-        setRefreshTrigger(prev => prev + 1);
-      } else {
-        alert("Failed to add: " + data.error);
-      }
     } catch (err) {
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
     }
@@ -565,6 +530,9 @@ export default function AdminDashboard() {
     if (newProduct.categoryIds.length === 0) {
       alert("Select at least one category."); return;
     }
+    if (newProduct.storeIds.length === 0) {
+      alert("Select at least one store."); return;
+    }
     setIsSavingProduct(true);
     try {
       const res = await fetch("/api/admin/products", {
@@ -593,6 +561,9 @@ export default function AdminDashboard() {
     if (editingProduct.categoryIds.length === 0) {
       alert("Select at least one category."); return;
     }
+    if (editingProduct.storeIds.length === 0) {
+      alert("Select at least one store."); return;
+    }
     setIsSavingProduct(true);
     try {
       const res = await fetch(`/api/admin/products/${editingProduct.id}`, {
@@ -606,6 +577,8 @@ export default function AdminDashboard() {
           badge: editingProduct.badge,
           stock_quantity: editingProduct.stock_quantity,
           categoryIds: editingProduct.categoryIds,
+          storeIds: editingProduct.storeIds,
+          personalization_fields: editingProduct.personalization_fields,
         }),
       });
       const data = await res.json();
@@ -715,46 +688,36 @@ export default function AdminDashboard() {
   const executeWebsiteSync = async (type: "curated" | "bazaar") => {
     if (!syncingItem) return;
     try {
-      if (type === "curated") {
-        const categoryId = categories.find((c) => c.name === syncCategory)?.id;
-        if (!categoryId) {
-          alert(`No "${syncCategory}" category found — create it under the Categories tab first.`);
-          return;
-        }
-        const res = await fetch("/api/admin/products", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: syncingItem.product_code,
-            name: syncingItem.name,
-            price: Number(syncingItem.selling_price),
-            image: syncingItem.photo_drive_link || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80",
-            description: `Offline Store exclusive catalog item by ${syncingItem.vendor_name}. Code: ${syncingItem.product_code}`,
-            badge: "Offline Treasure",
-            categoryIds: [categoryId],
-          }),
-        });
-        const data = await res.json();
-        if (!data.success) {
-          alert("Failed to sync as product: " + data.error);
-          return;
-        }
-      } else {
-        const res = await fetch("/api/admin/bazaar", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: syncingItem.name,
-            price: Number(syncingItem.selling_price),
-            image: syncingItem.photo_drive_link || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300&auto=format&fit=crop&q=80",
-            category: syncBazaarCategory,
-          }),
-        });
-        const data = await res.json();
-        if (!data.success) {
-          alert("Failed to sync as bazaar item: " + data.error);
-          return;
-        }
+      const categoryId = categories.find((c) => c.name === syncCategory)?.id;
+      if (!categoryId) {
+        alert(`No "${syncCategory}" category found — create it under the Categories tab first.`);
+        return;
+      }
+      const storeSlug = type === "curated" ? "pre-curated-collections" : "build-your-own-box";
+      const storeId = stores.find((s) => s.slug === storeSlug)?.id;
+      if (!storeId) {
+        alert(`Store setup incomplete — seed the "${storeSlug}" store under the Stores tab first.`);
+        return;
+      }
+
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: syncingItem.product_code,
+          name: syncingItem.name,
+          price: Number(syncingItem.selling_price),
+          image: syncingItem.photo_drive_link || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80",
+          description: `Offline Store exclusive catalog item by ${syncingItem.vendor_name}. Code: ${syncingItem.product_code}`,
+          badge: type === "curated" ? "Offline Treasure" : undefined,
+          categoryIds: [categoryId],
+          storeIds: [storeId],
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        alert("Failed to sync: " + data.error);
+        return;
       }
 
       // Update sync flag on offline_inventory
@@ -909,7 +872,7 @@ export default function AdminDashboard() {
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "categories", "blog", "bazaar", "inventory", "campaigns", "portfolio", "catalog", "content"].map((tab) => (
+          {["orders", "inquiries", "products", "categories", "stores", "blog", "packaging", "inventory", "campaigns", "portfolio", "catalog", "content"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -922,24 +885,26 @@ export default function AdminDashboard() {
                   : "text-teal-deep/60 hover:text-teal-deep hover:bg-teal-deep/5"
               }`}
             >
-              {tab === "bazaar" 
-                ? "Bazaar & Packaging" 
-                : tab === "inventory" 
-                  ? "Offline Inventory" 
-                  : tab === "portfolio" 
-                    ? "Past Projects" 
-                    : tab === "catalog"
-                      ? "Catalog Sections"
-                      : tab === "content"
-                        ? "Site Content"
-                        : tab === "campaigns"
-                          ? "Corporate Campaigns"
-                          : tab}
+              {tab === "packaging"
+                ? "Packaging Styles"
+                : tab === "stores"
+                  ? "Stores"
+                  : tab === "inventory"
+                    ? "Offline Inventory"
+                    : tab === "portfolio"
+                      ? "Past Projects"
+                      : tab === "catalog"
+                        ? "Catalog Sections"
+                        : tab === "content"
+                          ? "Site Content"
+                          : tab === "campaigns"
+                            ? "Corporate Campaigns"
+                            : tab}
             </button>
           ))}
         </div>
 
-        {activeTab !== "bazaar" && activeTab !== "categories" && activeTab !== "blog" && activeTab !== "campaigns" && (
+        {activeTab !== "packaging" && activeTab !== "categories" && activeTab !== "stores" && activeTab !== "blog" && activeTab !== "campaigns" && (
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="w-4 h-4 text-teal-deep/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -1012,11 +977,21 @@ export default function AdminDashboard() {
                           <span className="block font-bold text-teal-deep">₹{order.subtotal}</span>
                         </td>
                         <td className="p-4">
-                          <div className="flex flex-wrap gap-1 max-w-[200px]">
+                          <div className="flex flex-col gap-1 max-w-[220px]">
                             {order.items?.map((item: OrderItem, idx: number) => (
-                              <span key={idx} className="bg-teal-deep/5 px-2 py-0.5 rounded text-[12px] block">
-                                {item.name} x{item.quantity}
-                              </span>
+                              <div key={idx} className="space-y-0.5">
+                                <span className="bg-teal-deep/5 px-2 py-0.5 rounded text-[12px] block w-fit">
+                                  {item.name} x{item.quantity}
+                                </span>
+                                {item.giftMessage && (
+                                  <span className="block text-[11px] italic text-rani-pink/80 pl-1">&quot;{item.giftMessage}&quot;</span>
+                                )}
+                                {item.personalization && Object.keys(item.personalization).length > 0 && (
+                                  <span className="block text-[11px] text-saffron pl-1">
+                                    {Object.entries(item.personalization).map(([k, v]) => `${k}: ${v}`).join(" · ")}
+                                  </span>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </td>
@@ -1189,6 +1164,84 @@ export default function AdminDashboard() {
                       })}
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-[12px] font-bold text-teal-deep/60">Stores — which shelves this product appears on</label>
+                    <div className="flex flex-wrap gap-2">
+                      {stores.map((store) => {
+                        const checked = newProduct.storeIds.includes(store.id);
+                        return (
+                          <button
+                            type="button"
+                            key={store.id}
+                            onClick={() => setNewProduct({
+                              ...newProduct,
+                              storeIds: checked ? newProduct.storeIds.filter(id => id !== store.id) : [...newProduct.storeIds, store.id],
+                            })}
+                            className={`text-[13px] font-bold px-3 py-1.5 rounded-full border transition-all ${
+                              checked ? "bg-rani-pink text-white border-rani-pink" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
+                            }`}
+                          >
+                            {store.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[12px] font-bold text-teal-deep/60">Personalization fields — for Custom Gifts; asked at Add to Bag (engraving text, name, etc.)</label>
+                      <button type="button" onClick={() => setNewProduct({
+                        ...newProduct,
+                        personalization_fields: [...newProduct.personalization_fields, { key: "", label: "", type: "text", required: false }],
+                      })} className="text-[12px] font-bold text-teal-deep flex items-center space-x-1 flex-shrink-0">
+                        <Plus className="w-3 h-3" /><span>Add Field</span>
+                      </button>
+                    </div>
+                    {newProduct.personalization_fields.map((field, idx) => (
+                      <div key={idx} className="bg-white border border-teal-deep/10 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                        <input value={field.label} onChange={(e) => {
+                          const fields = [...newProduct.personalization_fields];
+                          fields[idx] = { ...fields[idx], label: e.target.value, key: e.target.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/(^_|_$)/g, "") || `field_${idx}` };
+                          setNewProduct({ ...newProduct, personalization_fields: fields });
+                        }} placeholder="Field label, e.g. Engraving Text"
+                          className="sm:col-span-6 bg-slate-50 border border-teal-deep/10 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                        <select value={field.type} onChange={(e) => {
+                          const fields = [...newProduct.personalization_fields];
+                          fields[idx] = { ...fields[idx], type: e.target.value as "text" | "dropdown" };
+                          setNewProduct({ ...newProduct, personalization_fields: fields });
+                        }} className="sm:col-span-3 bg-slate-50 border border-teal-deep/10 rounded-lg px-2 py-2 text-xs focus:outline-none">
+                          <option value="text">Text</option>
+                          <option value="dropdown">Dropdown</option>
+                        </select>
+                        <label className="sm:col-span-2 flex items-center space-x-1 text-[12px] text-teal-deep/60">
+                          <input type="checkbox" checked={field.required} onChange={(e) => {
+                            const fields = [...newProduct.personalization_fields];
+                            fields[idx] = { ...fields[idx], required: e.target.checked };
+                            setNewProduct({ ...newProduct, personalization_fields: fields });
+                          }} />
+                          <span>Required</span>
+                        </label>
+                        <button type="button" onClick={() => setNewProduct({
+                          ...newProduct,
+                          personalization_fields: newProduct.personalization_fields.filter((_, i) => i !== idx),
+                        })} className="sm:col-span-1 text-teal-deep/30 hover:text-rani-pink justify-self-end">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        {field.type === "dropdown" && (
+                          <input
+                            value={(field.options || []).join(", ")}
+                            onChange={(e) => {
+                              const fields = [...newProduct.personalization_fields];
+                              fields[idx] = { ...fields[idx], options: e.target.value.split(",").map(s => s.trim()) };
+                              setNewProduct({ ...newProduct, personalization_fields: fields });
+                            }}
+                            placeholder="Options, comma separated"
+                            className="sm:col-span-12 bg-slate-50 border border-teal-deep/10 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                   <button type="submit" disabled={isSavingProduct}
                     className="px-6 py-2.5 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-60">
                     {isSavingProduct ? "Saving..." : "Create Product"}
@@ -1327,6 +1380,84 @@ export default function AdminDashboard() {
                                     })}
                                   </div>
                                 </div>
+                                <div className="space-y-2">
+                                  <label className="text-[12px] font-bold text-teal-deep/60">Stores</label>
+                                  <div className="flex flex-wrap gap-2">
+                                    {stores.map((store) => {
+                                      const checked = editingProduct.storeIds.includes(store.id);
+                                      return (
+                                        <button
+                                          type="button"
+                                          key={store.id}
+                                          onClick={() => setEditingProduct({
+                                            ...editingProduct,
+                                            storeIds: checked ? editingProduct.storeIds.filter(id => id !== store.id) : [...editingProduct.storeIds, store.id],
+                                          })}
+                                          className={`text-[13px] font-bold px-3 py-1.5 rounded-full border transition-all ${
+                                            checked ? "bg-rani-pink text-white border-rani-pink" : "bg-white text-teal-deep/70 border-teal-deep/15 hover:border-teal-deep/40"
+                                          }`}
+                                        >
+                                          {store.name}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-[12px] font-bold text-teal-deep/60">Personalization fields</label>
+                                    <button type="button" onClick={() => setEditingProduct({
+                                      ...editingProduct,
+                                      personalization_fields: [...editingProduct.personalization_fields, { key: "", label: "", type: "text", required: false }],
+                                    })} className="text-[12px] font-bold text-teal-deep flex items-center space-x-1 flex-shrink-0">
+                                      <Plus className="w-3 h-3" /><span>Add Field</span>
+                                    </button>
+                                  </div>
+                                  {editingProduct.personalization_fields.map((field, idx) => (
+                                    <div key={idx} className="bg-white border border-teal-deep/10 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                                      <input value={field.label} onChange={(e) => {
+                                        const fields = [...editingProduct.personalization_fields];
+                                        fields[idx] = { ...fields[idx], label: e.target.value, key: e.target.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/(^_|_$)/g, "") || `field_${idx}` };
+                                        setEditingProduct({ ...editingProduct, personalization_fields: fields });
+                                      }} placeholder="Field label"
+                                        className="sm:col-span-6 bg-slate-50 border border-teal-deep/10 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                      <select value={field.type} onChange={(e) => {
+                                        const fields = [...editingProduct.personalization_fields];
+                                        fields[idx] = { ...fields[idx], type: e.target.value as "text" | "dropdown" };
+                                        setEditingProduct({ ...editingProduct, personalization_fields: fields });
+                                      }} className="sm:col-span-3 bg-slate-50 border border-teal-deep/10 rounded-lg px-2 py-2 text-xs focus:outline-none">
+                                        <option value="text">Text</option>
+                                        <option value="dropdown">Dropdown</option>
+                                      </select>
+                                      <label className="sm:col-span-2 flex items-center space-x-1 text-[12px] text-teal-deep/60">
+                                        <input type="checkbox" checked={field.required} onChange={(e) => {
+                                          const fields = [...editingProduct.personalization_fields];
+                                          fields[idx] = { ...fields[idx], required: e.target.checked };
+                                          setEditingProduct({ ...editingProduct, personalization_fields: fields });
+                                        }} />
+                                        <span>Required</span>
+                                      </label>
+                                      <button type="button" onClick={() => setEditingProduct({
+                                        ...editingProduct,
+                                        personalization_fields: editingProduct.personalization_fields.filter((_, i) => i !== idx),
+                                      })} className="sm:col-span-1 text-teal-deep/30 hover:text-rani-pink justify-self-end">
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                      {field.type === "dropdown" && (
+                                        <input
+                                          value={(field.options || []).join(", ")}
+                                          onChange={(e) => {
+                                            const fields = [...editingProduct.personalization_fields];
+                                            fields[idx] = { ...fields[idx], options: e.target.value.split(",").map(s => s.trim()) };
+                                            setEditingProduct({ ...editingProduct, personalization_fields: fields });
+                                          }}
+                                          placeholder="Options, comma separated"
+                                          className="sm:col-span-12 bg-slate-50 border border-teal-deep/10 rounded-lg px-3 py-2 text-xs focus:outline-none"
+                                        />
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
                                 <div className="flex space-x-2">
                                   <button type="submit" disabled={isSavingProduct}
                                     className="px-5 py-2 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-60">
@@ -1348,6 +1479,8 @@ export default function AdminDashboard() {
               </div>
             </div>
           )}
+
+          {activeTab === "stores" && <StoresTab />}
 
           {activeTab === "categories" && (
             <div className="p-6 space-y-6">
@@ -1545,138 +1678,16 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* TAB 4: BAZAAR & PACKAGING (NEW) */}
-          {activeTab === "bazaar" && (
+          {/* TAB: PACKAGING STYLES */}
+          {activeTab === "packaging" && (
             <div className="p-6 space-y-10">
-              {/* Part A: Bazaar items configuration */}
+              {/* Box Styles configuration. Build-a-Box treats used to live here
+                  too (as bazaar_items) but are now ordinary Products rows
+                  tagged into the "Build Your Own Box" store — manage them from
+                  the Products tab (filter by that store) instead. */}
               <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
-                  <h3 className="font-heading text-lg font-bold text-teal-deep">1. Hamper Studio treats</h3>
-                  <span className="text-[12px] text-teal-deep/50">Configure treats selectable by user in Build-a-Box studio.</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-                  {/* Form to add item */}
-                  <form onSubmit={addBazaarItem} className="md:col-span-4 bg-teal-deep/5 p-6 rounded-2xl border border-teal-deep/5 space-y-4">
-                    <h4 className="font-heading text-sm font-bold text-teal-deep flex items-center space-x-1">
-                      <Plus className="w-4 h-4 text-rani-pink" />
-                      <span>Add New Custom Treat</span>
-                    </h4>
-                    
-                    <div className="space-y-1">
-                      <label className="text-[12px] font-bold text-teal-deep/60">Treat Name</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="E.g. Rose Barfi (150g)"
-                        value={newBazaar.name}
-                        onChange={(e) => setNewBazaar({ ...newBazaar, name: e.target.value })}
-                        className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-[12px] font-bold text-teal-deep/60">Price (INR)</label>
-                        <input
-                          type="number"
-                          required
-                          placeholder="399"
-                          value={newBazaar.price}
-                          onChange={(e) => setNewBazaar({ ...newBazaar, price: e.target.value })}
-                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[12px] font-bold text-teal-deep/60">Category</label>
-                        <select
-                          value={newBazaar.category}
-                          onChange={(e) => setNewBazaar({ ...newBazaar, category: e.target.value })}
-                          className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-2 text-xs focus:outline-none text-teal-deep focus:border-rani-pink/40"
-                        >
-                          <option value="Sweets">Sweets</option>
-                          <option value="Decor">Decor</option>
-                          <option value="Wellness">Wellness</option>
-                          <option value="Gourmet">Gourmet</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[12px] font-bold text-teal-deep/60">Image URL</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="https://images.unsplash.com/..."
-                        value={newBazaar.image}
-                        onChange={(e) => setNewBazaar({ ...newBazaar, image: e.target.value })}
-                        className="w-full bg-background border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rani-pink/40"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full py-2.5 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-lg font-bold text-xs shadow transition-all"
-                    >
-                      Add to Studio Catalog
-                    </button>
-                  </form>
-
-                  {/* List of active items */}
-                  <div className="md:col-span-8 overflow-y-auto max-h-[360px] border border-teal-deep/5 rounded-2xl">
-                    <table className="w-full text-xs text-left">
-                      <thead className="bg-background uppercase font-bold text-teal-deep/60 border-b border-teal-deep/5">
-                        <tr>
-                          <th className="p-3">Product Name</th>
-                          <th className="p-3">Category</th>
-                          <th className="p-3">Price</th>
-                          <th className="p-3">Display Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-teal-deep/5">
-                        {bazaarItems.map((item) => (
-                          <tr key={item.id} className="hover:bg-teal-deep/5">
-                            <td className="p-3 flex items-center space-x-2">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={item.image} alt={item.name} className="w-8 h-8 object-cover rounded" />
-                              <span className="font-semibold">{item.name}</span>
-                            </td>
-                            <td className="p-3 text-teal-deep/80">{item.category}</td>
-                            <td className="p-3 font-bold">₹{item.price}</td>
-                            <td className="p-3">
-                              <button
-                                onClick={() => toggleBazaarActive(item.id, item.is_active)}
-                                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full font-bold text-[12px] transition-colors ${
-                                  item.is_active 
-                                    ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200" 
-                                    : "bg-red-100 text-red-800 hover:bg-red-200"
-                                }`}
-                              >
-                                {item.is_active ? (
-                                  <>
-                                    <Eye className="w-3.5 h-3.5" />
-                                    <span>Active</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <EyeOff className="w-3.5 h-3.5" />
-                                    <span>Hidden</span>
-                                  </>
-                                )}
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              {/* Part B: Box Styles configuration */}
-              <div className="space-y-6">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
-                  <h3 className="font-heading text-lg font-bold text-teal-deep">2. Rigid Packaging Styles</h3>
+                  <h3 className="font-heading text-lg font-bold text-teal-deep">Rigid Packaging Styles</h3>
                   <span className="text-[12px] text-teal-deep/50">Manage the rigid boxes offered in Hamper customizer.</span>
                 </div>
 
@@ -2625,29 +2636,28 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-4">
-                {/* Mode A: Curated Product */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-teal-deep/50 uppercase">Category Tag</label>
+                  <select
+                    value={syncCategory}
+                    onChange={(e) => setSyncCategory(e.target.value)}
+                    className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-1 text-xs text-teal-deep focus:outline-none"
+                  >
+                    <option value="Diwali">Diwali Celebrations</option>
+                    <option value="Weddings">Wedding Ceremonies</option>
+                    <option value="Anniversary">Anniversary Romance</option>
+                    <option value="Corporate">Corporate Elite</option>
+                    <option value="Housewarming">Housewarming Serenity</option>
+                  </select>
+                </div>
+
+                {/* Mode A: Pre-Curated Collections store */}
                 <div className="p-4 bg-teal-deep/5 border border-teal-deep/10 rounded-2xl space-y-3">
                   <h4 className="font-bold text-xs text-teal-deep flex items-center space-x-1.5">
                     <ShoppingBag className="w-4 h-4 text-rani-pink" />
-                    <span>Option 1: Sync as Pre-curated Box</span>
+                    <span>Option 1: Sync to Pre-Curated Collections</span>
                   </h4>
-                  <p className="text-[12px] text-teal-deep/70">Will list this item directly inside the collections catalogue at `/collections` under a chosen theme category.</p>
-                  
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-teal-deep/50 uppercase">Category Tag</label>
-                    <select
-                      value={syncCategory}
-                      onChange={(e) => setSyncCategory(e.target.value)}
-                      className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-1 text-xs text-teal-deep focus:outline-none"
-                    >
-                      <option value="Diwali">Diwali Celebrations</option>
-                      <option value="Weddings">Wedding Ceremonies</option>
-                      <option value="Anniversary">Anniversary Romance</option>
-                      <option value="Corporate">Corporate Elite</option>
-                      <option value="Housewarming">Housewarming Serenity</option>
-                    </select>
-                  </div>
-                  
+                  <p className="text-[12px] text-teal-deep/70">Lists this item at `/collections`, tagged with the category above.</p>
                   <button
                     type="button"
                     onClick={() => executeWebsiteSync("curated")}
@@ -2657,28 +2667,13 @@ export default function AdminDashboard() {
                   </button>
                 </div>
 
-                {/* Mode B: Bazaar Custom treat */}
+                {/* Mode B: Build Your Own Box store */}
                 <div className="p-4 bg-saffron/5 border border-saffron/10 rounded-2xl space-y-3">
                   <h4 className="font-bold text-xs text-teal-deep flex items-center space-x-1.5">
                     <Tag className="w-4 h-4 text-saffron" />
-                    <span>Option 2: Sync as Hamper Studio Treat</span>
+                    <span>Option 2: Sync as Build Your Own Box Treat</span>
                   </h4>
-                  <p className="text-[12px] text-teal-deep/70">Will register this treat inside the Build-a-Box configurator studio database. Users can choose it as a sub-item in custom gift baskets.</p>
-
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-teal-deep/50 uppercase">Bazaar Section</label>
-                    <select
-                      value={syncBazaarCategory}
-                      onChange={(e) => setSyncBazaarCategory(e.target.value as "Sweets" | "Decor" | "Wellness" | "Gourmet")}
-                      className="w-full bg-background border border-teal-deep/15 rounded-lg px-2 py-1 text-xs text-teal-deep focus:outline-none"
-                    >
-                      <option value="Sweets">Sweets (Mithai/Dry Fruits)</option>
-                      <option value="Decor">Decor (Diyas/Toran)</option>
-                      <option value="Wellness">Wellness (Candles/Mists)</option>
-                      <option value="Gourmet">Gourmet (Tea/Flasks)</option>
-                    </select>
-                  </div>
-
+                  <p className="text-[12px] text-teal-deep/70">Registers this as a treat selectable inside the Build-a-Box studio.</p>
                   <button
                     type="button"
                     onClick={() => executeWebsiteSync("bazaar")}

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { supabase } from "../../lib/supabase";
 import type { CategoryRow, ProductWithCategories } from "../../lib/types";
-import { Sparkles, Send, Bot, User, RefreshCw } from "lucide-react";
+import { Sparkles, Send, Bot, User, RefreshCw, Mic, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -14,6 +14,21 @@ interface ChatMessage {
   recommendations?: ProductWithCategories[];
   categorySlug?: string;
 }
+
+// Minimal typing for the browser's built-in Web Speech API (not in the
+// standard TS DOM lib). Chrome/Edge expose it as webkitSpeechRecognition;
+// Firefox doesn't support it at all, hence the feature-detection below.
+interface SpeechRecognitionInstance extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+}
+type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
 
 export default function GiftGenie() {
   const [input, setInput] = useState("");
@@ -28,6 +43,42 @@ export default function GiftGenie() {
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [products, setProducts] = useState<ProductWithCategories[]>([]);
   const nextId = useRef(0);
+
+  // Voice: speech-to-text via the browser's mic, text-to-speech for replies.
+  // Both are free (no API calls) but only work where the browser supports
+  // them — Chrome/Edge have both, Safari has speech synthesis only, Firefox
+  // has neither, so every control below is feature-detected and hidden
+  // rather than shown broken.
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+
+  useEffect(() => {
+    const SpeechRecognitionCtor = (window as unknown as {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    }).SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: SpeechRecognitionConstructor }).webkitSpeechRecognition;
+
+    if (SpeechRecognitionCtor) {
+      const recognition = new SpeechRecognitionCtor();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-IN";
+      recognitionRef.current = recognition;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- feature-detecting Web Speech API support, only knowable client-side post-mount
+      setSpeechSupported(true);
+    }
+  }, []);
+
+  const speak = useCallback((text: string) => {
+    if (!voiceEnabled || typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  }, [voiceEnabled]);
 
   // Live catalog, so the Genie always recommends what's actually stocked and
   // tagged in Admin rather than a stale, hand-picked seed list.
@@ -118,7 +169,26 @@ export default function GiftGenie() {
 
       setMessages((prev) => [...prev, botMsg]);
       setIsLoading(false);
+      speak(botMsg.text);
     }, 1800);
+  };
+
+  const handleMicClick = () => {
+    const recognition = recognitionRef.current;
+    if (!recognition || isListening) return;
+
+    // Using voice at all is a strong signal the visitor wants spoken
+    // replies too, so turn that on the first time they use the mic.
+    setVoiceEnabled(true);
+    setIsListening(true);
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0]?.[0]?.transcript;
+      if (transcript) handleSend(transcript);
+    };
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+    recognition.start();
   };
 
   return (
@@ -130,7 +200,7 @@ export default function GiftGenie() {
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-between space-y-8">
 
         {/* Editorial header */}
-        <section className="text-center space-y-4">
+        <section className="text-center space-y-4 relative">
           <div className="inline-flex items-center space-x-1.5 bg-teal-deep/5 border border-teal-deep/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-deep uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-teal-deep" />
             <span>AI Assistant</span>
@@ -139,8 +209,20 @@ export default function GiftGenie() {
             AI Gift Genie
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-            Whisper your parameters to the genie. Unravel the perfect celebratory bundles automatically.
+            {speechSupported ? "Speak or type your parameters — the genie replies out loud too." : "Whisper your parameters to the genie. Unravel the perfect celebratory bundles automatically."}
           </p>
+          <button
+            onClick={() => {
+              if (voiceEnabled) window.speechSynthesis.cancel();
+              setVoiceEnabled((v) => !v);
+            }}
+            title={voiceEnabled ? "Turn off spoken replies" : "Turn on spoken replies"}
+            className={`absolute top-0 right-0 p-2.5 rounded-full border transition-colors ${
+              voiceEnabled ? "bg-teal-deep text-white border-teal-deep" : "bg-white text-slate-400 border-slate-200 hover:text-teal-deep"
+            }`}
+          >
+            {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          </button>
         </section>
 
         {/* Chat History Panel */}
@@ -240,6 +322,21 @@ export default function GiftGenie() {
             </div>
           )}
 
+          {/* Listening indicator */}
+          <AnimatePresence>
+            {isListening && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-center space-x-2 text-[13px] font-bold text-rani-pink"
+              >
+                <span className="w-2 h-2 bg-rani-pink rounded-full animate-ping" />
+                <span>Listening...</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Chat Input form */}
           <form
             onSubmit={(e) => {
@@ -255,6 +352,21 @@ export default function GiftGenie() {
               onChange={(e) => setInput(e.target.value)}
               className="flex-1 bg-slate-50 border border-slate-200 focus:border-teal-deep rounded-xl px-4 py-3 text-xs focus:outline-none placeholder-slate-400 text-slate-800 transition-colors"
             />
+            {speechSupported && (
+              <motion.button
+                type="button"
+                onClick={handleMicClick}
+                whileTap={{ scale: 0.92 }}
+                animate={isListening ? { scale: [1, 1.12, 1] } : { scale: 1 }}
+                transition={isListening ? { repeat: Infinity, duration: 1 } : undefined}
+                title="Speak to the Genie"
+                className={`p-3 rounded-xl shadow transition-colors ${
+                  isListening ? "bg-rani-pink text-white" : "bg-white border border-slate-200 text-teal-deep hover:border-teal-deep"
+                }`}
+              >
+                <Mic className="w-4.5 h-4.5" />
+              </motion.button>
+            )}
             <button
               type="submit"
               className="p-3 bg-teal-deep text-white rounded-xl shadow hover:bg-teal-deep/90 transition-all transform active:scale-95"
