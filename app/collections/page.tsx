@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import { ProductCard } from "../../components/ProductCard";
 import { SlidersHorizontal, Gift, X, Tag, IndianRupee, Loader } from "lucide-react";
@@ -23,6 +24,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export default function Collections() {
+  const router = useRouter();
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [products, setProducts] = useState<ProductWithCategories[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -146,7 +148,15 @@ export default function Collections() {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategoryId(cat.id)}
+                  onClick={() => {
+                    if (cat.slug === "diwali") {
+                      router.push("/collections/diwali");
+                    } else if (cat.slug === "moortis" || cat.slug === "divine-collection") {
+                      router.push("/collections/divine");
+                    } else {
+                      setSelectedCategoryId(cat.id);
+                    }
+                  }}
                   className="group flex flex-col items-center space-y-2 focus:outline-none transition-all w-16 sm:w-20"
                 >
                   <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border p-0.5 transition-all duration-300 relative bg-white flex items-center justify-center ${
@@ -200,7 +210,13 @@ export default function Collections() {
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
-                    href={`/collections/${cat.slug}`}
+                    href={
+                      cat.slug === "diwali"
+                        ? "/collections/diwali"
+                        : cat.slug === "moortis" || cat.slug === "divine-collection"
+                        ? "/collections/divine"
+                        : `/collections/${cat.slug}`
+                    }
                     className="text-xs font-semibold px-3.5 py-2.5 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900 block"
                   >
                     {cat.name} Gifts

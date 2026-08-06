@@ -505,13 +505,19 @@ ALTER TABLE public.products ADD COLUMN IF NOT EXISTS personalization_fields JSON
 -- treat into products, tagged into the Build Your Own Box store. The
 -- bazaar_items table itself is left in place (unused) as a rollback safety
 -- net rather than dropped outright.
-INSERT INTO public.products (id, name, price, image, description, badge, stock_quantity)
+-- Some live databases still have `category` as NOT NULL from before that
+-- column was demoted to legacy/back-compat-only; relax it so this insert
+-- (and any future store-tagged product with no legacy category) can proceed.
+ALTER TABLE public.products ALTER COLUMN category DROP NOT NULL;
+
+INSERT INTO public.products (id, name, price, image, description, category, badge, stock_quantity)
 SELECT
     'bz-' || b.id::text,
     b.name,
     b.price,
     b.image,
     b.category || ' treat from the Hamper Studio bazaar.',
+    b.category,
     NULL,
     CASE WHEN b.is_active THEN NULL ELSE 0 END
 FROM public.bazaar_items b
