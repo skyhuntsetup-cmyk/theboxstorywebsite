@@ -5,7 +5,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   try {
     const body = await req.json();
-    const { name, price, image, description, badge, stock_quantity, categoryIds, storeIds, personalization_fields } = body;
+    const { name, price, image, description, badge, stock_quantity, cost_price, categoryIds, storeIds, personalization_fields } = body;
     const supabase = getSupabaseAdmin();
 
     const update: Record<string, unknown> = {};
@@ -15,6 +15,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (description !== undefined) update.description = description || null;
     if (badge !== undefined) update.badge = badge || null;
     if (stock_quantity !== undefined) update.stock_quantity = stock_quantity === "" || stock_quantity === null ? null : Number(stock_quantity);
+    if (cost_price !== undefined) update.cost_price = cost_price === "" || cost_price === null ? null : Number(cost_price);
     if (personalization_fields !== undefined) update.personalization_fields = personalization_fields;
 
     if (Object.keys(update).length > 0) {

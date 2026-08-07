@@ -115,6 +115,7 @@ export interface ProductRow {
   badge: string | null;
   stock_quantity: number | null;
   personalization_fields: CustomFieldDef[];
+  cost_price: number | null;
 }
 
 export interface StoreRow {
@@ -220,4 +221,24 @@ export interface CampaignCodeRow {
 export interface CampaignDetail extends CampaignRow {
   products: CampaignProductRow[];
   codes: CampaignCodeRow[];
+}
+
+export interface InvoiceLineItem {
+  description: string;
+  quantity: number;
+  cost_price: number;
+  selling_price: number;
+}
+
+export interface InvoiceRow {
+  id: string;
+  created_at: string;
+  invoice_number: string;
+  customer_name: string;
+  customer_phone: string | null;
+  customer_address: string | null;
+  line_items: InvoiceLineItem[];
+  subtotal: number;
+  total_cost: number;
+  notes: string | null;
 }

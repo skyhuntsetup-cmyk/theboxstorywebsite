@@ -32,7 +32,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, name, price, image, description, badge, stock_quantity, categoryIds, storeIds, personalization_fields } = body;
+    const { id, name, price, image, description, badge, stock_quantity, cost_price, categoryIds, storeIds, personalization_fields } = body;
     if (!id || !name || price == null) {
       return NextResponse.json({ success: false, error: "id, name, and price are required." }, { status: 400 });
     }
@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
         description: description || null,
         badge: badge || null,
         stock_quantity: stock_quantity === "" || stock_quantity == null ? null : Number(stock_quantity),
+        cost_price: cost_price === "" || cost_price == null ? null : Number(cost_price),
         personalization_fields: personalization_fields || [],
       }]);
     if (insertError) return NextResponse.json({ success: false, error: insertError.message }, { status: 400 });

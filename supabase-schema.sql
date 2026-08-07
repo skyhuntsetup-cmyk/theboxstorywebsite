@@ -457,7 +457,8 @@ INSERT INTO public.stores (name, slug, tagline, display_order) VALUES
 ('Build Your Own Box', 'build-your-own-box', 'Pick your packaging, pick your treats', 2),
 ('Quirky Stuff Store', 'quirky-stuff', 'Fun, offbeat gifts with personality', 3),
 ('Divine Store', 'divine-store', 'Sacred and spiritual gifting essentials', 4),
-('Custom Gifts', 'custom-gifts', 'Personalized and engraved keepsakes', 5)
+('Custom Gifts', 'custom-gifts', 'Personalized and engraved keepsakes', 5),
+('Shop', 'shop', 'Quick order catalogue', 6)
 ON CONFLICT (slug) DO NOTHING;
 
 
@@ -528,4 +529,40 @@ SELECT 'bz-' || b.id::text, s.id
 FROM public.bazaar_items b, public.stores s
 WHERE s.slug = 'build-your-own-box'
 ON CONFLICT DO NOTHING;
+
+
+-- 12. Billing & Invoices: an admin-only, from-scratch invoice builder.
+-- Cost price lives directly on the product so it can be looked up/autofilled
+-- when building an invoice, but every invoice line item also carries its own
+-- cost_price/selling_price snapshot (JSONB), independent of the product's
+-- current price, since prices/costs drift over time and a past invoice must
+-- stay exactly as it was printed.
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS cost_price NUMERIC;
+
+-- Backs invoice_number's default below; nextval() is atomic, so concurrent
+-- invoice creation can never produce a duplicate number.
+CREATE SEQUENCE IF NOT EXISTS public.invoice_number_seq START 1;
+
+CREATE TABLE IF NOT EXISTS public.invoices (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    invoice_number TEXT UNIQUE NOT NULL DEFAULT ('TBS-' || LPAD(nextval('public.invoice_number_seq')::text, 4, '0')),
+    customer_name TEXT NOT NULL,
+    customer_phone TEXT,
+    customer_address TEXT,
+    line_items JSONB NOT NULL,
+    subtotal NUMERIC NOT NULL,
+    total_cost NUMERIC NOT NULL,
+    notes TEXT
+);
+
+-- No public policy: invoices (and the cost prices inside them) are only ever
+-- read/written through /api/admin/invoices/* using the service-role client,
+-- gated by proxy.ts's /admin + /api/admin matcher — same treatment as
+-- offline_inventory and corporate_campaigns above.
+ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow authenticated full access on invoices" ON public.invoices;
+CREATE POLICY "Allow authenticated full access on invoices"
+ON public.invoices FOR ALL
+USING (auth.role() = 'authenticated');
 

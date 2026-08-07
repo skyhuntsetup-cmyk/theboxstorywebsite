@@ -35,7 +35,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-teal-deep selection:bg-rani-pink selection:text-white cultural-pattern">
         <GiftProvider>
-          <div className="fixed top-0 inset-x-0 z-50">
+          <div className="fixed top-0 inset-x-0 z-50 print:hidden">
             {/* Repeating promo strip, matching the persistent delivery/offer
                 banner pattern used on confettigifts.in */}
             <div className="bg-teal-deep text-[#FAF4E8] text-center py-2 px-4 text-[12px] sm:text-[13px] font-bold tracking-wide">
@@ -46,9 +46,9 @@ export default function RootLayout({
             <Navbar />
           </div>
           <CartDrawer />
-          <main className="flex-1 pt-36">{children}</main>
+          <main className="flex-1 pt-36 print:pt-0">{children}</main>
           {/* Footer */}
-          <footer className="bg-teal-deep text-[#FAF4E8] py-10 px-6 mt-20 border-t border-teal-deep/20">
+          <footer className="bg-teal-deep text-[#FAF4E8] py-10 px-6 mt-20 border-t border-teal-deep/20 print:hidden">
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="space-y-4">
                 <span className="font-heading text-2xl font-bold">The Box Story</span>

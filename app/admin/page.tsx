@@ -12,8 +12,10 @@ import type { Order, Inquiry, BoxStyleRow, OfflineInventoryItem, OrderItem, Cate
 import type { SiteContentField } from "../../lib/siteContent";
 import CampaignsTab from "./CampaignsTab";
 import StoresTab from "./StoresTab";
+import BillingTab from "./BillingTab";
+import BulkImportPanel from "./BulkImportPanel";
 
-type AdminTab = "orders" | "inquiries" | "products" | "categories" | "stores" | "blog" | "packaging" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns";
+type AdminTab = "orders" | "inquiries" | "products" | "categories" | "stores" | "blog" | "packaging" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns" | "billing";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
@@ -65,7 +67,7 @@ export default function AdminDashboard() {
 
   // Products tab state (full CRUD, multi-category tagging)
   const emptyProductForm = {
-    id: "", name: "", price: "", image: "", description: "", badge: "", stock_quantity: "",
+    id: "", name: "", price: "", image: "", description: "", badge: "", stock_quantity: "", cost_price: "",
     categoryIds: [] as string[],
     storeIds: [] as string[],
     personalization_fields: [] as CustomFieldDef[],
@@ -576,6 +578,7 @@ export default function AdminDashboard() {
           description: editingProduct.description,
           badge: editingProduct.badge,
           stock_quantity: editingProduct.stock_quantity,
+          cost_price: editingProduct.cost_price,
           categoryIds: editingProduct.categoryIds,
           storeIds: editingProduct.storeIds,
           personalization_fields: editingProduct.personalization_fields,
@@ -872,7 +875,7 @@ export default function AdminDashboard() {
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "categories", "stores", "blog", "packaging", "inventory", "campaigns", "portfolio", "catalog", "content"].map((tab) => (
+          {["orders", "inquiries", "products", "categories", "stores", "blog", "packaging", "inventory", "campaigns", "billing", "portfolio", "catalog", "content"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -904,7 +907,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {activeTab !== "packaging" && activeTab !== "categories" && activeTab !== "stores" && activeTab !== "blog" && activeTab !== "campaigns" && (
+        {activeTab !== "packaging" && activeTab !== "categories" && activeTab !== "stores" && activeTab !== "blog" && activeTab !== "campaigns" && activeTab !== "billing" && (
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="w-4 h-4 text-teal-deep/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -1100,6 +1103,8 @@ export default function AdminDashboard() {
                 </button>
               </div>
 
+              <BulkImportPanel onImported={() => setRefreshTrigger(prev => prev + 1)} />
+
               {showAddProduct && (
                 <form onSubmit={addProduct} className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1114,10 +1119,15 @@ export default function AdminDashboard() {
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-1">
                       <label className="text-[12px] font-bold text-teal-deep/60">Price (INR)</label>
                       <input type="number" required value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[12px] font-bold text-teal-deep/60">Cost Price (internal, optional)</label>
+                      <input type="number" min={0} placeholder="For invoices" value={newProduct.cost_price} onChange={(e) => setNewProduct({ ...newProduct, cost_price: e.target.value })}
                         className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                     </div>
                     <div className="space-y-1">
@@ -1325,7 +1335,7 @@ export default function AdminDashboard() {
                           <tr>
                             <td colSpan={5} className="p-4 bg-slate-50/50">
                               <form onSubmit={updateProduct} className="space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
                                   <div className="space-y-1">
                                     <label className="text-[12px] font-bold text-teal-deep/60">Name</label>
                                     <input type="text" value={editingProduct.name} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
@@ -1334,6 +1344,11 @@ export default function AdminDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-[12px] font-bold text-teal-deep/60">Price</label>
                                     <input type="number" value={editingProduct.price} onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
+                                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[12px] font-bold text-teal-deep/60">Cost Price</label>
+                                    <input type="number" min={0} value={editingProduct.cost_price ?? ""} onChange={(e) => setEditingProduct({ ...editingProduct, cost_price: e.target.value === "" ? null : Number(e.target.value) })}
                                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                   </div>
                                   <div className="space-y-1">
@@ -2121,6 +2136,12 @@ export default function AdminDashboard() {
           {activeTab === "campaigns" && (
             <div className="p-6">
               <CampaignsTab />
+            </div>
+          )}
+
+          {activeTab === "billing" && (
+            <div className="p-6">
+              <BillingTab />
             </div>
           )}
 

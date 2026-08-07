@@ -48,16 +48,30 @@ export default function CataloguePage() {
     const load = async () => {
       setIsLoadingCatalogue(true);
       try {
-        const [{ data: catData }, { data: prodData }] = await Promise.all([
+        const [{ data: catData }, { data: storeRow }] = await Promise.all([
           supabase.from("categories").select("*").eq("is_active", true).order("display_order"),
-          supabase.from("products").select("*, product_categories(category_id)").order("name"),
+          supabase.from("stores").select("id").eq("slug", "shop").maybeSingle(),
         ]);
         if (catData) setCategories(catData);
+        if (!storeRow) return;
+
+        const { data: prodData } = await supabase
+          .from("products")
+          .select("*, product_categories(category_id), product_stores!inner(store_id)")
+          .eq("product_stores.store_id", storeRow.id)
+          .order("name");
         if (prodData) {
           setProducts(
             prodData.map((p) => {
-              const { product_categories, ...rest } = p as typeof p & { product_categories: { category_id: string }[] };
-              return { ...rest, categoryIds: (product_categories || []).map((pc: { category_id: string }) => pc.category_id) };
+              const { product_categories, product_stores, ...rest } = p as typeof p & {
+                product_categories: { category_id: string }[];
+                product_stores: { store_id: string }[];
+              };
+              return {
+                ...rest,
+                categoryIds: (product_categories || []).map((pc: { category_id: string }) => pc.category_id),
+                storeIds: (product_stores || []).map((ps: { store_id: string }) => ps.store_id),
+              };
             })
           );
         }
