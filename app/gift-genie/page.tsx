@@ -107,9 +107,7 @@ export default function GiftGenie() {
     "Romance anniversary box for spouse",
   ];
 
-  const findCategory = (name: string) => categories.find((c) => c.name.toLowerCase() === name.toLowerCase());
-
-  const handleSend = (text: string) => {
+  const handleSend = async (text: string) => {
     if (!text.trim()) return;
 
     const userMsg: ChatMessage = {
@@ -117,60 +115,58 @@ export default function GiftGenie() {
       sender: "user",
       text,
     };
+    // Snapshot of the conversation so far, sent along so the Genie has
+    // context for follow-up questions ("what about under 1500?").
+    const history = messages.map((m) => ({ role: m.sender === "user" ? ("user" as const) : ("assistant" as const), text: m.text }));
 
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
 
-    setTimeout(() => {
-      const query = text.toLowerCase();
-      let matchedCategory: CategoryRow | undefined;
+    try {
+      const res = await fetch("/api/gift-genie/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, history }),
+      });
+      const data = await res.json();
 
-      if (query.includes("corp") || query.includes("team") || query.includes("office") || query.includes("exec")) {
-        matchedCategory = findCategory("Corporate");
-      } else if (query.includes("diwali") || query.includes("fest") || query.includes("sweets") || query.includes("mithai")) {
-        matchedCategory = findCategory("Diwali");
-      } else if (query.includes("wedding") || query.includes("brides") || query.includes("couple") || query.includes("marriage")) {
-        matchedCategory = findCategory("Weddings");
-      } else if (query.includes("anniv") || query.includes("wife") || query.includes("love") || query.includes("husband") || query.includes("spouse")) {
-        matchedCategory = findCategory("Anniversary");
-      } else if (query.includes("house") || query.includes("warm") || query.includes("home")) {
-        matchedCategory = findCategory("Housewarming");
-      } else if (query.includes("him") || query.includes("dad") || query.includes("father") || query.includes("brother")) {
-        matchedCategory = findCategory("For Him");
-      } else if (query.includes("her") || query.includes("mom") || query.includes("mother") || query.includes("sister")) {
-        matchedCategory = findCategory("For Her");
-      } else if (query.includes("birthday")) {
-        matchedCategory = findCategory("Birthday");
+      if (!data.success) {
+        const botMsg: ChatMessage = {
+          id: `bot-${nextId.current++}`,
+          sender: "bot",
+          text: data.error || "Sorry, I couldn't process that — please try again.",
+        };
+        setMessages((prev) => [...prev, botMsg]);
+        speak(botMsg.text);
+        return;
       }
 
-      let filtered = matchedCategory
-        ? products.filter((p) => p.categoryIds.includes(matchedCategory!.id))
-        : products.slice(0, 3);
-
-      if (query.includes("under") || query.includes("below") || query.includes("within")) {
-        const numbers = query.match(/\d+/g);
-        if (numbers && numbers.length > 0) {
-          const limit = parseInt(numbers[0], 10);
-          filtered = filtered.filter((p) => p.price <= limit);
-        }
-      }
+      const recommendedProducts = (data.productIds as string[])
+        .map((id) => products.find((p) => p.id === id))
+        .filter((p): p is ProductWithCategories => Boolean(p));
+      const firstCategoryId = recommendedProducts[0]?.categoryIds[0];
+      const categorySlug = firstCategoryId ? categories.find((c) => c.id === firstCategoryId)?.slug : undefined;
 
       const botMsg: ChatMessage = {
         id: `bot-${nextId.current++}`,
         sender: "bot",
-        text:
-          filtered.length > 0
-            ? "Here are the matching gift hamper combinations I found inside the catalog:"
-            : "I couldn't find a match in the current catalog — try a different occasion or a higher budget.",
-        recommendations: filtered.slice(0, 3),
-        categorySlug: matchedCategory?.slug,
+        text: data.reply,
+        recommendations: recommendedProducts.length > 0 ? recommendedProducts : undefined,
+        categorySlug,
       };
-
       setMessages((prev) => [...prev, botMsg]);
+      speak(data.reply);
+    } catch {
+      const botMsg: ChatMessage = {
+        id: `bot-${nextId.current++}`,
+        sender: "bot",
+        text: "Sorry, something went wrong reaching the Genie. Please try again.",
+      };
+      setMessages((prev) => [...prev, botMsg]);
+    } finally {
       setIsLoading(false);
-      speak(botMsg.text);
-    }, 1800);
+    }
   };
 
   const handleMicClick = () => {

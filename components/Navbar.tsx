@@ -30,6 +30,8 @@ const navGroups: NavGroup[] = [
       { href: "/store/quirky-stuff", label: "Quirky Stuff Store" },
       { href: "/store/divine-store", label: "Divine Store" },
       { href: "/custom-gifts", label: "Custom Gifts" },
+      { href: "/kids", label: "Kids Section" },
+      { href: "/store/wedding-essentials", label: "Wedding Essentials" },
     ],
   },
   {

@@ -18,132 +18,204 @@ interface CatalogItem {
 
 const catalogsList: CatalogItem[] = [
   {
-    file: "1.Portronics_PPT_July.pdf",
-    title: "Portronics Tech Accessories",
-    category: "Tech & Gadgets",
-    icon: Smartphone,
-    description: "Wireless chargers, portable speakers, and smart B2B gadgets.",
-    size: "24.3 MB"
+    file: "The Box Story - Corporate Gifting Profile.pdf",
+    title: "Corporate Gifting Profile",
+    category: "Corporate Proposals",
+    icon: Gift,
+    description: "Overview of The Box Story corporate gifting solutions and client portfolio.",
+    size: "23.8 MB"
   },
   {
-    file: "NOISE ELECTRONICS.pdf",
+    file: "The Box Story 2025 - Diwali Catalogue .pdf",
+    title: "Diwali Catalogue 2025",
+    category: "Corporate Proposals",
+    icon: Gift,
+    description: "Vibrant festive gift hampers, sweets trays, and corporate packages.",
+    size: "60.1 MB"
+  },
+  {
+    file: "1. TBS X XECH - Consumer Electronics.pdf.pdf",
+    title: "XECH Consumer Electronics I",
+    category: "Tech & Gadgets",
+    icon: Smartphone,
+    description: "Premium smart lifestyle products, wireless stands, and desk accessories.",
+    size: "10.1 MB"
+  },
+  {
+    file: "2. TBS X XECH - Consumer Electronics.pdf.pdf",
+    title: "XECH Consumer Electronics II",
+    category: "Tech & Gadgets",
+    icon: Smartphone,
+    description: "Advanced lifestyle electronics, humidifiers, and executive gear.",
+    size: "273.8 MB"
+  },
+  {
+    file: "3. TBS X TIMALFI - LAMPS.pdf.pdf",
+    title: "TIMALFI Designer Lamps",
+    category: "Tech & Gadgets",
+    icon: Smartphone,
+    description: "Aesthetic design lamps, ambient desk lights, and bedside fixtures.",
+    size: "9.9 MB"
+  },
+  {
+    file: "4. TBS X Noise - Consumer Electronics.pdf.pdf",
     title: "Noise Smart Electronics",
     category: "Tech & Gadgets",
     icon: Smartphone,
-    description: "Smartwatches, fitness bands, and premium audio accessories.",
-    size: "8.3 MB"
+    description: "Noise smartwatches, fitness trackers, and bluetooth audio devices.",
+    size: "9.1 MB"
   },
   {
-    file: "13.Wacaco Presentation 2023.pdf",
-    title: "Wacaco Portable Coffee Gear",
-    category: "Drinkware & Coffee",
-    icon: Coffee,
-    description: "Luxury portable espresso makers and travel brewer sets.",
-    size: "8.8 MB"
+    file: "5. TBS X Portronics.pdf",
+    title: "Portronics Tech Accessories",
+    category: "Tech & Gadgets",
+    icon: Smartphone,
+    description: "Portable bluetooth speakers, wireless power banks, and desk hubs.",
+    size: "73.2 MB"
   },
   {
-    file: "7.Aquaminder July 2026.pdf",
+    file: "6. TBS X AQUAMINDER.pdf.pdf",
     title: "Aquaminder Smart Hydration",
     category: "Drinkware & Coffee",
     icon: Coffee,
-    description: "Sensor-tracked smart flasks and temperature-display drinkware.",
-    size: "4.8 MB"
+    description: "Sensor-tracked smart hydration flasks and temperature display mugs.",
+    size: "8.3 MB"
   },
   {
-    file: "MEYVIN CATALOGUE 2025-26.pdf",
-    title: "Meyvin Premium Flasks & Drinkware",
-    category: "Drinkware & Coffee",
-    icon: Coffee,
-    description: "Vacuum-insulated thermal bottles and matching coasters sets.",
-    size: "66.1 MB"
-  },
-  {
-    file: "DRINKWARE.pdf",
-    title: "Premium Drinkware & Tumblers",
-    category: "Drinkware & Coffee",
-    icon: Coffee,
-    description: "Double-walled travel mugs and thermal sports bottles.",
-    size: "21.6 MB"
-  },
-  {
-    file: "BAG CATALOGUE 2025-26.pdf",
-    title: "Bags & Executive Backpacks",
-    category: "Bags & Leather",
-    icon: Luggage,
-    description: "Premium laptop sleeves, leather bags, and business packs.",
-    size: "32.7 MB"
-  },
-  {
-    file: "EXECUTIVE BAG CATALOGUE 2025-26.pdf",
-    title: "Executive Bags & Travel Packs",
-    category: "Bags & Leather",
-    icon: Luggage,
-    description: "High-end corporate luggage sets and travel backpacks.",
-    size: "36.7 MB"
-  },
-  {
-    file: "WALLET CATALOGUE 2025-26.pdf",
-    title: "Wallets & Leather Accessories",
-    category: "Bags & Leather",
-    icon: Luggage,
-    description: "RFID-protected bifold wallets and travel passport folders.",
-    size: "27.7 MB"
-  },
-  {
-    file: "NOTEBOOK CATALOGUE 2025-26.pdf",
-    title: "Notebooks & Planners",
+    file: "7. TBS X Everyday Organizers.pdf.pdf",
+    title: "Everyday Organizers & Planners",
     category: "Stationery & Office",
     icon: PenTool,
-    description: "Genuine leather diaries, custom planners, and notebooks.",
-    size: "45.1 MB"
+    description: "Professional desk organizers, leather planner diaries, and folders.",
+    size: "51.9 MB"
   },
   {
-    file: "PEN & KEYCHAIN CATALOGUE 2025-26.pdf",
-    title: "Writing Instruments & Keys",
-    category: "Stationery & Office",
-    icon: PenTool,
-    description: "Engraved metal rollerballs and custom leather keychains.",
-    size: "21.4 MB"
+    file: "8. TBS X WACACO.pdf.pdf",
+    title: "Wacaco Portable Coffee Gear",
+    category: "Drinkware & Coffee",
+    icon: Coffee,
+    description: "Luxury portable espresso makers, Minipresso travel sets, and accessories.",
+    size: "23.3 MB"
   },
   {
-    file: "CORPORATE GIFTS.pdf",
-    title: "Corporate Gift Proposals",
-    category: "Corporate Proposals",
-    icon: Gift,
-    description: "Pre-curated corporate gift sets and onboarding boxes.",
-    size: "25.1 MB"
-  },
-  {
-    file: "Flynn Premium Tee Catalogue-1.pdf",
-    title: "Flynn Premium Tees",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Premium cotton Flynn tee collections for branding.",
-    size: "2.0 MB"
-  },
-  {
-    file: "golfer premium polo.pdf",
-    title: "Golfer Premium Polos",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Custom logo polo shirts for corporate workspace wear.",
-    size: "9.4 MB"
-  },
-  {
-    file: "solid polo.pdf",
+    file: "9. Non Branded - Solid Polos.pdf",
     title: "Solid Polo Collections",
     category: "Apparel & Clothing",
     icon: Shirt,
-    description: "Classic solid color polos for workspace apparel.",
-    size: "2.5 MB"
+    description: "Premium cotton solid color polos for corporate workspace apparel.",
+    size: "11.2 MB"
   },
   {
-    file: "green polo.pdf",
-    title: "Green Polo Series",
+    file: "10. Non Branded - T-Shirts Solids.pdf",
+    title: "Solid T-Shirt Series",
     category: "Apparel & Clothing",
     icon: Shirt,
-    description: "Eco-friendly green series corporate polos.",
-    size: "15.1 MB"
+    description: "Standard non-branded solid cotton t-shirts for brand printing.",
+    size: "3.1 MB"
+  },
+  {
+    file: "11. Non Branded - Striped Polos.pdf",
+    title: "Striped Polo Selections",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Smart casual striped pique cotton polos for corporate events.",
+    size: "33.3 MB"
+  },
+  {
+    file: "12. Non Branded - Golfer Polos.pdf",
+    title: "Golfer Polo Series",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Sporty pique cotton golfer polo shirts for executive outings.",
+    size: "9.6 MB"
+  },
+  {
+    file: "13. Pens & Keychains.pdf",
+    title: "Writing Instruments & Keyrings",
+    category: "Stationery & Office",
+    icon: PenTool,
+    description: "Engraved metal rollerball pens and customized leather keychains.",
+    size: "19.3 MB"
+  },
+  {
+    file: "14. Wallets.pdf",
+    title: "Leather Wallets & Sleeves",
+    category: "Bags & Leather",
+    icon: Luggage,
+    description: "RFID-protected genuine leather wallets and slim cardholder sleeves.",
+    size: "147.5 MB"
+  },
+  {
+    file: "15. Notebooks.pdf",
+    title: "Notebooks & Custom Journals",
+    category: "Stationery & Office",
+    icon: PenTool,
+    description: "Hard-bound custom notebooks with elastic band closures.",
+    size: "78.6 MB"
+  },
+  {
+    file: "16. Premium Office Bags.pdf",
+    title: "Premium Office Bags",
+    category: "Bags & Leather",
+    icon: Luggage,
+    description: "Genuine leather briefcases, messenger bags, and laptop sleeves.",
+    size: "101.4 MB"
+  },
+  {
+    file: "17. Employee Kits.pdf",
+    title: "Employee Onboarding Kits",
+    category: "Corporate Proposals",
+    icon: Gift,
+    description: "Bespoke corporate new hire welcome boxes and appreciation crates.",
+    size: "89.7 MB"
+  },
+  {
+    file: "18. Executive Bags.pdf",
+    title: "Executive Bags & Trolleys",
+    category: "Bags & Leather",
+    icon: Luggage,
+    description: "Nashermiles cabin luggage and high-end executive travel briefcases.",
+    size: "89.6 MB"
+  },
+  {
+    file: "19. Bags.pdf",
+    title: "Standard Backpacks & Duffels",
+    category: "Bags & Leather",
+    icon: Luggage,
+    description: "Ergonomic work backpacks, gym duffels, and travel messenger packs.",
+    size: "61.9 MB"
+  },
+  {
+    file: "20. TBS X Turtle - Branded Apparels.pdf",
+    title: "Turtle Branded Apparels",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Branded premium cotton hoodies, jackets, and corporate polos.",
+    size: "16.3 MB"
+  },
+  {
+    file: "21. Premium T-Shirts - Non Branded.pdf",
+    title: "Premium T-Shirts",
+    category: "Apparel & Clothing",
+    icon: Shirt,
+    description: "Luxury ring-spun combed cotton t-shirts for premium branding.",
+    size: "5.5 MB"
+  },
+  {
+    file: "22. Corporate Gifts.pdf",
+    title: "Corporate Gifts Catalog",
+    category: "Corporate Proposals",
+    icon: Gift,
+    description: "General client token gifts, desktop accessories, and curated sets.",
+    size: "20.3 MB"
+  },
+  {
+    file: "23. Drinkware.pdf",
+    title: "Drinkware & Coffee Tumblers",
+    category: "Drinkware & Coffee",
+    icon: Coffee,
+    description: "Insulated water flasks, travel mugs, and steel tea infusers.",
+    size: "11.3 MB"
   }
 ];
 

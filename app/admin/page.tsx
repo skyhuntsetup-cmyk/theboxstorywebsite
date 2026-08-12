@@ -14,8 +14,10 @@ import CampaignsTab from "./CampaignsTab";
 import StoresTab from "./StoresTab";
 import BillingTab from "./BillingTab";
 import BulkImportPanel from "./BulkImportPanel";
+import CustomersTab from "./CustomersTab";
+import LeadsTab from "./LeadsTab";
 
-type AdminTab = "orders" | "inquiries" | "products" | "categories" | "stores" | "blog" | "packaging" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns" | "billing";
+type AdminTab = "orders" | "inquiries" | "products" | "categories" | "stores" | "blog" | "packaging" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns" | "billing" | "customers" | "leads";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
@@ -875,7 +877,7 @@ export default function AdminDashboard() {
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "categories", "stores", "blog", "packaging", "inventory", "campaigns", "billing", "portfolio", "catalog", "content"].map((tab) => (
+          {["orders", "inquiries", "products", "categories", "stores", "blog", "packaging", "inventory", "campaigns", "billing", "customers", "leads", "portfolio", "catalog", "content"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -907,7 +909,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {activeTab !== "packaging" && activeTab !== "categories" && activeTab !== "stores" && activeTab !== "blog" && activeTab !== "campaigns" && activeTab !== "billing" && (
+        {activeTab !== "packaging" && activeTab !== "categories" && activeTab !== "stores" && activeTab !== "blog" && activeTab !== "campaigns" && activeTab !== "billing" && activeTab !== "customers" && activeTab !== "leads" && (
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="w-4 h-4 text-teal-deep/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -2142,6 +2144,18 @@ export default function AdminDashboard() {
           {activeTab === "billing" && (
             <div className="p-6">
               <BillingTab />
+            </div>
+          )}
+
+          {activeTab === "customers" && (
+            <div className="p-6">
+              <CustomersTab />
+            </div>
+          )}
+
+          {activeTab === "leads" && (
+            <div className="p-6">
+              <LeadsTab />
             </div>
           )}
 

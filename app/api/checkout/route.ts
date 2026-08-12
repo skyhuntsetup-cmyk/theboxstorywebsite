@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "../../../lib/supabase";
+import { syncCustomer } from "../../../lib/customerSync";
 
 export async function POST(request: Request) {
   try {
@@ -37,6 +38,8 @@ export async function POST(request: Request) {
       console.error("Supabase insert error:", error);
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
+
+    await syncCustomer({ phone: customerPhone, name: customerName, email: customerEmail });
 
     return NextResponse.json({ success: true, order: data });
   } catch (err) {

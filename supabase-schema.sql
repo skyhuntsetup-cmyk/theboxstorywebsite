@@ -223,7 +223,12 @@ INSERT INTO public.categories (name, slug, display_order) VALUES
 ('Diwali', 'diwali', 6),
 ('Weddings', 'weddings', 7),
 ('Corporate', 'corporate', 8),
-('Housewarming', 'housewarming', 9)
+('Housewarming', 'housewarming', 9),
+('Kids Birthday Gifts', 'kids-birthday-gifts', 10),
+('Kids Return Gifts', 'kids-return-gifts', 11),
+('Wedding Invites', 'wedding-invites', 12),
+('Return Favours', 'return-favours', 13),
+('Wedding Stationery', 'wedding-stationery', 14)
 ON CONFLICT (slug) DO NOTHING;
 
 
@@ -458,7 +463,9 @@ INSERT INTO public.stores (name, slug, tagline, display_order) VALUES
 ('Quirky Stuff Store', 'quirky-stuff', 'Fun, offbeat gifts with personality', 3),
 ('Divine Store', 'divine-store', 'Sacred and spiritual gifting essentials', 4),
 ('Custom Gifts', 'custom-gifts', 'Personalized and engraved keepsakes', 5),
-('Shop', 'shop', 'Quick order catalogue', 6)
+('Shop', 'shop', 'Quick order catalogue', 6),
+('Kids', 'kids', 'Playful gifts and party favours for little ones', 7),
+('Wedding Essentials', 'wedding-essentials', 'Invites, stationery, and return favours for your big day', 8)
 ON CONFLICT (slug) DO NOTHING;
 
 
@@ -565,4 +572,66 @@ DROP POLICY IF EXISTS "Allow authenticated full access on invoices" ON public.in
 CREATE POLICY "Allow authenticated full access on invoices"
 ON public.invoices FOR ALL
 USING (auth.role() = 'authenticated');
+
+
+-- 14. Customers: a single contact list aggregated from every place a phone
+-- number shows up today (orders, inquiries, catalogue leads, redeemed
+-- campaign codes), keyed by a normalized last-10-digits phone so the same
+-- person collapses to one row regardless of "+91 98765 43210" vs
+-- "9876543210" formatting differences across those source tables. This is
+-- the CRM foundation: the on-ramp for any future WhatsApp marketing tool
+-- (via the CSV export) and the one place to see a customer's full history.
+-- No public policy — populated only via lib/customerSync.ts's service-role
+-- client, even from routes whose primary insert uses the anon client.
+CREATE TABLE IF NOT EXISTS public.customers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    phone TEXT UNIQUE NOT NULL,
+    name TEXT,
+    email TEXT,
+    company TEXT,
+    notes TEXT
+);
+
+ALTER TABLE public.customers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow authenticated full access on customers" ON public.customers;
+CREATE POLICY "Allow authenticated full access on customers"
+ON public.customers FOR ALL
+USING (auth.role() = 'authenticated');
+
+-- One-time backfill from every existing source table. Only fills gaps
+-- (ON CONFLICT DO NOTHING) so this stays safe to re-run in full.
+INSERT INTO public.customers (phone, name, email)
+SELECT NULLIF(RIGHT(regexp_replace(COALESCE(o.customer_phone, ''), '\D', '', 'g'), 10), ''), o.customer_name, o.customer_email
+FROM public.orders o
+WHERE NULLIF(RIGHT(regexp_replace(COALESCE(o.customer_phone, ''), '\D', '', 'g'), 10), '') IS NOT NULL
+ON CONFLICT (phone) DO NOTHING;
+
+INSERT INTO public.customers (phone, name, email, company)
+SELECT NULLIF(RIGHT(regexp_replace(COALESCE(i.phone, ''), '\D', '', 'g'), 10), ''), i.name, i.email, i.company
+FROM public.inquiries i
+WHERE NULLIF(RIGHT(regexp_replace(COALESCE(i.phone, ''), '\D', '', 'g'), 10), '') IS NOT NULL
+ON CONFLICT (phone) DO NOTHING;
+
+INSERT INTO public.customers (phone, name)
+SELECT NULLIF(RIGHT(regexp_replace(COALESCE(c.whatsapp, ''), '\D', '', 'g'), 10), ''), c.name
+FROM public.catalogue_leads c
+WHERE NULLIF(RIGHT(regexp_replace(COALESCE(c.whatsapp, ''), '\D', '', 'g'), 10), '') IS NOT NULL
+ON CONFLICT (phone) DO NOTHING;
+
+INSERT INTO public.customers (phone, name, email)
+SELECT NULLIF(RIGHT(regexp_replace(COALESCE(cc.recipient_phone, ''), '\D', '', 'g'), 10), ''), cc.recipient_name, cc.recipient_email
+FROM public.campaign_codes cc
+WHERE cc.is_redeemed = true
+  AND NULLIF(RIGHT(regexp_replace(COALESCE(cc.recipient_phone, ''), '\D', '', 'g'), 10), '') IS NOT NULL
+ON CONFLICT (phone) DO NOTHING;
+
+
+-- 15. Corporate Quote Builder: reuses catalogue_leads (already the right
+-- shape — name/contact + cart snapshot + subtotal) rather than a parallel
+-- table, distinguished by `source`.
+ALTER TABLE public.catalogue_leads ADD COLUMN IF NOT EXISTS company TEXT;
+ALTER TABLE public.catalogue_leads ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE public.catalogue_leads ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'shop';
 

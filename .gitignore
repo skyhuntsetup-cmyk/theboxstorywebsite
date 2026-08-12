@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Large PDF files (> 100MB)
+public/catalogues/14. Wallets.pdf
+public/catalogues/2. TBS X XECH - Consumer Electronics.pdf.pdf

@@ -4,12 +4,217 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   Building, Gift, CheckCircle2, ChevronRight,
-  Globe, Laptop, Star, ArrowRight, ExternalLink
+  Globe, Laptop, Star, ArrowRight, ExternalLink,
+  Download, Eye, BookOpen
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { revealProps, staggerContainer, staggerItem } from "../../lib/motion";
 
+const corporateCatalogs = [
+  {
+    file: "The Box Story - Corporate Gifting Profile.pdf",
+    title: "Corporate Gifting Profile",
+    category: "Corporate Proposals",
+    description: "Overview of The Box Story corporate gifting solutions and client portfolio.",
+    img: "/images/categories/4. Corporate Gifts/watermarked_img_12051686267136327533.jpg",
+    size: "23.8 MB"
+  },
+  {
+    file: "The Box Story 2025 - Diwali Catalogue .pdf",
+    title: "Diwali Catalogue 2025",
+    category: "Corporate Proposals",
+    description: "Vibrant festive gift hampers, sweets trays, and corporate packages.",
+    img: "/images/categories/4. Corporate Gifts/watermarked_img_1408009961220448201.jpg",
+    size: "60.1 MB"
+  },
+  {
+    file: "1. TBS X XECH - Consumer Electronics.pdf.pdf",
+    title: "XECH Consumer Electronics I",
+    category: "Tech & Gadgets",
+    description: "Premium smart lifestyle products, wireless stands, and desk accessories.",
+    img: "/images/categories/9. Noise Consumer Electronics/watermarked_img_12071728457325787041.jpg",
+    size: "10.1 MB"
+  },
+  {
+    file: "2. TBS X XECH - Consumer Electronics.pdf.pdf",
+    title: "XECH Consumer Electronics II",
+    category: "Tech & Gadgets",
+    description: "Advanced lifestyle electronics, humidifiers, and executive gear.",
+    img: "/images/categories/9. Noise Consumer Electronics/watermarked_img_11474945919467215748.jpg",
+    size: "273.8 MB"
+  },
+  {
+    file: "3. TBS X TIMALFI - LAMPS.pdf.pdf",
+    title: "TIMALFI Designer Lamps",
+    category: "Tech & Gadgets",
+    description: "Aesthetic design lamps, ambient desk lights, and bedside fixtures.",
+    img: "/images/categories/9. Desk Lamps/watermarked_img_12171658573486743729.jpg",
+    size: "9.9 MB"
+  },
+  {
+    file: "4. TBS X Noise - Consumer Electronics.pdf.pdf",
+    title: "Noise Smart Electronics",
+    category: "Tech & Gadgets",
+    description: "Noise smartwatches, fitness trackers, and bluetooth audio devices.",
+    img: "/images/categories/9. Noise Consumer Electronics/watermarked_img_13368173261474923732.jpg",
+    size: "9.1 MB"
+  },
+  {
+    file: "5. TBS X Portronics.pdf",
+    title: "Portronics Tech Accessories",
+    category: "Tech & Gadgets",
+    description: "Portable bluetooth speakers, wireless power banks, and desk hubs.",
+    img: "/images/categories/15. Portronics Consumer Products/watermarked_img_14478076630029269723.jpg",
+    size: "73.2 MB"
+  },
+  {
+    file: "6. TBS X AQUAMINDER.pdf.pdf",
+    title: "Aquaminder Smart Hydration",
+    category: "Drinkware & Coffee",
+    description: "Sensor-tracked smart hydration flasks and temperature display mugs.",
+    img: "/images/categories/14. Reminder Water Bottles/watermarked_img_11775971033268889749.jpg",
+    size: "8.3 MB"
+  },
+  {
+    file: "7. TBS X Everyday Organizers.pdf.pdf",
+    title: "Everyday Organizers & Planners",
+    category: "Stationery & Office",
+    description: "Professional desk organizers, leather planner diaries, and folders.",
+    img: "/images/categories/8. Desk Organizers/watermarked_img_14433706821600378337.jpg",
+    size: "51.9 MB"
+  },
+  {
+    file: "8. TBS X WACACO.pdf.pdf",
+    title: "Wacaco Portable Coffee Gear",
+    category: "Drinkware & Coffee",
+    description: "Luxury portable espresso makers, Minipresso travel sets, and accessories.",
+    img: "/images/categories/3. Drinkware/watermarked_img_13563193197810308771.jpg",
+    size: "23.3 MB"
+  },
+  {
+    file: "9. Non Branded - Solid Polos.pdf",
+    title: "Solid Polo Collections",
+    category: "Apparel & Clothing",
+    description: "Premium cotton solid color polos for corporate workspace apparel.",
+    img: "/images/categories/11. Polos/Gemini_Generated_Image_cddt2xcddt2xcddt.png",
+    size: "11.2 MB"
+  },
+  {
+    file: "10. Non Branded - T-Shirts Solids.pdf",
+    title: "Solid T-Shirt Series",
+    category: "Apparel & Clothing",
+    description: "Standard non-branded solid cotton t-shirts for brand printing.",
+    img: "/images/categories/12. T-Shirts/645e187d-58ba-4209-9956-60c77de76bc5.jpeg",
+    size: "3.1 MB"
+  },
+  {
+    file: "11. Non Branded - Striped Polos.pdf",
+    title: "Striped Polo Selections",
+    category: "Apparel & Clothing",
+    description: "Smart casual striped pique cotton polos for corporate events.",
+    img: "/images/categories/11. Polos/Gemini_Generated_Image_t4jo6dt4jo6dt4jo.png",
+    size: "33.3 MB"
+  },
+  {
+    file: "12. Non Branded - Golfer Polos.pdf",
+    title: "Golfer Polo Series",
+    category: "Apparel & Clothing",
+    description: "Sporty pique cotton golfer polo shirts for executive outings.",
+    img: "/images/categories/11. Polos/Gemini_Generated_Image_ghxhitghxhitghxh.png",
+    size: "9.6 MB"
+  },
+  {
+    file: "13. Pens & Keychains.pdf",
+    title: "Writing Instruments & Keyrings",
+    category: "Stationery & Office",
+    description: "Engraved metal rollerball pens and customized leather keychains.",
+    img: "/images/categories/5. Pens/Gemini_Generated_Image_27qhdd27qhdd27qh.png",
+    size: "19.3 MB"
+  },
+  {
+    file: "14. Wallets.pdf",
+    title: "Leather Wallets & Sleeves",
+    category: "Bags & Leather",
+    description: "RFID-protected genuine leather wallets and slim cardholder sleeves.",
+    img: "/images/categories/7. Wallets/Gemini_Generated_Image_zfngz4zfngz4zfng.png",
+    size: "147.5 MB"
+  },
+  {
+    file: "15. Notebooks.pdf",
+    title: "Notebooks & Custom Journals",
+    category: "Stationery & Office",
+    description: "Hard-bound custom notebooks with elastic band closures.",
+    img: "/images/categories/2. Diaries/watermarked_img_14715734161756954805.jpg",
+    size: "78.6 MB"
+  },
+  {
+    file: "16. Premium Office Bags.pdf",
+    title: "Premium Office Bags",
+    category: "Bags & Leather",
+    description: "Genuine leather briefcases, messenger bags, and laptop sleeves.",
+    img: "/images/categories/13. Premium Office Bags/2948e6c4-991b-48aa-bbe6-078bd39e4791.jpeg",
+    size: "101.4 MB"
+  },
+  {
+    file: "17. Employee Kits.pdf",
+    title: "Employee Onboarding Kits",
+    category: "Corporate Proposals",
+    description: "Bespoke corporate new hire welcome boxes and appreciation crates.",
+    img: "/images/categories/1. Employee Onboarding Kits/Gemini_Generated_Image_ent7q2ent7q2ent7.png",
+    size: "89.7 MB"
+  },
+  {
+    file: "18. Executive Bags.pdf",
+    title: "Executive Bags & Trolleys",
+    category: "Bags & Leather",
+    description: "Nashermiles cabin luggage and high-end executive travel briefcases.",
+    img: "/images/categories/10. Luggage Trolleys - Nashermiles/watermarked_img_4992227648424952132.jpg",
+    size: "89.6 MB"
+  },
+  {
+    file: "19. Bags.pdf",
+    title: "Standard Backpacks & Duffels",
+    category: "Bags & Leather",
+    description: "Ergonomic work backpacks, gym duffels, and travel messenger packs.",
+    img: "/images/categories/13. Premium Office Bags/watermarked_img_11706627081056960211.jpg",
+    size: "61.9 MB"
+  },
+  {
+    file: "20. TBS X Turtle - Branded Apparels.pdf",
+    title: "Turtle Branded Apparels",
+    category: "Apparel & Clothing",
+    description: "Branded premium cotton hoodies, jackets, and corporate polos.",
+    img: "/images/categories/HOODIES/watermarked_img_11185030333774733631.jpg",
+    size: "16.3 MB"
+  },
+  {
+    file: "21. Premium T-Shirts - Non Branded.pdf",
+    title: "Premium T-Shirts",
+    category: "Apparel & Clothing",
+    description: "Luxury ring-spun combed cotton t-shirts for premium branding.",
+    img: "/images/categories/12. T-Shirts/877b5e14-5e94-4bf9-be59-ee8b23649c30.jpeg",
+    size: "5.5 MB"
+  },
+  {
+    file: "22. Corporate Gifts.pdf",
+    title: "Corporate Gifts Catalog",
+    category: "Corporate Proposals",
+    description: "General client token gifts, desktop accessories, and curated sets.",
+    img: "/images/categories/4. Corporate Gifts/watermarked_img_12051686267136327533.jpg",
+    size: "20.3 MB"
+  },
+  {
+    file: "23. Drinkware.pdf",
+    title: "Drinkware & Coffee Tumblers",
+    category: "Drinkware & Coffee",
+    description: "Insulated water flasks, travel mugs, and steel tea infusers.",
+    img: "/images/categories/3. Drinkware/watermarked_img_8332171379844688208.jpg",
+    size: "11.3 MB"
+  }
+];
+
 export default function CorporateGifting() {
+  const [selectedCatalogCategory, setSelectedCatalogCategory] = useState<string>("All");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -478,379 +683,111 @@ export default function CorporateGifting() {
         </section>
 
         {/* Products We Deal In / Catalogues Download */}
-        <motion.section {...revealProps} className="space-y-10">
+        <motion.section {...revealProps} className="space-y-12">
           <div className="space-y-3 text-center">
             <span className="text-[12px] font-bold text-rani-pink uppercase tracking-widest bg-rani-pink/5 border border-rani-pink/15 px-2.5 py-1 rounded-full inline-block">
               Corporate Catalogues
             </span>
             <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">Products We Deal In</h2>
             <p className="text-xs text-slate-555 max-w-md mx-auto">
-              Download our signature brochures and curated catalogs for detailed specifications, bulk pricing levels, and branding guidelines.
+              Browse our brand proposals and product catalogs live on site, or download standard copies for your team offline.
             </p>
           </div>
 
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap justify-center gap-3">
+            {["All", "Corporate Proposals", "Tech & Gadgets", "Drinkware & Coffee", "Bags & Leather", "Stationery & Office", "Apparel & Clothing"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCatalogCategory(cat)}
+                className={`text-xs font-bold px-4 py-2 rounded-full transition-all border ${
+                  selectedCatalogCategory === cat
+                    ? "bg-[#042F2E] text-white border-[#042F2E] shadow-sm"
+                    : "bg-[#FCFAF2] hover:bg-[#FAF4E8] text-teal-deep border-teal-deep/10"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Catalogues Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* 1. Bags & Backpacks */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-saffron/10 text-saffron rounded-xl flex items-center justify-center font-bold text-lg">
-                  💼
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Bags & Executive Backpacks
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Premium laptop sleeves, leather bags, smart business packs, and luggage sets.
-                </p>
-              </div>
-              <div className="flex flex-col space-y-2 pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=BAG CATALOGUE 2025-26.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
+            {corporateCatalogs
+              .filter(c => selectedCatalogCategory === "All" || c.category === selectedCatalogCategory)
+              .map((catalog, idx) => (
+                <div 
+                  key={idx} 
+                  className="bg-[#FCFAF2]/65 border border-slate-200 rounded-[32px] overflow-hidden text-left space-y-4 hover:shadow-lg transition-all duration-300 group flex flex-col justify-between"
                 >
-                  <span>Standard Bag Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-                <a
-                  href="/corporate/catalog?file=EXECUTIVE BAG CATALOGUE 2025-26.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Executive Bag Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
+                  <div className="space-y-4">
+                    {/* Catalog Image */}
+                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-50 border-b border-slate-100 shrink-0">
+                      <img
+                        src={catalog.img}
+                        alt={catalog.title}
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                      />
+                      <span className="absolute top-4 left-4 bg-teal-deep/90 backdrop-blur-sm text-white text-[9px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md">
+                        {catalog.category}
+                      </span>
+                    </div>
 
-            {/* 2. Executive Notebooks & Diaries */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-rani-pink/10 text-rani-pink rounded-xl flex items-center justify-center font-bold text-lg">
-                  📓
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Notebooks & Organizers
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Genuine leather diaries, pocket memo pads, custom planners, and gold-trimmed conference notebooks.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=NOTEBOOK CATALOGUE 2025-26.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Notebook Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 3. Luxury Pens & Keychains */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-teal-deep/10 text-teal-deep rounded-xl flex items-center justify-center font-bold text-lg">
-                  🖋️
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Writing Instruments & Keys
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Engraved metal rollerballs, premium pen sets, custom leather keychains, and laser-marked steel key rings.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=PEN & KEYCHAIN CATALOGUE 2025-26.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Pens & Keychains Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 4. Leather Wallets & Cardholders */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-emerald-700/10 text-emerald-800 rounded-xl flex items-center justify-center font-bold text-lg">
-                  👛
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Wallets & Leather Accessories
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  RFID-protected bifold wallets, card sleeves, travel passport folders, and premium utility cases.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=WALLET CATALOGUE 2025-26.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Wallets Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 5. Meyvin Collection & Drinkware */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-amber-700/10 text-amber-800 rounded-xl flex items-center justify-center font-bold text-lg">
-                  ☕
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Meyvin Premium Flasks & Drinkware
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Vacuum-insulated thermal bottles, travel mugs, matching coasters, and gift boxes.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=MEYVIN CATALOGUE 2025-26.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Meyvin Flasks Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 6. Smart Lifestyle & Electronics */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-[#8F9489]/10 text-emerald-950 rounded-xl flex items-center justify-center font-bold text-lg">
-                  🔌
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Smart Lifestyle Products
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Smart mugs, tech accessories, ambient desk humidifiers, and organizers from our lifestyle selection.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=LIFESTYLE PRODUCT CATALOGUE 2025-26.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Lifestyle Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 7. Portronics Tech Accessories */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-indigo-100 text-indigo-800 rounded-xl flex items-center justify-center font-bold text-lg">
-                  🔋
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Portronics Tech Accessories
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Wireless power banks, multi-port chargers, smart tables, and portable bluetooth speakers.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=1.Portronics_PPT_July.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Portronics PPT</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 8. Wacaco Premium Espresso Gear */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-amber-100 text-amber-800 rounded-xl flex items-center justify-center font-bold text-lg">
-                  ☕
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Wacaco Portable Coffee Gear
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Luxury portable espresso makers, Minipresso travel sets, and premium coffee capsules.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=13.Wacaco Presentation 2023.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Wacaco Presentation</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 9. Aquaminder Smart Hydration */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-sky-100 text-sky-800 rounded-xl flex items-center justify-center font-bold text-lg">
-                  🥤
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Aquaminder Smart Hydration
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Tracked premium hydration flasks, smart bottles, and temperature-controlled drinkware.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=7.Aquaminder July 2026.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Aquaminder Brochure</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 10. Corporate Gift Proposals */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-amber-100 text-amber-800 rounded-xl flex items-center justify-center font-bold text-lg">
-                  🎁
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Corporate Gift Proposals
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Curated gift sets, executive onboarding boxes, and custom appreciation packages.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=CORPORATE GIFTS.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Corporate Gifts Proposal</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 11. Noise Smart Electronics */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-cyan-100 text-cyan-850 rounded-xl flex items-center justify-center font-bold text-lg">
-                  🎧
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Noise Smart Electronics
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Smartwatches, Bluetooth earbuds, smart accessories, and fitness trackers.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=NOISE ELECTRONICS.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Noise Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 12. Premium Drinkware & Tumblers */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="w-10 h-10 bg-rose-100 text-rose-800 rounded-xl flex items-center justify-center font-bold text-lg">
-                  🥤
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                  Premium Drinkware & Tumblers
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Double-walled vacuum flasks, thermal sports bottles, coffee tumblers, and steel mugs.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-slate-100">
-                <a
-                  href="/corporate/catalog?file=DRINKWARE.pdf"
-                  target="_blank"
-                  className="inline-flex items-center justify-between w-full text-[13px] font-bold text-teal-deep hover:text-saffron transition-colors"
-                >
-                  <span>Download Drinkware Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* 13. Premium Apparel & Polos */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 text-left space-y-4 hover:shadow-md transition-all group flex flex-col justify-between sm:col-span-2 lg:col-span-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div className="w-10 h-10 bg-[#5A6E85]/10 text-[#2B3A4A] rounded-xl flex items-center justify-center font-bold text-lg">
-                    👕
+                    <div className="px-6 space-y-2">
+                      <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-rani-pink transition-colors leading-snug">
+                        {catalog.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 leading-relaxed font-light line-clamp-2">
+                        {catalog.description}
+                      </p>
+                      <span className="inline-block text-[10px] text-slate-400 font-bold uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded">
+                        Size: {catalog.size}
+                      </span>
+                    </div>
                   </div>
-                  <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-teal-deep transition-colors">
-                    Premium Apparel & Polo T-shirts
-                  </h3>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Custom logo polo shirts, Flynn tee series, cotton workspace hoodies, and activewear for corporate events.
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-3 pt-2 md:pt-0 pl-0 md:pl-6 border-l border-slate-100">
-                  <a
-                    href="/corporate/catalog?file=Flynn Premium Tee Catalogue-1.pdf"
-                    target="_blank"
-                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
-                  >
-                    <span>Flynn Tees</span>
-                    <ArrowRight className="w-2.5 h-2.5" />
-                  </a>
-                  <a
-                    href="/corporate/catalog?file=golfer premium polo.pdf"
-                    target="_blank"
-                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
-                  >
-                    <span>Golfer Polos</span>
-                    <ArrowRight className="w-2.5 h-2.5" />
-                  </a>
-                  <a
-                    href="/corporate/catalog?file=solid polo.pdf"
-                    target="_blank"
-                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
-                  >
-                    <span>Solid Polos</span>
-                    <ArrowRight className="w-2.5 h-2.5" />
-                  </a>
-                  <a
-                    href="/corporate/catalog?file=green polo.pdf"
-                    target="_blank"
-                    className="flex items-center justify-between text-[13px] text-teal-deep font-bold hover:text-saffron transition-colors"
-                  >
-                    <span>Green Polos</span>
-                    <ArrowRight className="w-2.5 h-2.5" />
-                  </a>
-                </div>
-              </div>
-            </div>
 
+                  <div className="p-6 pt-4 border-t border-slate-100 flex items-center gap-3">
+                    {/* View Online Button */}
+                    <Link
+                      href={`/corporate/catalog?file=${encodeURIComponent(catalog.file)}`}
+                      className="flex-1 flex items-center justify-center space-x-1.5 border border-teal-deep/20 hover:border-teal-deep hover:bg-teal-deep/5 text-teal-deep py-2.5 rounded-xl font-bold text-xs transition-all"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>View Online</span>
+                    </Link>
+                    {/* Download Button */}
+                    <a
+                      href={`/catalogues/${catalog.file}`}
+                      download
+                      className="flex-1 flex items-center justify-center space-x-1.5 bg-teal-deep hover:bg-[#032322] text-white py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download</span>
+                    </a>
+                  </div>
+                </div>
+              ))}
           </div>
         </motion.section>
+
+        {/* Corporate Quote Builder CTA */}
+        <motion.div
+          {...revealProps}
+          className="bg-teal-deep rounded-3xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left"
+        >
+          <div className="space-y-2">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-saffron">Prefer to browse first?</span>
+            <h3 className="font-heading text-2xl font-black text-white">Build a Tentative Selection</h3>
+            <p className="text-xs text-white/70 max-w-md">Skip the form — browse our catalogue and mark what you&apos;d want for your team, and we&apos;ll follow up with pricing.</p>
+          </div>
+          <Link
+            href="/corporate-quote"
+            className="inline-flex items-center space-x-2 bg-white hover:bg-slate-50 text-teal-deep px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg transition-all flex-shrink-0"
+          >
+            <span>Start Building</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
 
         {/* Inquiries Form Section */}
         <motion.section {...revealProps} id="brief-form" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm text-left">

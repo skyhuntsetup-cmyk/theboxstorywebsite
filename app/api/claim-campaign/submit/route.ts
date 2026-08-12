@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "../../../../lib/supabaseAdmin";
+import { syncCustomer } from "../../../../lib/customerSync";
 import type { CustomFieldDef } from "../../../../lib/types";
 
 const attempts = new Map<string, { count: number; resetAt: number }>();
@@ -107,6 +108,8 @@ export async function POST(req: NextRequest) {
     if (!updated) {
       return NextResponse.json({ success: false, error: "This code has already been redeemed." }, { status: 409 });
     }
+
+    await syncCustomer({ phone: recipientPhone, name: recipientName, email: recipientEmail });
 
     return NextResponse.json({ success: true });
   } catch (err) {

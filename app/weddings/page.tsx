@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Heart, CheckCircle2, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, Heart, CheckCircle2, ChevronRight, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { revealProps, staggerContainer, staggerItem } from "../../lib/motion";
 
@@ -147,6 +148,28 @@ export default function WeddingGifting() {
             ))}
           </motion.div>
         </section>
+
+        {/* Wedding Essentials CTA */}
+        <motion.div
+          {...revealProps}
+          className="bg-amber-950 rounded-3xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left"
+        >
+          <div className="space-y-2">
+            <span className="inline-flex items-center space-x-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-200">
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Wedding Essentials</span>
+            </span>
+            <h3 className="font-heading text-2xl font-black text-white">Invites, Stationery &amp; Return Favours</h3>
+            <p className="text-xs text-amber-100/70 max-w-md">Browse our ready-to-order collection for every touchpoint of your celebration.</p>
+          </div>
+          <Link
+            href="/store/wedding-essentials"
+            className="inline-flex items-center space-x-2 bg-white hover:bg-amber-50 text-amber-950 px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg transition-all flex-shrink-0"
+          >
+            <span>Browse the Collection</span>
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
 
         {/* Wedding Brief Form */}
         <motion.section

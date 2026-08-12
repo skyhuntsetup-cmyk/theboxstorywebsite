@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "../../../lib/supabase";
+import { syncCustomer } from "../../../lib/customerSync";
 
 // Simple in-memory rate limit (same pattern as /api/admin/login): 10 shared
 // carts per IP per 5 minutes. Resets on server restart/cold start, an
@@ -27,16 +28,26 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, whatsapp, cart_items, subtotal } = body;
+    const { name, whatsapp, cart_items, subtotal, company, email, source } = body;
     if (!name || !whatsapp || !Array.isArray(cart_items) || cart_items.length === 0) {
       return NextResponse.json({ success: false, error: "Name, WhatsApp number, and a non-empty cart are required." }, { status: 400 });
+    }
+    const leadSource = source === "corporate" ? "corporate" : "shop";
+    if (leadSource === "corporate" && !company) {
+      return NextResponse.json({ success: false, error: "Company name is required for a corporate quote." }, { status: 400 });
     }
 
     const { error } = await supabase
       .from("catalogue_leads")
-      .insert([{ name, whatsapp, cart_items, subtotal: Number(subtotal) || 0, status: "shared" }]);
+      .insert([{
+        name, whatsapp, cart_items, subtotal: Number(subtotal) || 0, status: "shared",
+        company: company || null, email: email || null, source: leadSource,
+      }]);
 
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+
+    await syncCustomer({ phone: whatsapp, name, email, company });
+
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json(

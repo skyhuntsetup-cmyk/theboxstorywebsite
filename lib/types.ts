@@ -168,6 +168,9 @@ export interface CatalogueLead {
   cart_items: CatalogueCartItem[];
   subtotal: number;
   status: "browsing" | "shared";
+  company: string | null;
+  email: string | null;
+  source: "shop" | "corporate";
 }
 
 export interface CustomFieldDef {
@@ -241,4 +244,26 @@ export interface InvoiceRow {
   subtotal: number;
   total_cost: number;
   notes: string | null;
+}
+
+export interface CustomerRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  phone: string;
+  name: string | null;
+  email: string | null;
+  company: string | null;
+  notes: string | null;
+}
+
+export interface CustomerWithStats extends CustomerRow {
+  totalOrders: number;
+  totalSpent: number;
+}
+
+export interface CustomerDetail extends CustomerWithStats {
+  orders: Order[];
+  inquiries: Inquiry[];
+  catalogueLeads: CatalogueLead[];
 }

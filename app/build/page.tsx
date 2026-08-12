@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGift, BoxItem } from "../context/GiftContext";
 import { Sparkles, Trash2, Box, ShoppingBag, Plus, Minus, Check, ArrowLeft, ArrowRight, MessageSquareHeart } from "lucide-react";
@@ -45,6 +45,8 @@ type StepKey = (typeof STEPS)[number]["key"];
 
 export default function BuildBox() {
   const router = useRouter();
+  const pathname = usePathname();
+  const compact = pathname === "/build-my-box";
   const {
     buildABoxItems,
     boxCapacity,
@@ -163,18 +165,20 @@ export default function BuildBox() {
 
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
-        <section className="text-center max-w-2xl mx-auto space-y-4">
-          <div className="inline-flex items-center space-x-1.5 bg-teal-deep/5 border border-teal-deep/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-deep uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Interactive Customizer</span>
-          </div>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-teal-deep tracking-tight">
-            Hamper Customization Studio
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-            Build your own box in four simple steps — packaging, products, a personal message, then checkout.
-          </p>
-        </section>
+        {!compact && (
+          <section className="text-center max-w-2xl mx-auto space-y-4">
+            <div className="inline-flex items-center space-x-1.5 bg-teal-deep/5 border border-teal-deep/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-deep uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Interactive Customizer</span>
+            </div>
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-teal-deep tracking-tight">
+              Hamper Customization Studio
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              Build your own box in four simple steps — packaging, products, a personal message, then checkout.
+            </p>
+          </section>
+        )}
 
         {/* Step indicator */}
         <div className="flex items-center justify-center gap-2 sm:gap-4">
