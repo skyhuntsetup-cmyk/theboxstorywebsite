@@ -26,14 +26,6 @@ const catalogsList: CatalogItem[] = [
     size: "23.8 MB"
   },
   {
-    file: "The Box Story 2025 - Diwali Catalogue .pdf",
-    title: "Diwali Catalogue 2025",
-    category: "Corporate Proposals",
-    icon: Gift,
-    description: "Vibrant festive gift hampers, sweets trays, and corporate packages.",
-    size: "60.1 MB"
-  },
-  {
     file: "1. TBS X XECH - Consumer Electronics.pdf.pdf",
     title: "XECH Consumer Electronics I",
     category: "Tech & Gadgets",
