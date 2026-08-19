@@ -3,13 +3,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { jsPDF } from "jspdf";
 import { supabase } from "../../lib/supabase";
-import { getContent } from "../../lib/siteContent";
+import { useSiteContent } from "../../lib/siteContent";
 import { ShoppingBag, Plus, Minus, Trash2, Gift, Loader, MessageCircle, X, ArrowRight } from "lucide-react";
 import type { CategoryRow, ProductWithCategories, CatalogueCartItem } from "../../lib/types";
 
 const LEAD_STORAGE_KEY = "tbs_catalogue_lead";
 
 export default function CataloguePage() {
+  const { getContent } = useSiteContent();
   const [step, setStep] = useState<"info" | "browse">("info");
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");

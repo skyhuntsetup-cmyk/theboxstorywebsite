@@ -130,7 +130,9 @@ export default function BillingTab() {
 
   const deleteInvoice = async (id: string) => {
     if (!confirm("Delete this invoice? This can't be undone.")) return;
-    await fetch(`/api/admin/invoices/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/invoices/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    if (!data.success) { alert("Failed to delete: " + data.error); return; }
     setRefreshTrigger((prev) => prev + 1);
   };
 

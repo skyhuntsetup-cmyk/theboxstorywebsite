@@ -1,30 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
+import { getSupabaseAdmin } from "../../../../lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
   try {
     const { type, config } = await req.json();
-    
-    let filePath = "";
-    if (type === "catalog") {
-      filePath = path.join(process.cwd(), "data", "catalog-config.json");
-    } else if (type === "past-work") {
-      filePath = path.join(process.cwd(), "data", "past-work-config.json");
-    } else if (type === "site-content") {
-      filePath = path.join(process.cwd(), "data", "site-content.json");
-    } else {
+
+    if (type !== "past-work" && type !== "site-content") {
       return NextResponse.json({ success: false, error: "Invalid configuration type" }, { status: 400 });
     }
-    
-    // Write config back to local JSON
-    await fs.writeFile(filePath, JSON.stringify(config, null, 2), "utf-8");
-    
+
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase
+      .from("site_config")
+      .upsert([{ type, data: config, updated_at: new Date().toISOString() }], { onConflict: "type" });
+
+    if (error) return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Save config error:", error);
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : String(error) }, 
+      { success: false, error: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

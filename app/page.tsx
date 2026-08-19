@@ -6,12 +6,12 @@ import { supabase } from "../lib/supabase";
 import { ProductCard } from "../components/ProductCard";
 import type { ProductRow } from "../lib/types";
 import {
-  Sparkles, Gift, ArrowRight, CheckCircle2, ChevronRight, Zap, Star,
+  Sparkles, Gift, ArrowRight, CheckCircle2, ChevronRight, Zap,
   Heart
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { getContent } from "../lib/siteContent";
+import { useSiteContent } from "../lib/siteContent";
 
 const revealProps = {
   initial: { opacity: 0, y: 24 },
@@ -48,6 +48,7 @@ const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function Home() {
+  const { getContent } = useSiteContent();
   const heroBadge = getContent("home.hero.badge", "Premium Diwali Gifting 2026");
   const heroSubtext = getContent(
     "home.hero.subtext",
@@ -176,15 +177,6 @@ export default function Home() {
     }
   };
 
-  const clientLogos = [
-    { name: "TATA", type: "Enterprise" },
-    { name: "CRED", type: "Fintech" },
-    { name: "Google", type: "Technology" },
-    { name: "Zomato", type: "Logistics" },
-    { name: "Reliance", type: "Retail" },
-    { name: "Razorpay", type: "Fintech" },
-  ];
-
   const occasions = [
     "DIWALI CELEBRATIONS",
     "WEDDING CEREMONIES",
@@ -270,26 +262,6 @@ export default function Home() {
     "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&auto=format&fit=crop&q=80",
   ];
 
-  const testimonials = [
-    {
-      quote: "The Box Story completely elevated our company onboarding! The laser-engraved copper bottles and premium notebook diaries were standard-setting. Every new hire was wowed.",
-      author: "Aditi Sharma",
-      role: "HR Director, CRED",
-      rating: 5,
-    },
-    {
-      quote: "I sent a custom built anniversary hamper to my sister via a Magical Link. She filled in her shipping address directly and loved the unboxing confetti simulation. Genius concept!",
-      author: "Vikram Malhotra",
-      role: "Mumbai",
-      rating: 5,
-    },
-    {
-      quote: "Exquisite packing and outstanding local sweets. Saffron honey and dry fruits were premium grade. Will definitely choose them for Diwali bulk gifting next month.",
-      author: "Pooja Hegde",
-      role: "Wedding Planner, Jaipur",
-      rating: 5,
-    },
-  ];
 
   const faqs = [
     {
@@ -818,74 +790,6 @@ export default function Home() {
           <div className="w-16 h-0.5 bg-saffron mx-auto rounded-full" />
         </div>
       </motion.section>
-
-      {/* 8. TESTIMONIALS SLIDER SECTION */}
-      <section className="max-w-6xl mx-auto px-6 space-y-8 text-center">
-        <motion.div {...revealProps} className="space-y-3">
-          <span className="text-[12px] font-bold tracking-widest text-rani-pink bg-rani-pink/10 px-3 py-1 rounded-full uppercase">
-            Client Testimonials
-          </span>
-          <h2 className="font-heading text-3xl font-black text-teal-deep">
-            Trusted by Gifting Lovers
-          </h2>
-        </motion.div>
-
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-        >
-          {testimonials.map((t, idx) => (
-            <motion.div
-              key={idx}
-              variants={staggerItem}
-              whileHover={{ y: -4 }}
-              className="bg-white border border-teal-deep/5 p-8 rounded-3xl shadow-sm text-left flex flex-col justify-between h-72 relative"
-            >
-              <div className="space-y-4">
-                <div className="flex space-x-1 text-saffron">
-                  {[...Array(t.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-saffron" />
-                  ))}
-                </div>
-                <p className="text-xs text-teal-deep/85 italic leading-relaxed">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-              </div>
-              <div className="border-t border-teal-deep/5 pt-4 flex justify-between items-center mt-auto">
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-teal-deep">{t.author}</span>
-                  <span className="text-[12px] text-teal-deep/50">{t.role}</span>
-                </div>
-                <Heart className="w-4 h-4 text-rani-pink/30" />
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* 2.5 TRUSTED BY MANY CLIENT CAROUSEL */}
-      <section className="max-w-6xl mx-auto px-6 text-center space-y-8">
-        <motion.div {...revealProps} className="space-y-1">
-          <span className="text-[11px] uppercase tracking-widest font-black text-saffron block">Our Corporate Partners</span>
-          <h2 className="font-heading text-2xl font-black text-teal-deep">Trusted By Industry Leaders</h2>
-        </motion.div>
-
-        <div className="relative py-4 overflow-hidden bg-white/40 border-y border-teal-deep/5 backdrop-blur-sm">
-          <div className="flex space-x-16 animate-marquee whitespace-nowrap">
-            {[...clientLogos, ...clientLogos].map((client, idx) => (
-              <div key={idx} className="inline-flex flex-col items-center justify-center min-w-[120px]">
-                <span className="font-heading text-lg font-black tracking-tight text-teal-deep hover:text-rani-pink transition-colors">
-                  {client.name}
-                </span>
-                <span className="text-[10px] text-teal-deep/40 uppercase tracking-widest">{client.type}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* 8.5 QUICK BULK & CORPORATE GIFTING CONTACT FORM */}
       <section id="bulk-contact" className="max-w-4xl mx-auto px-6">

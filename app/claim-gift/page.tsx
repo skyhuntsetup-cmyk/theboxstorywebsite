@@ -49,17 +49,14 @@ function ClaimGiftContent() {
 
     const fetchOrder = async () => {
       try {
-        const { data, error } = await supabase
-          .from("orders")
-          .select("*")
-          .eq("id", orderId)
-          .single();
+        const res = await fetch(`/api/claim-gift/${orderId}`);
+        const result = await res.json();
 
-        if (error || !data) {
-          setErrorMsg("This gift link is invalid or has already been claimed.");
+        if (!result.success) {
+          setErrorMsg(result.error || "This gift link is invalid or has already been claimed.");
         } else {
-          setOrder(data);
-          if (data.status === "claimed") {
+          setOrder(result.order);
+          if (result.order.status === "claimed") {
             setIsClaimed(true);
             setIsOpen(true);
           }
@@ -157,26 +154,18 @@ function ClaimGiftContent() {
     setIsSubmitting(true);
 
     try {
-      const updatePayload: {
-        status: string;
-        shipping_address: typeof addressInfo;
-        items?: SelectableItem[];
-      } = {
-        status: "claimed",
-        shipping_address: addressInfo,
-      };
+      const res = await fetch(`/api/claim-gift/${orderId}/claim`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          addressInfo,
+          items: isCustomizable ? selectedItems : undefined,
+        }),
+      });
+      const result = await res.json();
 
-      if (isCustomizable) {
-        updatePayload.items = selectedItems;
-      }
-
-      const { error } = await supabase
-        .from("orders")
-        .update(updatePayload)
-        .eq("id", orderId);
-
-      if (error) {
-        alert("Fulfillment Error: " + error.message);
+      if (!result.success) {
+        alert("Fulfillment Error: " + result.error);
       } else {
         setIsClaimed(true);
         triggerConfetti();

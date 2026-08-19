@@ -5,7 +5,7 @@ import { supabase } from "../../lib/supabase";
 import { 
   BarChart3, ShoppingBag, MessageSquare, Package, Loader,
   CheckCircle, Mail, Phone, Calendar, Search, RefreshCw,
-  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X, LogOut, Copy, Link2, Check
+  Eye, EyeOff, Plus, Trash2, ExternalLink, Edit3, Globe, Tag, X, LogOut, Copy, Link2, Check, Upload
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Order, Inquiry, BoxStyleRow, OfflineInventoryItem, OrderItem, CategoryRow, StoreRow, ProductWithCategories, BlogPostRow, CustomFieldDef } from "../../lib/types";
@@ -16,8 +16,10 @@ import BillingTab from "./BillingTab";
 import BulkImportPanel from "./BulkImportPanel";
 import CustomersTab from "./CustomersTab";
 import LeadsTab from "./LeadsTab";
+import CatalogsTab from "./CatalogsTab";
+import MessagesTab from "./MessagesTab";
 
-type AdminTab = "orders" | "inquiries" | "products" | "categories" | "stores" | "blog" | "packaging" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns" | "billing" | "customers" | "leads";
+type AdminTab = "orders" | "inquiries" | "products" | "categories" | "stores" | "blog" | "packaging" | "inventory" | "portfolio" | "catalog" | "content" | "campaigns" | "billing" | "customers" | "leads" | "messages";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
@@ -76,9 +78,26 @@ export default function AdminDashboard() {
   };
   const [newProduct, setNewProduct] = useState(emptyProductForm);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [editingProduct, setEditingProduct] = useState<(ProductWithCategories & { priceInput?: string }) | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductWithCategories | null>(null);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [isUploadingProductImage, setIsUploadingProductImage] = useState(false);
+
+  const uploadProductImage = async (file: File, onDone: (url: string) => void) => {
+    setIsUploadingProductImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/admin/products/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.success) onDone(data.url);
+      else alert("Upload failed: " + data.error);
+    } catch (err) {
+      alert("Upload error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsUploadingProductImage(false);
+    }
+  };
 
   // Blog tab state
   const emptyBlogForm = { title: "", excerpt: "", content: "", category: "", image: "", tags: "", is_published: true };
@@ -93,7 +112,6 @@ export default function AdminDashboard() {
   const [syncCategory, setSyncCategory] = useState<string>("Diwali"); // Default for products
 
   // Website Content Config states
-  const [catalogConfig, setCatalogConfig] = useState<{ totalPages: number; sections: any[] } | null>(null);
   const [portfolioConfig, setPortfolioConfig] = useState<{ projects: any[] } | null>(null);
   const [siteContentConfig, setSiteContentConfig] = useState<{ fields: SiteContentField[] } | null>(null);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
@@ -101,10 +119,6 @@ export default function AdminDashboard() {
 
   const fetchConfigs = async () => {
     try {
-      const catRes = await fetch("/api/admin/get-config?type=catalog");
-      const catData = await catRes.json();
-      if (catData.success) setCatalogConfig(catData.config);
-
       const portRes = await fetch("/api/admin/get-config?type=past-work");
       const portData = await portRes.json();
       if (portData.success) setPortfolioConfig(portData.config);
@@ -117,7 +131,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const saveConfig = async (type: "catalog" | "past-work" | "site-content", config: any) => {
+  const saveConfig = async (type: "past-work" | "site-content", config: any) => {
     setIsSavingConfig(true);
     try {
       const res = await fetch("/api/admin/save-config", {
@@ -128,10 +142,6 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (data.success) {
         // Reload configurations to sync state
-        const catRes = await fetch("/api/admin/get-config?type=catalog");
-        const catData = await catRes.json();
-        if (catData.success) setCatalogConfig(catData.config);
-
         const portRes = await fetch("/api/admin/get-config?type=past-work");
         const portData = await portRes.json();
         if (portData.success) setPortfolioConfig(portData.config);
@@ -151,7 +161,7 @@ export default function AdminDashboard() {
 
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "catalog" | "past-work",
+    type: "past-work",
     folder?: string,
     projectIdx?: number
   ) => {
@@ -177,17 +187,6 @@ export default function AdminDashboard() {
           const newConfig = { ...portfolioConfig, projects: updatedProjects };
           setPortfolioConfig(newConfig);
           await saveConfig("past-work", newConfig);
-        } else if (type === "catalog" && catalogConfig) {
-          // If uploading page_XX.png, update totalPages
-          const match = file.name.match(/page_(\d+)/i);
-          if (match) {
-            const pageNum = parseInt(match[1]);
-            if (pageNum > catalogConfig.totalPages) {
-              const newConfig = { ...catalogConfig, totalPages: pageNum };
-              setCatalogConfig(newConfig);
-              await saveConfig("catalog", newConfig);
-            }
-          }
         }
         alert("Image uploaded and linked successfully!");
       } else {
@@ -280,8 +279,11 @@ export default function AdminDashboard() {
         if (oData) {
           setOrders(oData);
           
-          // Calculate Stats
-          const revenue = oData.reduce((acc: number, curr: Order) => acc + Number(curr.subtotal || 0), 0);
+          // Calculate Stats — only count orders that were actually paid for;
+          // "pending" orders haven't been confirmed and shouldn't inflate revenue.
+          const revenue = oData
+            .filter((o) => o.status !== "pending")
+            .reduce((acc: number, curr: Order) => acc + Number(curr.subtotal || 0), 0);
           const paid = oData.filter(o => o.status === "paid").length;
           const claimed = oData.filter(o => o.status === "claimed").length;
 
@@ -757,10 +759,26 @@ export default function AdminDashboard() {
     i.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredInventory = offlineInventory.filter(item => 
+  const filteredInventory = offlineInventory.filter(item =>
     item.product_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.vendor_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredProducts = products.filter(p =>
+    p.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const filteredPortfolioProjects = (portfolioConfig?.projects || []).filter((project) =>
+    project.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredContentFields = (siteContentConfig?.fields || []).filter((field) =>
+    field.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    field.key.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -877,7 +895,7 @@ export default function AdminDashboard() {
       {/* Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-teal-deep/5 p-2 rounded-2xl">
         <div className="flex space-x-1 flex-wrap gap-1">
-          {["orders", "inquiries", "products", "categories", "stores", "blog", "packaging", "inventory", "campaigns", "billing", "customers", "leads", "portfolio", "catalog", "content"].map((tab) => (
+          {["orders", "inquiries", "products", "categories", "stores", "blog", "packaging", "inventory", "campaigns", "billing", "customers", "leads", "messages", "portfolio", "catalog", "content"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -899,7 +917,7 @@ export default function AdminDashboard() {
                     : tab === "portfolio"
                       ? "Past Projects"
                       : tab === "catalog"
-                        ? "Catalog Sections"
+                        ? "Catalogs"
                         : tab === "content"
                           ? "Site Content"
                           : tab === "campaigns"
@@ -909,7 +927,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {activeTab !== "packaging" && activeTab !== "categories" && activeTab !== "stores" && activeTab !== "blog" && activeTab !== "campaigns" && activeTab !== "billing" && activeTab !== "customers" && activeTab !== "leads" && (
+        {activeTab !== "packaging" && activeTab !== "categories" && activeTab !== "stores" && activeTab !== "blog" && activeTab !== "campaigns" && activeTab !== "billing" && activeTab !== "customers" && activeTab !== "leads" && activeTab !== "catalog" && activeTab !== "messages" && (
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="w-4 h-4 text-teal-deep/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -1143,10 +1161,28 @@ export default function AdminDashboard() {
                     <input type="number" min={0} placeholder="e.g. 12" value={newProduct.stock_quantity} onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: e.target.value })}
                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[12px] font-bold text-teal-deep/60">Image URL</label>
-                    <input type="text" placeholder="https://..." value={newProduct.image} onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                      className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] font-bold text-teal-deep/60">Image</label>
+                    <div className="flex items-center space-x-3">
+                      {newProduct.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={newProduct.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg border border-teal-deep/10 flex-shrink-0" />
+                      )}
+                      <div className="flex-1 space-y-1.5">
+                        <input type="text" placeholder="https://... or upload a photo below" value={newProduct.image} onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                          className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                        <label className="inline-flex items-center space-x-1.5 text-[11px] font-bold text-teal-deep cursor-pointer hover:text-rani-pink">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{isUploadingProductImage ? "Uploading..." : "Upload a photo"}</span>
+                          <input type="file" accept="image/*" className="hidden" disabled={isUploadingProductImage}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) uploadProductImage(file, (url) => setNewProduct((prev) => ({ ...prev, image: url })));
+                              e.target.value = "";
+                            }} />
+                        </label>
+                      </div>
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[12px] font-bold text-teal-deep/60">Description</label>
@@ -1273,7 +1309,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-teal-deep/5">
-                    {products.map((prod) => (
+                    {filteredProducts.map((prod) => (
                       <React.Fragment key={prod.id}>
                         <tr className="hover:bg-teal-deep/5 transition-colors">
                           <td className="p-4 flex items-center space-x-3">
@@ -1364,10 +1400,28 @@ export default function AdminDashboard() {
                                       className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
                                   </div>
                                 </div>
-                                <div className="space-y-1">
-                                  <label className="text-[12px] font-bold text-teal-deep/60">Image URL</label>
-                                  <input type="text" value={editingProduct.image || ""} onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
-                                    className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                <div className="space-y-1.5">
+                                  <label className="text-[12px] font-bold text-teal-deep/60">Image</label>
+                                  <div className="flex items-center space-x-3">
+                                    {editingProduct.image && (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src={editingProduct.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg border border-teal-deep/10 flex-shrink-0" />
+                                    )}
+                                    <div className="flex-1 space-y-1.5">
+                                      <input type="text" value={editingProduct.image || ""} onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
+                                        className="w-full bg-white border border-teal-deep/15 rounded-lg px-3 py-2 text-xs focus:outline-none" />
+                                      <label className="inline-flex items-center space-x-1.5 text-[11px] font-bold text-teal-deep cursor-pointer hover:text-rani-pink">
+                                        <Upload className="w-3.5 h-3.5" />
+                                        <span>{isUploadingProductImage ? "Uploading..." : "Upload a photo"}</span>
+                                        <input type="file" accept="image/*" className="hidden" disabled={isUploadingProductImage}
+                                          onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) uploadProductImage(file, (url) => setEditingProduct((prev) => prev ? { ...prev, image: url } : prev));
+                                            e.target.value = "";
+                                          }} />
+                                      </label>
+                                    </div>
+                                  </div>
                                 </div>
                                 <div className="space-y-1">
                                   <label className="text-[12px] font-bold text-teal-deep/60">Description</label>
@@ -2159,6 +2213,13 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {activeTab === "portfolio" && !portfolioConfig && (
+            <div className="p-12 text-center space-y-2">
+              <p className="text-sm font-bold text-teal-deep/60">Couldn&apos;t load the portfolio config.</p>
+              <p className="text-xs text-teal-deep/40">Check that Supabase is reachable and the `site_config` table has a &quot;past-work&quot; row, then refresh.</p>
+            </div>
+          )}
+
           {activeTab === "portfolio" && portfolioConfig && (
             <div className="p-6 space-y-8">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
@@ -2190,8 +2251,20 @@ export default function AdminDashboard() {
               </div>
 
               {/* Projects List */}
+              {searchQuery && filteredPortfolioProjects.length === 0 && (
+                <p className="text-xs text-teal-deep/40 text-center py-8">No projects match &quot;{searchQuery}&quot;.</p>
+              )}
               <div className="space-y-10">
-                {portfolioConfig.projects.map((project, idx) => (
+                {portfolioConfig.projects.map((project, idx) => {
+                  // Map over the full array (not the filtered one) so `idx` always
+                  // stays the true index into portfolioConfig.projects — every
+                  // handler below mutates by that index, and filtering the source
+                  // array directly would silently edit the wrong project.
+                  const matchesSearch = !searchQuery ||
+                    project.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    project.title.toLowerCase().includes(searchQuery.toLowerCase());
+                  if (!matchesSearch) return null;
+                  return (
                   <div key={idx} className="bg-slate-50/50 border border-teal-deep/5 rounded-3xl p-6 md:p-8 space-y-6 relative group">
                     {/* Controls Row */}
                     <div className="absolute top-6 right-6 flex items-center space-x-2">
@@ -2381,191 +2454,21 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {/* TAB 7: CATALOG SECTIONS EDITOR */}
-          {activeTab === "catalog" && catalogConfig && (
-            <div className="p-6 space-y-8 text-left">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-teal-deep/5 pb-4">
-                <div>
-                  <h3 className="font-heading text-lg font-bold text-teal-deep">Diwali Catalog Sections Index</h3>
-                  <p className="text-[12px] text-teal-deep/50">Edit page counts, section page ranges, and visual description tags.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newSection = {
-                      title: "New Category",
-                      startPage: catalogConfig.totalPages,
-                      endPage: catalogConfig.totalPages,
-                      description: "Enter category details."
-                    };
-                    const updated = { ...catalogConfig, sections: [...catalogConfig.sections, newSection] };
-                    setCatalogConfig(updated);
-                    saveConfig("catalog", updated);
-                  }}
-                  className="mt-4 sm:mt-0 px-4 py-2 bg-teal-deep text-[#FAF4E8] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center space-x-1.5 hover:bg-teal-deep/90 shadow transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Catalog Section</span>
-                </button>
-              </div>
+          {/* TAB 7: CORPORATE CATALOGS */}
+          {activeTab === "catalog" && <CatalogsTab />}
 
-              {/* Total Pages Config */}
-              <div className="bg-slate-50/50 p-6 rounded-2xl border border-teal-deep/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 max-w-xl">
-                <div className="space-y-1">
-                  <h4 className="font-heading text-sm font-bold text-teal-deep">Total Catalog Pages</h4>
-                  <p className="text-[12px] text-teal-deep/50">Adjusting this updates the number of page PNGs rendered in the catalog scroll view.</p>
-                </div>
-                <div className="flex items-center space-x-3 shrink-0">
-                  <input
-                    type="number"
-                    value={catalogConfig.totalPages}
-                    onChange={(e) => {
-                      const updated = { ...catalogConfig, totalPages: parseInt(e.target.value) || 1 };
-                      setCatalogConfig(updated);
-                    }}
-                    className="w-24 bg-white border border-teal-deep/15 rounded-xl px-3 py-2 text-center text-xs font-bold text-teal-deep focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => saveConfig("catalog", catalogConfig)}
-                    className="px-4 py-2 bg-saffron hover:bg-saffron/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
-                  >
-                    Save Pages count
-                  </button>
-                </div>
-              </div>
+          {activeTab === "messages" && <MessagesTab />}
 
-              {/* Sections Table List */}
-              <div className="border border-teal-deep/5 rounded-3xl overflow-hidden bg-white shadow-sm">
-                <table className="w-full text-xs text-left">
-                  <thead className="bg-background border-b border-teal-deep/5 uppercase font-bold text-teal-deep/60">
-                    <tr>
-                      <th className="p-4 w-12">No.</th>
-                      <th className="p-4">Section Title</th>
-                      <th className="p-4 w-28">Start Page</th>
-                      <th className="p-4 w-28">End Page</th>
-                      <th className="p-4">Short Description</th>
-                      <th className="p-4 w-32 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {catalogConfig.sections.map((section, idx) => (
-                      <tr key={idx} className="border-b border-teal-deep/5 hover:bg-teal-deep/[0.01] transition-colors">
-                        <td className="p-4 font-mono font-bold text-teal-deep/50">{idx + 1}</td>
-                        <td className="p-4">
-                          <input
-                            type="text"
-                            value={section.title}
-                            onChange={(e) => {
-                              const list = [...catalogConfig.sections];
-                              list[idx].title = e.target.value;
-                              setCatalogConfig({ ...catalogConfig, sections: list });
-                            }}
-                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-xs font-bold text-teal-deep focus:outline-none focus:border-teal-deep/20"
-                          />
-                        </td>
-                        <td className="p-4">
-                          <input
-                            type="number"
-                            value={section.startPage}
-                            onChange={(e) => {
-                              const list = [...catalogConfig.sections];
-                              list[idx].startPage = parseInt(e.target.value) || 1;
-                              setCatalogConfig({ ...catalogConfig, sections: list });
-                            }}
-                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-center text-xs font-bold text-teal-deep focus:outline-none focus:border-teal-deep/20"
-                          />
-                        </td>
-                        <td className="p-4">
-                          <input
-                            type="number"
-                            value={section.endPage}
-                            onChange={(e) => {
-                              const list = [...catalogConfig.sections];
-                              list[idx].endPage = parseInt(e.target.value) || 1;
-                              setCatalogConfig({ ...catalogConfig, sections: list });
-                            }}
-                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-center text-xs font-bold text-teal-deep focus:outline-none focus:border-teal-deep/20"
-                          />
-                        </td>
-                        <td className="p-4">
-                          <input
-                            type="text"
-                            value={section.description}
-                            onChange={(e) => {
-                              const list = [...catalogConfig.sections];
-                              list[idx].description = e.target.value;
-                              setCatalogConfig({ ...catalogConfig, sections: list });
-                            }}
-                            className="bg-slate-50 border border-teal-deep/5 rounded-lg px-2.5 py-1.5 w-full text-xs text-teal-deep focus:outline-none focus:border-teal-deep/20"
-                          />
-                        </td>
-                        <td className="p-4 text-right">
-                          <div className="flex items-center justify-end space-x-1.5">
-                            <button
-                              type="button"
-                              disabled={idx === 0}
-                              onClick={() => {
-                                const list = [...catalogConfig.sections];
-                                [list[idx], list[idx - 1]] = [list[idx - 1], list[idx]];
-                                const updated = { ...catalogConfig, sections: list };
-                                setCatalogConfig(updated);
-                                saveConfig("catalog", updated);
-                              }}
-                              className="p-1 bg-white border border-teal-deep/5 rounded hover:bg-teal-deep/5 text-teal-deep disabled:opacity-30"
-                            >
-                              ▲
-                            </button>
-                            <button
-                              type="button"
-                              disabled={idx === catalogConfig.sections.length - 1}
-                              onClick={() => {
-                                const list = [...catalogConfig.sections];
-                                [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
-                                const updated = { ...catalogConfig, sections: list };
-                                setCatalogConfig(updated);
-                                saveConfig("catalog", updated);
-                              }}
-                              className="p-1 bg-white border border-teal-deep/5 rounded hover:bg-teal-deep/5 text-teal-deep disabled:opacity-30"
-                            >
-                              ▼
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (confirm(`Delete section "${section.title}"?`)) {
-                                  const list = catalogConfig.sections.filter((_: any, i: number) => i !== idx);
-                                  const updated = { ...catalogConfig, sections: list };
-                                  setCatalogConfig(updated);
-                                  saveConfig("catalog", updated);
-                                }
-                              }}
-                              className="p-1 bg-red-50 hover:bg-red-100 text-red-650 rounded border border-red-100"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <button
-                  type="button"
-                  onClick={() => saveConfig("catalog", catalogConfig)}
-                  className="px-6 py-3 bg-teal-deep hover:bg-teal-deep/90 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
-                >
-                  Save Section Indexes Config
-                </button>
-              </div>
+          {activeTab === "content" && !siteContentConfig && (
+            <div className="p-12 text-center space-y-2">
+              <p className="text-sm font-bold text-teal-deep/60">Couldn&apos;t load the site content config.</p>
+              <p className="text-xs text-teal-deep/40">Check that Supabase is reachable and the `site_config` table has a &quot;site-content&quot; row, then refresh.</p>
             </div>
           )}
 
@@ -2575,13 +2478,12 @@ export default function AdminDashboard() {
                 <h3 className="font-heading text-lg font-bold text-teal-deep">Site Text & Images</h3>
                 <p className="text-[12px] text-teal-deep/50">
                   Edit copy and swap images used across the homepage, About page, and sitewide contact info.
-                  Changes save to the site&apos;s content file — in local dev they show up immediately; once
-                  deployed, they take effect on the next deploy (this writes to disk, not a live database).
+                  Changes save straight to the database and show up on the live site immediately — no redeploy needed.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {siteContentConfig.fields.map((field) => (
+                {filteredContentFields.map((field) => (
                   <div key={field.key} className="bg-slate-50/50 p-5 rounded-2xl border border-teal-deep/5 space-y-2">
                     <label className="text-[12px] font-bold text-teal-deep/60 uppercase tracking-wider block">
                       {field.label}

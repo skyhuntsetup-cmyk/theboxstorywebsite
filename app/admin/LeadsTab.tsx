@@ -31,7 +31,9 @@ export default function LeadsTab() {
 
   const deleteLead = async (id: string) => {
     if (!confirm("Delete this lead?")) return;
-    await fetch(`/api/admin/catalogue-leads/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/catalogue-leads/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    if (!data.success) { alert("Failed to delete: " + data.error); return; }
     fetchLeads();
   };
 

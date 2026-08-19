@@ -6,10 +6,11 @@ import {
   Gift, Sparkles, Building2, Heart, Award, ShieldCheck, Leaf, Compass, ArrowRight 
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { getContent } from "../../lib/siteContent";
+import { useSiteContent } from "../../lib/siteContent";
 import { revealProps, staggerContainer, staggerItem } from "../../lib/motion";
 
 export default function About() {
+  const { getContent } = useSiteContent();
   const heroBadge = getContent("about.hero.badge", "OUR MISSION & VALUES");
   const heroBody = getContent(
     "about.hero.body",

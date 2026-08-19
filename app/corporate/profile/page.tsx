@@ -1,15 +1,56 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  ArrowLeft, ArrowRight, Sparkles, Gift, ShieldCheck, 
-  Truck, Award, Heart, Layers, Laptop, PenTool, 
-  ExternalLink, CheckCircle2, ChevronRight, HelpCircle, Users
+import {
+  ArrowLeft, Sparkles, Gift, ShieldCheck,
+  Truck, Award, Heart, Layers, Laptop, PenTool,
+  ExternalLink, CheckCircle2, ChevronRight, HelpCircle, Users, Loader
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CorporateProfilePage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    occasion: "Onboarding",
+    quantity: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/corporate-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          quantity: formData.quantity || "Not specified",
+          budget: "Not specified via design request form",
+          details: `Occasion: ${formData.occasion}`,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsSubmitted(true);
+      } else {
+        alert("Submission failed: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -607,34 +648,70 @@ export default function CorporateProfilePage() {
             <p className="text-[12px] text-slate-500 font-light">
               Enter your details below and our corporate client managers will reach out to you within 24 hours.
             </p>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Inquiry Sent! Our B2B managers will call you back shortly.'); }} className="space-y-4">
-              <div>
-                <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Full Name</label>
-                <input required type="text" placeholder="Your Name" className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
-              </div>
-              <div>
-                <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Company Email</label>
-                <input required type="email" placeholder="name@company.com" className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Occasion Type</label>
-                  <select className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep">
-                    <option>Onboarding</option>
-                    <option>Client Appreciation</option>
-                    <option>Milestone Reward</option>
-                    <option>Festival / Holiday</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Est. Quantity</label>
-                  <input type="number" placeholder="MOQ 20" min="20" className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
-                </div>
-              </div>
-              <button type="submit" className="w-full bg-rani-pink hover:bg-rani-pink/95 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
-                Submit Design Request
-              </button>
-            </form>
+            <AnimatePresence mode="wait">
+              {isSubmitted ? (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-6 space-y-2"
+                >
+                  <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
+                  <p className="text-xs font-bold text-teal-deep">Inquiry sent — our B2B managers will call you back shortly.</p>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="form"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Full Name</label>
+                    <input required type="text" placeholder="Your Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Company Email</label>
+                    <input required type="email" placeholder="name@company.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Phone</label>
+                      <input required type="tel" placeholder="+91 98765 43210" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
+                    </div>
+                    <div>
+                      <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Company Name</label>
+                      <input required type="text" placeholder="Acme Pvt Ltd" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                        className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Occasion Type</label>
+                      <select value={formData.occasion} onChange={(e) => setFormData({ ...formData, occasion: e.target.value })}
+                        className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep">
+                        <option>Onboarding</option>
+                        <option>Client Appreciation</option>
+                        <option>Milestone Reward</option>
+                        <option>Festival / Holiday</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[12px] font-bold text-slate-400 uppercase mb-1">Est. Quantity</label>
+                      <input type="number" placeholder="MOQ 20" min="20" value={formData.quantity} onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                        className="w-full text-xs border border-[#042F2E]/10 px-3 py-2.5 rounded-xl bg-[#FAF4E8]/50 focus:outline-none focus:border-teal-deep" />
+                    </div>
+                  </div>
+                  <button type="submit" disabled={isSubmitting} className="w-full bg-rani-pink hover:bg-rani-pink/95 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all disabled:opacity-60 flex items-center justify-center space-x-2">
+                    {isSubmitting ? <Loader className="w-4 h-4 animate-spin" /> : <span>Submit Design Request</span>}
+                  </button>
+                </motion.form>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>

@@ -1,21 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   CheckCircle2, Award, ArrowRight, X, ChevronLeft, ChevronRight, Eye
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { revealProps, staggerContainer, staggerItem } from "../../../lib/motion";
+import { supabase } from "../../../lib/supabase";
 
-import pastWorkConfig from "../../../data/past-work-config.json";
+import pastWorkConfigFallback from "../../../data/past-work-config.json";
+
+interface PastWorkProject {
+  folder: string;
+  company: string;
+  title: string;
+  badge: string;
+  context: string;
+  outcome: string;
+  images: string[];
+}
 
 export default function PastWorkPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [activeProjectIdx, setActiveProjectIdx] = useState<number>(0);
   const [activeImageIdx, setActiveImageIdx] = useState<number>(0);
 
-  const projects = pastWorkConfig.projects;
+  // Renders instantly from the build-time fallback, then swaps in the live
+  // admin-edited version once fetched — same pattern as useSiteContent.
+  const [projects, setProjects] = useState<PastWorkProject[]>(pastWorkConfigFallback.projects);
+
+  useEffect(() => {
+    let active = true;
+    supabase
+      .from("site_config")
+      .select("data")
+      .eq("type", "past-work")
+      .maybeSingle()
+      .then(({ data }) => {
+        const liveProjects = (data?.data as { projects?: PastWorkProject[] } | undefined)?.projects;
+        if (active && liveProjects) setProjects(liveProjects);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleOpenLightbox = (projectIdx: number, imgIdx: number) => {
     setActiveProjectIdx(projectIdx);

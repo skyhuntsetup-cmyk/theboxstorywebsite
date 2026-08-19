@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  Building, Gift, CheckCircle2, ChevronRight,
-  Globe, Laptop, Star, ArrowRight, ExternalLink,
-  Download, Eye, BookOpen
+  Gift, CheckCircle2, ChevronRight,
+  Globe, Laptop, ArrowRight, ExternalLink,
+  Download, Eye
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { revealProps, staggerContainer, staggerItem } from "../../lib/motion";
@@ -253,10 +253,6 @@ export default function CorporateGifting() {
     { number: "100%", label: "On-time Dispatch Rate" },
   ];
 
-  const clientLogos = [
-    "Google", "CRED", "TATA", "Razorpay", "Zomato", "Microsoft"
-  ];
-
   const features = [
     {
       icon: Laptop,
@@ -273,27 +269,6 @@ export default function CorporateGifting() {
       title: "Bespoke Engraving & Swag",
       desc: "Laser-etch company logos on premium copper flasks, mahogany notebooks, leather bags, or wooden boxes.",
     },
-  ];
-
-  const testimonials = [
-    {
-      quote: "The Box Story's automated claiming portal made our annual employee appreciation campaign completely painless. Employees selected their own diwali diya styles, and tracking was transparent.",
-      author: "Sneha Reddy",
-      role: "VP of People, CRED",
-      rating: 5
-    },
-    {
-      quote: "Excellent customization options! They laser-engraved our brand logo on insulated Stanley cups and shipped them to 200+ clients across India on time. Outstanding support.",
-      author: "Rohan Das",
-      role: "Operations Director, Razorpay",
-      rating: 5
-    },
-    {
-      quote: "Outstanding unboxing experience! Our new hires loved the custom diaries, hoodies, and saffron sweets. The Box Story is our default onboarding kit partner.",
-      author: "Aditi Iyer",
-      role: "HR Lead, Google India",
-      rating: 5
-    }
   ];
 
   const faqs = [
@@ -344,18 +319,6 @@ export default function CorporateGifting() {
             </div>
           </div>
         </motion.section>
-
-        {/* Client Logos ticker */}
-        <section className="space-y-4 text-center">
-          <span className="text-[12px] uppercase font-bold tracking-widest text-slate-400">Trusted by fast-growing startups & enterprises</span>
-          <div className="flex flex-wrap gap-8 justify-center items-center py-4 opacity-55">
-            {clientLogos.map((logo, idx) => (
-              <span key={idx} className="font-heading text-xl font-extrabold tracking-tight text-slate-600 uppercase">
-                {logo}
-              </span>
-            ))}
-          </div>
-        </section>
 
         {/* Stats Grid */}
         <motion.section
@@ -939,42 +902,6 @@ export default function CorporateGifting() {
             </AnimatePresence>
           </div>
         </motion.section>
-
-        {/* Testimonials Segment: What Our Corporate Clients Say */}
-        <section className="space-y-8 text-center">
-          <div className="space-y-2">
-            <span className="text-[12px] font-bold tracking-widest text-saffron bg-saffron/10 px-3 py-1 rounded-full uppercase">
-              Reviews & Validation
-            </span>
-            <h2 className="font-heading text-2xl md:text-3xl font-black text-slate-900">
-              What Our Clients Say
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 p-8 rounded-3xl text-left flex flex-col justify-between h-72 shadow-sm">
-                <div className="space-y-4">
-                  <div className="flex space-x-1 text-saffron">
-                    {[...Array(t.rating)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-saffron" />
-                    ))}
-                  </div>
-                  <p className="text-xs text-slate-600 italic leading-relaxed">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                </div>
-                <div className="border-t border-slate-100 pt-4 flex justify-between items-center mt-auto">
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-800">{t.author}</span>
-                    <span className="text-[12px] text-slate-500 font-semibold">{t.role}</span>
-                  </div>
-                  <Building className="w-4 h-4 text-teal-deep/30" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* FAQs */}
         <section className="max-w-4xl mx-auto space-y-8 text-left">

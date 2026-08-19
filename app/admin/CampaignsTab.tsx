@@ -53,6 +53,8 @@ export default function CampaignsTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [detail, setDetail] = useState<CampaignDetail | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [addCodesCount, setAddCodesCount] = useState("10");
+  const [isAddingCodes, setIsAddingCodes] = useState(false);
 
   // Create-form state
   const [name, setName] = useState("");
@@ -148,29 +150,58 @@ export default function CampaignsTab() {
   };
 
   const toggleActive = async (id: string, current: boolean) => {
-    await fetch(`/api/admin/campaigns/${id}`, {
+    const res = await fetch(`/api/admin/campaigns/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ is_active: !current }),
     });
+    const data = await res.json();
+    if (!data.success) { alert("Failed to update: " + data.error); return; }
     setRefreshTrigger(prev => prev + 1);
     if (detail?.id === id) openDetail(id);
   };
 
   const deleteCampaign = async (id: string) => {
     if (!confirm("Delete this campaign and all its codes/redemptions? This can't be undone.")) return;
-    await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    if (!data.success) { alert("Failed to delete: " + data.error); return; }
     setView("list");
     setRefreshTrigger(prev => prev + 1);
   };
 
   const markShipped = async (campaignId: string, code: string, currentStatus: string) => {
-    await fetch(`/api/admin/campaigns/${campaignId}/codes/${code}`, {
+    const res = await fetch(`/api/admin/campaigns/${campaignId}/codes/${code}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fulfillment_status: currentStatus === "shipped" ? "pending" : "shipped" }),
     });
+    const data = await res.json();
+    if (!data.success) { alert("Failed to update: " + data.error); return; }
     openDetail(campaignId);
+  };
+
+  const addMoreCodes = async () => {
+    if (!detail) return;
+    const count = Number(addCodesCount);
+    if (!Number.isInteger(count) || count <= 0) { alert("Enter a positive whole number."); return; }
+    setIsAddingCodes(true);
+    try {
+      const res = await fetch(`/api/admin/campaigns/${detail.id}/codes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ count }),
+      });
+      const data = await res.json();
+      if (!data.success) { alert("Failed to add codes: " + data.error); return; }
+      setAddCodesCount("10");
+      await openDetail(detail.id);
+      setRefreshTrigger(prev => prev + 1);
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsAddingCodes(false);
+    }
   };
 
   const copyCode = (code: string) => {
@@ -490,7 +521,27 @@ export default function CampaignsTab() {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-teal-deep/50">Unclaimed Codes ({unredeemed.length}) — copy and distribute to employees</h4>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-teal-deep/50">Unclaimed Codes ({unredeemed.length}) — copy and distribute to employees</h4>
+                  <div className="flex items-center space-x-2 flex-shrink-0">
+                    <input
+                      type="number"
+                      min={1}
+                      value={addCodesCount}
+                      onChange={(e) => setAddCodesCount(e.target.value)}
+                      className="w-16 bg-white border border-teal-deep/15 rounded-lg px-2 py-1.5 text-xs text-center focus:outline-none"
+                    />
+                    <motion.button
+                      whileTap={{ scale: 0.96 }}
+                      onClick={addMoreCodes}
+                      disabled={isAddingCodes}
+                      className="flex items-center space-x-1.5 text-[12px] font-bold px-3 py-1.5 rounded-full border border-teal-deep/15 text-teal-deep hover:bg-teal-deep/5 disabled:opacity-50"
+                    >
+                      {isAddingCodes ? <Loader className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                      <span>Add More Codes</span>
+                    </motion.button>
+                  </div>
+                </div>
                 <motion.div variants={listContainer} initial="initial" animate="animate" className="flex flex-wrap gap-2">
                   {unredeemed.map((c) => (
                     <motion.button

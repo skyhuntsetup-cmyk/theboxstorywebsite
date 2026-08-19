@@ -66,11 +66,13 @@ export default function CustomersTab() {
     if (!detail) return;
     setIsSaving(true);
     try {
-      await fetch(`/api/admin/customers/${detail.phone}`, {
+      const res = await fetch(`/api/admin/customers/${detail.phone}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
       });
+      const data = await res.json();
+      if (!data.success) { alert("Failed to save: " + data.error); return; }
       await fetchCustomers();
       openDetail(detail.phone);
     } finally {

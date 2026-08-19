@@ -62,14 +62,13 @@ export interface Inquiry {
   details: string | null;
 }
 
-export interface BazaarItemRow {
+export interface ContactMessage {
   id: string;
   created_at: string;
   name: string;
-  price: number;
-  image: string;
-  category: "Sweets" | "Decor" | "Wellness" | "Gourmet";
-  is_active: boolean;
+  email: string;
+  subject: string;
+  message: string;
 }
 
 export interface BoxStyleRow {
@@ -244,6 +243,26 @@ export interface InvoiceRow {
   subtotal: number;
   total_cost: number;
   notes: string | null;
+}
+
+export type CorporateCatalogCategory =
+  | "Tech & Gadgets"
+  | "Drinkware & Coffee"
+  | "Bags & Leather"
+  | "Stationery & Office"
+  | "Apparel & Clothing"
+  | "Corporate Proposals";
+
+export interface CorporateCatalogRow {
+  id: string;
+  created_at: string;
+  file: string;
+  title: string;
+  category: CorporateCatalogCategory;
+  description: string | null;
+  size: string | null;
+  display_order: number;
+  is_active: boolean;
 }
 
 export interface CustomerRow {

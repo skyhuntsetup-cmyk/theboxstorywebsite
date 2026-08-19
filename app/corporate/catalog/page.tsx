@@ -3,250 +3,92 @@
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { 
-  ArrowLeft, Download, Search, ChevronRight, FileText, Smartphone, Coffee, Luggage, PenTool, Shirt, Gift 
+import {
+  ArrowLeft, Download, Search, FileText, Smartphone, Coffee, Luggage, PenTool, Shirt, Gift, Loader
 } from "lucide-react";
+import { supabase } from "../../../lib/supabase";
+import type { CorporateCatalogRow, CorporateCatalogCategory } from "../../../lib/types";
 
-interface CatalogItem {
-  file: string;
-  title: string;
-  category: "Tech & Gadgets" | "Drinkware & Coffee" | "Bags & Leather" | "Stationery & Office" | "Apparel & Clothing" | "Corporate Proposals";
-  icon: any;
-  description: string;
-  size: string;
-}
-
-const catalogsList: CatalogItem[] = [
-  {
-    file: "The Box Story - Corporate Gifting Profile.pdf",
-    title: "Corporate Gifting Profile",
-    category: "Corporate Proposals",
-    icon: Gift,
-    description: "Overview of The Box Story corporate gifting solutions and client portfolio.",
-    size: "23.8 MB"
-  },
-  {
-    file: "1. TBS X XECH - Consumer Electronics.pdf.pdf",
-    title: "XECH Consumer Electronics I",
-    category: "Tech & Gadgets",
-    icon: Smartphone,
-    description: "Premium smart lifestyle products, wireless stands, and desk accessories.",
-    size: "10.1 MB"
-  },
-  {
-    file: "2. TBS X XECH - Consumer Electronics.pdf.pdf",
-    title: "XECH Consumer Electronics II",
-    category: "Tech & Gadgets",
-    icon: Smartphone,
-    description: "Advanced lifestyle electronics, humidifiers, and executive gear.",
-    size: "273.8 MB"
-  },
-  {
-    file: "3. TBS X TIMALFI - LAMPS.pdf.pdf",
-    title: "TIMALFI Designer Lamps",
-    category: "Tech & Gadgets",
-    icon: Smartphone,
-    description: "Aesthetic design lamps, ambient desk lights, and bedside fixtures.",
-    size: "9.9 MB"
-  },
-  {
-    file: "4. TBS X Noise - Consumer Electronics.pdf.pdf",
-    title: "Noise Smart Electronics",
-    category: "Tech & Gadgets",
-    icon: Smartphone,
-    description: "Noise smartwatches, fitness trackers, and bluetooth audio devices.",
-    size: "9.1 MB"
-  },
-  {
-    file: "5. TBS X Portronics.pdf",
-    title: "Portronics Tech Accessories",
-    category: "Tech & Gadgets",
-    icon: Smartphone,
-    description: "Portable bluetooth speakers, wireless power banks, and desk hubs.",
-    size: "73.2 MB"
-  },
-  {
-    file: "6. TBS X AQUAMINDER.pdf.pdf",
-    title: "Aquaminder Smart Hydration",
-    category: "Drinkware & Coffee",
-    icon: Coffee,
-    description: "Sensor-tracked smart hydration flasks and temperature display mugs.",
-    size: "8.3 MB"
-  },
-  {
-    file: "7. TBS X Everyday Organizers.pdf.pdf",
-    title: "Everyday Organizers & Planners",
-    category: "Stationery & Office",
-    icon: PenTool,
-    description: "Professional desk organizers, leather planner diaries, and folders.",
-    size: "51.9 MB"
-  },
-  {
-    file: "8. TBS X WACACO.pdf.pdf",
-    title: "Wacaco Portable Coffee Gear",
-    category: "Drinkware & Coffee",
-    icon: Coffee,
-    description: "Luxury portable espresso makers, Minipresso travel sets, and accessories.",
-    size: "23.3 MB"
-  },
-  {
-    file: "9. Non Branded - Solid Polos.pdf",
-    title: "Solid Polo Collections",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Premium cotton solid color polos for corporate workspace apparel.",
-    size: "11.2 MB"
-  },
-  {
-    file: "10. Non Branded - T-Shirts Solids.pdf",
-    title: "Solid T-Shirt Series",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Standard non-branded solid cotton t-shirts for brand printing.",
-    size: "3.1 MB"
-  },
-  {
-    file: "11. Non Branded - Striped Polos.pdf",
-    title: "Striped Polo Selections",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Smart casual striped pique cotton polos for corporate events.",
-    size: "33.3 MB"
-  },
-  {
-    file: "12. Non Branded - Golfer Polos.pdf",
-    title: "Golfer Polo Series",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Sporty pique cotton golfer polo shirts for executive outings.",
-    size: "9.6 MB"
-  },
-  {
-    file: "13. Pens & Keychains.pdf",
-    title: "Writing Instruments & Keyrings",
-    category: "Stationery & Office",
-    icon: PenTool,
-    description: "Engraved metal rollerball pens and customized leather keychains.",
-    size: "19.3 MB"
-  },
-  {
-    file: "14. Wallets.pdf",
-    title: "Leather Wallets & Sleeves",
-    category: "Bags & Leather",
-    icon: Luggage,
-    description: "RFID-protected genuine leather wallets and slim cardholder sleeves.",
-    size: "147.5 MB"
-  },
-  {
-    file: "15. Notebooks.pdf",
-    title: "Notebooks & Custom Journals",
-    category: "Stationery & Office",
-    icon: PenTool,
-    description: "Hard-bound custom notebooks with elastic band closures.",
-    size: "78.6 MB"
-  },
-  {
-    file: "16. Premium Office Bags.pdf",
-    title: "Premium Office Bags",
-    category: "Bags & Leather",
-    icon: Luggage,
-    description: "Genuine leather briefcases, messenger bags, and laptop sleeves.",
-    size: "101.4 MB"
-  },
-  {
-    file: "17. Employee Kits.pdf",
-    title: "Employee Onboarding Kits",
-    category: "Corporate Proposals",
-    icon: Gift,
-    description: "Bespoke corporate new hire welcome boxes and appreciation crates.",
-    size: "89.7 MB"
-  },
-  {
-    file: "18. Executive Bags.pdf",
-    title: "Executive Bags & Trolleys",
-    category: "Bags & Leather",
-    icon: Luggage,
-    description: "Nashermiles cabin luggage and high-end executive travel briefcases.",
-    size: "89.6 MB"
-  },
-  {
-    file: "19. Bags.pdf",
-    title: "Standard Backpacks & Duffels",
-    category: "Bags & Leather",
-    icon: Luggage,
-    description: "Ergonomic work backpacks, gym duffels, and travel messenger packs.",
-    size: "61.9 MB"
-  },
-  {
-    file: "20. TBS X Turtle - Branded Apparels.pdf",
-    title: "Turtle Branded Apparels",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Branded premium cotton hoodies, jackets, and corporate polos.",
-    size: "16.3 MB"
-  },
-  {
-    file: "21. Premium T-Shirts - Non Branded.pdf",
-    title: "Premium T-Shirts",
-    category: "Apparel & Clothing",
-    icon: Shirt,
-    description: "Luxury ring-spun combed cotton t-shirts for premium branding.",
-    size: "5.5 MB"
-  },
-  {
-    file: "22. Corporate Gifts.pdf",
-    title: "Corporate Gifts Catalog",
-    category: "Corporate Proposals",
-    icon: Gift,
-    description: "General client token gifts, desktop accessories, and curated sets.",
-    size: "20.3 MB"
-  },
-  {
-    file: "23. Drinkware.pdf",
-    title: "Drinkware & Coffee Tumblers",
-    category: "Drinkware & Coffee",
-    icon: Coffee,
-    description: "Insulated water flasks, travel mugs, and steel tea infusers.",
-    size: "11.3 MB"
-  }
-];
+// Components can't be stored in the database, so the icon is derived from
+// the (fixed, CHECK-constrained) category at render time instead.
+const CATEGORY_ICONS: Record<CorporateCatalogCategory, React.ElementType> = {
+  "Tech & Gadgets": Smartphone,
+  "Drinkware & Coffee": Coffee,
+  "Bags & Leather": Luggage,
+  "Stationery & Office": PenTool,
+  "Apparel & Clothing": Shirt,
+  "Corporate Proposals": Gift,
+};
 
 function CatalogReaderContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const fileParam = searchParams.get("file");
 
-  const [selectedCatalog, setSelectedCatalog] = useState<CatalogItem>(catalogsList[0]);
+  const [catalogs, setCatalogs] = useState<CorporateCatalogRow[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCatalog, setSelectedCatalog] = useState<CorporateCatalogRow | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Handle URL param selection
   useEffect(() => {
-    if (fileParam) {
-      const match = catalogsList.find(c => c.file === fileParam);
-      if (match) {
-        setSelectedCatalog(match);
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await supabase
+          .from("corporate_catalogs")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order");
+        if (data) {
+          setCatalogs(data);
+          const initial = fileParam ? data.find((c) => c.file === fileParam) : undefined;
+          setSelectedCatalog(initial || data[0] || null);
+        }
+      } catch (err) {
+        console.error("Failed to load catalogs:", err);
+      } finally {
+        setIsLoading(false);
       }
-    }
-  }, [fileParam]);
+    };
+    load();
+    // Only run once on mount — fileParam is only relevant for the initial selection.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleSelect = (item: CatalogItem) => {
+  const handleSelect = (item: CorporateCatalogRow) => {
     setSelectedCatalog(item);
-    // Update URL query param quietly
     router.replace(`/corporate/catalog?file=${item.file}`);
   };
 
-  const filteredCatalogs = catalogsList.filter(item => 
+  const filteredCatalogs = catalogs.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#faf4e7] text-teal-deep">
+        <Loader className="w-6 h-6 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!selectedCatalog) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#faf4e7] text-teal-deep space-y-3">
+        <FileText className="w-10 h-10 text-teal-deep/30" />
+        <p className="text-sm font-semibold">No catalogues published yet.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#faf4e7] text-slate-800 flex flex-col h-[calc(100vh-96px)] overflow-hidden">
-      
+
       {/* Top Bar Header */}
       <header className="bg-white/90 backdrop-blur-md border-b border-teal-deep/5 px-6 py-4 mt-6 flex items-center justify-between z-10 shrink-0 shadow-sm animate-fade-in">
         <div className="flex items-center space-x-4">
-          <Link 
+          <Link
             href="/corporate"
             className="p-2 bg-[#FCFAF2] hover:bg-teal-deep/5 border border-teal-deep/15 text-teal-deep rounded-full transition-all flex items-center justify-center shadow-sm"
             title="Back to Corporate"
@@ -265,28 +107,27 @@ function CatalogReaderContent() {
           <span className="hidden md:inline-block text-[12px] font-bold text-slate-400 uppercase tracking-widest">
             Active: {selectedCatalog.category}
           </span>
-          <a 
+          <a
             href={`/catalogues/${selectedCatalog.file}`}
             download
             className="flex items-center space-x-1.5 bg-teal-deep hover:bg-teal-deep/95 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow transition-all"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Download ({selectedCatalog.size})</span>
+            <span>Download{selectedCatalog.size ? ` (${selectedCatalog.size})` : ""}</span>
           </a>
         </div>
       </header>
 
       {/* Main Split Layout */}
       <div className="flex-1 flex overflow-hidden relative">
-        
+
         {/* Left Side: Sidebar Selection List */}
         <aside className="hidden md:flex flex-col w-80 bg-white border-r border-teal-deep/5 overflow-y-auto shrink-0 text-left p-6 space-y-6">
-          {/* Sidebar Search */}
           <div className="space-y-2">
             <span className="text-[12px] font-black text-teal-deep/40 uppercase tracking-widest block">Filter Collections</span>
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-teal-deep/30 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input 
+              <input
                 type="text"
                 placeholder="Search catalogs..."
                 value={searchQuery}
@@ -296,20 +137,19 @@ function CatalogReaderContent() {
             </div>
           </div>
 
-          {/* Catalog Selection List */}
           <div className="space-y-4 flex-1">
             <span className="text-[12px] font-black text-teal-deep/40 uppercase tracking-widest block">Available Catalogues</span>
             <div className="space-y-2">
-              {filteredCatalogs.map((item, idx) => {
+              {filteredCatalogs.map((item) => {
                 const isSelected = selectedCatalog.file === item.file;
-                const IconComponent = item.icon;
+                const IconComponent = CATEGORY_ICONS[item.category] || FileText;
                 return (
                   <button
-                    key={idx}
+                    key={item.id}
                     onClick={() => handleSelect(item)}
                     className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-start space-x-3 ${
-                      isSelected 
-                        ? "bg-teal-deep text-white border-teal-deep shadow-md font-bold" 
+                      isSelected
+                        ? "bg-teal-deep text-white border-teal-deep shadow-md font-bold"
                         : "bg-[#FCFAF2]/40 hover:bg-[#FCFAF2] border-teal-deep/5 text-teal-deep"
                     }`}
                   >
@@ -336,20 +176,20 @@ function CatalogReaderContent() {
 
         {/* Right Panel: Full Screen Embedded PDF iframe */}
         <main className="flex-1 bg-slate-100/50 p-6 flex flex-col overflow-hidden relative">
-          
+
           {/* Mobile Selector Dropdown */}
           <div className="md:hidden w-full mb-4">
             <select
               value={selectedCatalog.file}
               onChange={(e) => {
-                const match = catalogsList.find(c => c.file === e.target.value);
+                const match = catalogs.find(c => c.file === e.target.value);
                 if (match) handleSelect(match);
               }}
               className="w-full bg-white border border-teal-deep/15 rounded-xl px-4 py-3 text-xs font-bold text-teal-deep shadow-sm focus:outline-none"
             >
-              {catalogsList.map((c) => (
-                <option key={c.file} value={c.file}>
-                  {c.title} ({c.size})
+              {catalogs.map((c) => (
+                <option key={c.id} value={c.file}>
+                  {c.title}{c.size ? ` (${c.size})` : ""}
                 </option>
               ))}
             </select>

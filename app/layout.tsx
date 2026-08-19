@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Playfair_Display, Outfit } from "next/font/google";
 import "./globals.css";
 import { GiftProvider } from "./context/GiftContext";
 import { Navbar } from "../components/Navbar";
 import { CartDrawer } from "../components/CartDrawer";
+
+// No-op until NEXT_PUBLIC_GA_MEASUREMENT_ID is set — the plumbing is ready,
+// nothing loads or tracks anything until a real Measurement ID is provided.
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -34,6 +39,19 @@ export default function RootLayout({
       className={`${playfair.variable} ${outfit.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-teal-deep selection:bg-rani-pink selection:text-white cultural-pattern">
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}');
+              `}
+            </Script>
+          </>
+        )}
         <GiftProvider>
           <div className="fixed top-0 inset-x-0 z-50 print:hidden">
             {/* Repeating promo strip, matching the persistent delivery/offer
